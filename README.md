@@ -1,1 +1,142 @@
-# replace this
+# Amazon Verified Permissions L2 CDK Construct
+This repo contains the implementation of an L2 CDK Construct for Amazon Verified Permissions
+
+# Project Stability
+This construct is still versioned with alpha/v0 major version and we could introduce breaking changes even without a major version bump. Our goal is to keep the API stable & backwards compatible as much as possible but we currently cannot guarantee that. Once we'll publish v1.0.0 the breaking changes will be introduced via major version bumps.
+
+# Getting Started
+
+## Policy Store
+Define a Policy Store with defaults (No schema & Validation Settings Mode set to OFF)
+```ts
+const test = new PolicyStore(stack, 'PolicyStore')
+```
+
+Define a Policy Store without Schema definition (Validation Settings Mode must be set to OFF)
+```ts
+const test = new PolicyStore(stack, 'PolicyStore', {
+  validationSettings: {
+    mode: ValidationSettingsMode.OFF
+  }
+})
+```
+
+Define a Policy Store with Schema definition (a STRICT Validation Settings Mode is strongly suggested for Policy Stores with schemas):
+```ts
+const policyStore = new PolicyStore(stack, 'PolicyStore', {
+  schema: {
+    cedarJson: readFileSync(join(__dirname, 'assets/store-schema.json'), 'utf-8'),
+  },
+  validationSettings: {
+    mode: ValidationSettingsMode.STRICT,
+  },
+});
+```
+
+## Identity Source
+Define Identity Source with required properties
+```ts
+const userPool = new UserPool(stack, 'UserPool'); // Creating a new Cognito UserPool
+new IdentitySource(stack, 'IdentitySource', {
+    configuration: {
+      cognitoUserPoolConfiguration: {
+          userPool: userPool,
+      },
+    }
+});
+```
+
+Define Identity Source with all the properties
+```ts
+const userPool = new UserPool(stack, 'UserPool'); // Creating a new Cognito UserPool
+new IdentitySource(stack, 'IdentitySource', {
+    configuration: {
+      cognitoUserPoolConfiguration: {
+          clientIds: [
+          '&ExampleCogClientId;',
+          ],
+          userPool: userPool,
+      },
+    },
+    policyStore: policyStore,
+    principalEntityType: 'PETEXAMPLEabcdefg111111',
+});
+```
+
+## Policy
+Define a Policy and add it to a specific Policy Store
+```ts
+const statement = `permit(
+    principal,
+    action in [MyFirstApp::Action::"Read"],
+    resource
+) when {
+    true
+};`;
+
+const description = 'Test policy assigned to the test store';
+
+const policyStore = new PolicyStore(stack, 'PolicyStore', {
+    validationSettings: {
+    mode: ValidationSettingsMode.OFF,
+    },
+});
+
+// Create a policy and add it to the policy store
+const policy = new Policy(stack, 'MyTestPolicy', {
+    definition: {
+    static: {
+        statement,
+        description,
+    },
+    },
+    policyStore: policyStore,
+});
+```
+
+Define a policy with a template linked definition
+```ts
+
+const policyStore = new PolicyStore(stack, 'PolicyStore', {
+  validationSettings: {
+    mode: ValidationSettingsMode.OFF,
+  },
+});
+
+const template = new PolicyTemplate(stack, 'PolicyTemplate', {
+  statement: policyTemplateStatement,
+});
+
+const policy = new Policy(stack, 'MyTestPolicy', {
+  definition: {
+    templateLinked: {
+      policyTemplate: template,
+      principal: {
+        entityId: 'exampleId',
+        entityType: 'exampleType',
+      },
+      resource: {
+        entityId: 'exampleId',
+        entityType: 'exampleType',
+      },
+    },
+  },
+  policyStore: policyStore,
+});
+
+```
+
+## Policy Template
+Define a Policy Template referring to a Cedar Statement in local file
+```ts
+new PolicyTemplate(stack, 'PolicyTemplate', {
+  description: 'Allows sharing photos in full access mode',
+  policyStore: policyStore,
+  statement: Statement.fromFile('assets/template-statement.cedar'),
+});
+```
+
+# Notes
+* This project is following the AWS CDK Official Design Guidelines (see https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md) and the AWS CDK New Constructs Creation Guide (see here https://github.com/aws/aws-cdk/blob/main/docs/NEW_CONSTRUCTS_GUIDE.md).
+
+* Feedback is a gift: if you find something wrong or you've ideas to improve please open an issue or a pull request
