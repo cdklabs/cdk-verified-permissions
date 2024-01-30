@@ -15,37 +15,15 @@ const test = new PolicyStore(scope, 'PolicyStore')
 Define a Policy Store without Schema definition (Validation Settings Mode must be set to OFF)
 ```ts
 const test = new PolicyStore(scope, 'PolicyStore', {
-  validationSettings: {
-    mode: ValidationSettingsMode.OFF,
-  },
+  validationSettings: validationSettingsOff,
 })
 ```
 
 Define a Policy Store with Schema definition (a STRICT Validation Settings Mode is strongly suggested for Policy Stores with schemas):
 ```ts
-const cedarJsonSchema = {
-  PhotoApp: {
-    entityTypes: {
-      User: {},
-      Photo: {},
-    },
-    actions: {
-      viewPhoto: {
-        appliesTo: {
-          principalTypes: ['User'],
-          resourceTypes: ['Photo'],
-        },
-      },
-    },
-  },
-};
 const policyStore = new PolicyStore(scope, 'PolicyStore', {
-  schema: {
-    cedarJson: JSON.stringify(cedarJsonSchema),
-  },
-  validationSettings: {
-    mode: ValidationSettingsMode.STRICT,
-  },
+  schema: cedarSchema,
+  validationSettings: validationSettingsStrict,
 });
 ```
 
@@ -64,29 +42,9 @@ new IdentitySource(scope, 'IdentitySource', {
 
 Define Identity Source with all the properties
 ```ts
-const cedarJsonSchema = {
-  PhotoApp: {
-    entityTypes: {
-      User: {},
-      Photo: {},
-    },
-    actions: {
-      viewPhoto: {
-        appliesTo: {
-          principalTypes: ['User'],
-          resourceTypes: ['Photo'],
-        },
-      },
-    },
-  },
-};
 const policyStore = new PolicyStore(scope, 'PolicyStore', {
-  schema: {
-    cedarJson: JSON.stringify(cedarJsonSchema),
-  },
-  validationSettings: {
-    mode: ValidationSettingsMode.STRICT,
-  },
+  schema: cedarSchema,
+  validationSettings: validationSettingsStrict,
 });
 const userPool = new UserPool(scope, 'UserPool'); // Creating a new Cognito UserPool
 new IdentitySource(scope, 'IdentitySource', {
@@ -117,9 +75,7 @@ const statement = `permit(
 const description = 'Test policy assigned to the test store';
 
 const policyStore = new PolicyStore(scope, 'PolicyStore', {
-    validationSettings: {
-      mode: ValidationSettingsMode.OFF,
-    },
+    validationSettings: validationSettingsOff,
 });
 
 // Create a policy and add it to the policy store
@@ -138,9 +94,7 @@ Define a policy with a template linked definition
 ```ts
 
 const policyStore = new PolicyStore(scope, 'PolicyStore', {
-  validationSettings: {
-    mode: ValidationSettingsMode.OFF,
-  },
+  validationSettings: validationSettingsOff,
 });
 const policyTemplateStatement = `
 permit (
@@ -175,9 +129,7 @@ const policy = new Policy(scope, 'MyTestPolicy', {
 Define a Policy Template referring to a Cedar Statement in local file
 ```ts
 const policyStore = new PolicyStore(scope, 'PolicyStore', {
-  validationSettings: {
-    mode: ValidationSettingsMode.OFF,
-  },
+  validationSettings: validationSettingsOff,
 });
 new PolicyTemplate(scope, 'PolicyTemplate', {
   description: 'Allows sharing photos in full access mode',

@@ -7,7 +7,31 @@ import { Construct } from 'constructs';
 class Fixture extends Stack {
   constructor(scope: Construct, id: string) {
     super(scope, id);
-
+    const validationSettingsOff = {
+      mode: ValidationSettingsMode.OFF,
+    };
+    const validationSettingsStrict = {
+      mode: ValidationSettingsMode.STRICT,
+    };
+    const cedarJsonSchema = {
+      PhotoApp: {
+        entityTypes: {
+          User: {},
+          Photo: {},
+        },
+        actions: {
+          viewPhoto: {
+            appliesTo: {
+              principalTypes: ['User'],
+              resourceTypes: ['Photo'],
+            },
+          },
+        },
+      },
+    };
+    const cedarSchema = {
+      cedarJson: JSON.stringify(cedarJsonSchema),
+    };
     /// here
   }
 }
