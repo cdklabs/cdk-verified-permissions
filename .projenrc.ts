@@ -7,7 +7,7 @@ const project = new CdklabsConstructLibrary({
   cdkVersion: '2.92.0',
   defaultReleaseBranch: 'main',
   devDeps: ['cdklabs-projen-project-types'],
-  jsiiVersion: '~5.0.0',
+  jsiiVersion: '~5.3.0',
   workflowNodeVersion: '20.x',
   minNodeVersion: '20.0.0',
   name: 'cdk-verified-permissions',
