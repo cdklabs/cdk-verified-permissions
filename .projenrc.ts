@@ -7,29 +7,11 @@ const project = new CdklabsConstructLibrary({
   cdkVersion: '2.92.0',
   defaultReleaseBranch: 'main',
   devDeps: ['cdklabs-projen-project-types'],
-  name: 'cdk-verified-permissions',
+  name: '@cdklabs/cdk-verified-permissions',
   projenrcTs: true,
   prerelease: 'alpha',
   stability: 'experimental',
   releaseToNpm: true,
-  publishToPypi: {
-    distName: 'cdk-verified-permissions',
-    module: 'cdk_verified_permissions',
-  },
-  publishToMaven: {
-    javaPackage: 'io.github.cdklabs.verifiedpermissions',
-    mavenGroupId: 'io.github.cdklabs',
-    mavenArtifactId: 'cdk-verified-permissions',
-    mavenEndpoint: 'https://s01.oss.sonatype.org',
-  },
-  publishToNuget: {
-    dotNetNamespace: 'Cdklabs.VerifiedPermissions',
-    packageId: 'Cdklabs.VerifiedPermissions',
-  },
-  publishToGo: {
-    moduleName: 'github.com/cdklabs/cdk-verified-permissions-go',
-    packageName: 'cdk-verified-permissions-go',
-  },
   repositoryUrl: 'https://github.com/cdklabs/cdk-verified-permissions.git',
 });
 project.synth();

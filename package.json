@@ -1,5 +1,5 @@
 {
-  "name": "cdk-verified-permissions",
+  "name": "@cdklabs/cdk-verified-permissions",
   "description": "L2 AWS CDK Constructs for Amazon Verified Permissions",
   "repository": {
     "type": "git",
@@ -135,23 +135,22 @@
     "outdir": "dist",
     "targets": {
       "java": {
-        "package": "io.github.cdklabs.verifiedpermissions",
+        "package": "io.github.cdklabs.cdk.verified.permissions",
         "maven": {
           "groupId": "io.github.cdklabs",
           "artifactId": "cdk-verified-permissions"
         }
       },
       "python": {
-        "distName": "cdk-verified-permissions",
-        "module": "cdk_verified_permissions"
+        "distName": "cdklabs.cdk-verified-permissions",
+        "module": "cdklabs.cdk_verified_permissions"
       },
       "dotnet": {
-        "namespace": "Cdklabs.VerifiedPermissions",
-        "packageId": "Cdklabs.VerifiedPermissions"
+        "namespace": "Cdklabs.CdkVerifiedPermissions",
+        "packageId": "Cdklabs.CdkVerifiedPermissions"
       },
       "go": {
-        "moduleName": "github.com/cdklabs/cdk-verified-permissions-go",
-        "packageName": "cdk-verified-permissions-go"
+        "moduleName": "github.com/cdklabs/cdk-verified-permissions-go"
       }
     },
     "tsc": {
