@@ -1,5 +1,4 @@
-import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
-import { JsiiLanguage } from 'cdklabs-projen-project-types';
+import { CdklabsConstructLibrary, JsiiLanguage } from 'cdklabs-projen-project-types';
 const project = new CdklabsConstructLibrary({
   author: 'Amazon Web Services',
   authorAddress: 'aws-avp-cdk-dev@amazon.com',
