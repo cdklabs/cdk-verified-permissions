@@ -1,4 +1,5 @@
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
+import { JsiiLanguage } from 'cdklabs-projen-project-types';
 const project = new CdklabsConstructLibrary({
   author: 'Amazon Web Services',
   authorAddress: 'aws-avp-cdk-dev@amazon.com',
@@ -12,6 +13,7 @@ const project = new CdklabsConstructLibrary({
   prerelease: 'alpha',
   stability: 'experimental',
   releaseToNpm: true,
+  jsiiTargetLanguages: [JsiiLanguage.PYTHON, JsiiLanguage.JAVA, JsiiLanguage.DOTNET],
   repositoryUrl: 'https://github.com/cdklabs/cdk-verified-permissions.git',
 });
 project.synth();
