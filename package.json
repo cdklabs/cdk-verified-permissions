@@ -1,11 +1,13 @@
 {
-  "name": "cdk-verified-permissions",
+  "name": "@cdklabs/cdk-verified-permissions",
+  "description": "L2 AWS CDK Constructs for Amazon Verified Permissions",
   "repository": {
     "type": "git",
     "url": "https://github.com/cdklabs/cdk-verified-permissions.git"
   },
   "scripts": {
     "build": "npx projen build",
+    "bump": "npx projen bump",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
     "compile": "npx projen compile",
@@ -25,9 +27,11 @@
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
     "pre-compile": "npx projen pre-compile",
+    "release": "npx projen release",
     "rosetta:extract": "npx projen rosetta:extract",
     "test": "npx projen test",
     "test:watch": "npx projen test:watch",
+    "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
     "upgrade-cdklabs-projen-project-types": "npx projen upgrade-cdklabs-projen-project-types",
     "upgrade-dev-deps": "npx projen upgrade-dev-deps",
@@ -46,7 +50,7 @@
     "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
-    "aws-cdk-lib": "2.1.0",
+    "aws-cdk-lib": "2.92.0",
     "cdklabs-projen-project-types": "^0.1.187",
     "constructs": "10.0.5",
     "eslint": "^8",
@@ -60,16 +64,22 @@
     "jsii-pacmak": "^1.94.0",
     "jsii-rosetta": "^5.3.9",
     "projen": "^0.79.7",
+    "standard-version": "^9",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.1.0",
+    "aws-cdk-lib": "^2.92.0",
     "constructs": "^10.0.5"
   },
   "keywords": [
-    "cdk"
+    "authorization",
+    "aws",
+    "aws-cdk",
+    "awscdk",
+    "cdk",
+    "verified-permissions"
   ],
   "engines": {
     "node": ">= 18.12.0"
@@ -132,12 +142,12 @@
         }
       },
       "python": {
-        "distName": "cdk-verified-permissions",
-        "module": "cdk_verified_permissions"
+        "distName": "cdklabs.cdk-verified-permissions",
+        "module": "cdklabs.cdk_verified_permissions"
       },
       "dotnet": {
-        "namespace": "CdklabsCdkVerifiedPermissions",
-        "packageId": "CdklabsCdkVerifiedPermissions"
+        "namespace": "Cdklabs.CdkVerifiedPermissions",
+        "packageId": "Cdklabs.CdkVerifiedPermissions"
       },
       "go": {
         "moduleName": "github.com/cdklabs/cdk-verified-permissions-go"

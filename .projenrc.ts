@@ -1,17 +1,17 @@
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
 const project = new CdklabsConstructLibrary({
-  author: 'AWS',
-  authorAddress: 'aws-cdk-dev@amazon.com',
-  cdkVersion: '2.1.0',
+  author: 'Amazon Web Services',
+  authorAddress: 'aws-avp-cdk-dev@amazon.com',
+  description: 'L2 AWS CDK Constructs for Amazon Verified Permissions',
+  keywords: ['cdk', 'aws-cdk', 'awscdk', 'aws', 'verified-permissions', 'authorization'],
+  cdkVersion: '2.92.0',
   defaultReleaseBranch: 'main',
   devDeps: ['cdklabs-projen-project-types'],
-  name: 'cdk-verified-permissions',
+  name: '@cdklabs/cdk-verified-permissions',
   projenrcTs: true,
-  release: false,
+  prerelease: 'alpha',
+  stability: 'experimental',
+  releaseToNpm: true,
   repositoryUrl: 'https://github.com/cdklabs/cdk-verified-permissions.git',
-
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // packageName: undefined,  /* The "name" in package.json. */
 });
 project.synth();

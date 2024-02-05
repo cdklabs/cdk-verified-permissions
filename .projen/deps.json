@@ -71,6 +71,11 @@
       "type": "build"
     },
     {
+      "name": "standard-version",
+      "version": "^9",
+      "type": "build"
+    },
+    {
       "name": "ts-jest",
       "type": "build"
     },
@@ -94,7 +99,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.1.0",
+      "version": "^2.92.0",
       "type": "peer"
     },
     {
