@@ -12,6 +12,8 @@ const project = new CdklabsConstructLibrary({
   prerelease: 'alpha',
   stability: 'experimental',
   releaseToNpm: true,
+  private: false,
+  enablePRAutoMerge: true,
   repositoryUrl: 'https://github.com/cdklabs/cdk-verified-permissions.git',
 });
 project.synth();
