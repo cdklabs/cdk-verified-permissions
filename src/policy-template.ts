@@ -30,9 +30,9 @@ export interface PolicyTemplateProps {
   /**
    * The policy store that contains the template.
    *
-   * @default - No policy store.
+   * @default - The policy store to attach the new or updated policy template.
    */
-  readonly policyStore?: IPolicyStore;
+  readonly policyStore: IPolicyStore;
 }
 
 export interface PolicyTemplateAttributes {
@@ -65,11 +65,11 @@ export class PolicyTemplate extends PolicyTemplateBase {
   }
 
   /**
-   * Creates a PolicyStore construct that represents an external Policy Store.
+   * Creates a PolicyTemplate construct that represents an external Policy Template.
    *
    * @param scope The parent creating construct (usually `this`).
    * @param id The construct's name.
-   * @param attrs A `PolicyStoreAttributes` object.
+   * @param attrs A `PolicyTemplateAttributes` object.
    */
   public static fromPolicyTemplateAttributes(
     scope: Construct,
@@ -113,7 +113,7 @@ export class PolicyTemplate extends PolicyTemplateBase {
   /**
    * The Policy store that contains the template.
    */
-  readonly policyStore?: IPolicyStore;
+  readonly policyStore: IPolicyStore;
 
   constructor(scope: Construct, id: string, props: PolicyTemplateProps) {
     super(scope, id);
@@ -121,7 +121,7 @@ export class PolicyTemplate extends PolicyTemplateBase {
     this.policyTemplate = new CfnPolicyTemplate(this, id, {
       statement: props.statement,
       description: props.description,
-      policyStoreId: props.policyStore?.policyStoreId,
+      policyStoreId: props.policyStore.policyStoreId,
     });
     this.policyTemplateId = this.policyTemplate.attrPolicyTemplateId;
     this.statement = this.policyTemplate.statement;
