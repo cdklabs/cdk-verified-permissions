@@ -1235,7 +1235,7 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.isOwnedResource">isOwnedResource</a></code> | Returns true if the construct was created by CDK, and false otherwise. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.fromPolicyTemplateAttributes">fromPolicyTemplateAttributes</a></code> | Creates a PolicyStore construct that represents an external Policy Store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.fromPolicyTemplateAttributes">fromPolicyTemplateAttributes</a></code> | Creates a PolicyTemplate construct that represents an external Policy Template. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.fromPolicyTemplateId">fromPolicyTemplateId</a></code> | Create a PolicyTemplate construct that represents an external policy template via policy template id. |
 
 ---
@@ -1298,7 +1298,7 @@ import { PolicyTemplate } from '@cdklabs/cdk-verified-permissions'
 PolicyTemplate.fromPolicyTemplateAttributes(scope: Construct, id: string, attrs: PolicyTemplateAttributes)
 ```
 
-Creates a PolicyStore construct that represents an external Policy Store.
+Creates a PolicyTemplate construct that represents an external Policy Template.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.fromPolicyTemplateAttributes.parameter.scope"></a>
 
@@ -1320,7 +1320,7 @@ The construct's name.
 
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.PolicyTemplateAttributes">PolicyTemplateAttributes</a>
 
-A `PolicyStoreAttributes` object.
+A `PolicyTemplateAttributes` object.
 
 ---
 
@@ -1365,10 +1365,10 @@ The PolicyTemplate's id.
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The Policy store that contains the template. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyTemplateId">policyTemplateId</a></code> | <code>string</code> | The ID of the policy template. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.statement">statement</a></code> | <code>string</code> | The statement of the policy template. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.description">description</a></code> | <code>string</code> | Description of the policy template. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The Policy store that contains the template. |
 
 ---
 
@@ -1415,6 +1415,18 @@ The stack in which this resource is defined.
 
 ---
 
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyStore"></a>
+
+```typescript
+public readonly policyStore: IPolicyStore;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+
+The Policy store that contains the template.
+
+---
+
 ##### `policyTemplateId`<sup>Required</sup> <a name="policyTemplateId" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyTemplateId"></a>
 
 ```typescript
@@ -1448,18 +1460,6 @@ public readonly description: string;
 - *Type:* string
 
 Description of the policy template.
-
----
-
-##### `policyStore`<sup>Optional</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyStore"></a>
-
-```typescript
-public readonly policyStore: IPolicyStore;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
-
-The Policy store that contains the template.
 
 ---
 
@@ -2004,9 +2004,22 @@ const policyTemplateProps: PolicyTemplateProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplateProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that contains the template. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplateProps.property.statement">statement</a></code> | <code>string</code> | Specifies the content that you want to use for the new policy template, written in the Cedar policy language. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplateProps.property.description">description</a></code> | <code>string</code> | The description to attach to the new or updated policy template. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplateProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that contains the template. |
+
+---
+
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.PolicyTemplateProps.property.policyStore"></a>
+
+```typescript
+public readonly policyStore: IPolicyStore;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+- *Default:* The policy store to attach the new or updated policy template.
+
+The policy store that contains the template.
 
 ---
 
@@ -2033,19 +2046,6 @@ public readonly description: string;
 - *Default:* No description.
 
 The description to attach to the new or updated policy template.
-
----
-
-##### `policyStore`<sup>Optional</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.PolicyTemplateProps.property.policyStore"></a>
-
-```typescript
-public readonly policyStore: IPolicyStore;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
-- *Default:* No policy store.
-
-The policy store that contains the template.
 
 ---
 

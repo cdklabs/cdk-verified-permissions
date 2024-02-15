@@ -187,6 +187,7 @@ when { true };`;
     });
     const template = new PolicyTemplate(stack, 'PolicyTemplate', {
       statement: Statement.fromInline(policyTemplateStatement),
+      policyStore: policyStore,
     });
 
     // Create a policy and add it to the policy store
@@ -268,6 +269,7 @@ when { true };`;
     });
     const template = new PolicyTemplate(stack, 'PolicyTemplate', {
       statement: Statement.fromInline(policyTemplateStatement),
+      policyStore: policyStore,
     });
 
     // THEN

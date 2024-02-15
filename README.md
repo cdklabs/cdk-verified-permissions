@@ -155,6 +155,7 @@ permit (
 );`;
 const template = new PolicyTemplate(scope, 'PolicyTemplate', {
   statement: policyTemplateStatement,
+  policyStore: policyStore,
 });
 
 const policy = new Policy(scope, 'MyTestPolicy', {

@@ -14,13 +14,19 @@ permit (
 );`;
 
 describe('Policy Template creation', () => {
-  test('Policy Template creation only with Statement', () => {
+  test('Policy Template creation with Statement and PolicyStore', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
 
     // WHEN
     new PolicyTemplate(stack, 'PolicyTemplate', {
       statement: Statement.fromInline(policyTemplateStatement),
+      policyStore: policyStore,
     });
 
     // THEN
@@ -32,27 +38,7 @@ describe('Policy Template creation', () => {
     );
   });
 
-  test('Policy Template creation with Statement and Description', () => {
-    // GIVEN
-    const stack = new Stack(undefined, 'Stack');
-
-    // WHEN
-    new PolicyTemplate(stack, 'PolicyTemplate', {
-      statement: Statement.fromInline(policyTemplateStatement),
-      description: 'Test Description for Policy Template',
-    });
-
-    // THEN
-    Template.fromStack(stack).hasResourceProperties(
-      'AWS::VerifiedPermissions::PolicyTemplate',
-      {
-        Statement: policyTemplateStatement,
-        Description: 'Test Description for Policy Template',
-      },
-    );
-  });
-
-  test('Policy Template creation with Statement and Description and PolicyStoreId', () => {
+  test('Policy Template creation with Statement and Description and PolicyStore', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
     const policyStore = new PolicyStore(stack, 'PolicyStore', {
