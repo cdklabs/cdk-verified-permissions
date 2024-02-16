@@ -1938,9 +1938,9 @@ downlevel-dts@^0.11.0:
     typescript next
 
 electron-to-chromium@^1.4.668:
-  version "1.4.670"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.670.tgz#0fc5ac92ada8371e898ea72d577ffc888167a017"
-  integrity sha512-hcijYOWjOtjKrKPtNA6tuLlA/bTLO3heFG8pQA6mLpq7dRydSWicXova5lyxDzp1iVJaYhK7J2OQlGE52KYn7A==
+  version "1.4.671"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.671.tgz#fa3094d6d2512a6c4d609a9bc4997154543febfe"
+  integrity sha512-UUlE+/rWbydmp+FW8xlnnTA5WNA0ZZd2XL8CuMS72rh+k4y1f8+z6yk3UQhEwqHQWj6IBdL78DwWOdGMvYfQyA==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -3413,10 +3413,10 @@ jsii-diff@^1.94.0:
     log4js "^6.9.1"
     yargs "^16.2.0"
 
-jsii-docgen@^10.3.16:
-  version "10.3.16"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.3.16.tgz#60e2a21e8ea3cb7f635bff905d2d0b3413408681"
-  integrity sha512-7FbgDK0+1KKYmLsLwfBWAKDt6qBwZNUNeWbijfODAKOwraoHS5aMdlfByFXQk5TwI7i1WdZqUB1Rkl3lUHGC9g==
+jsii-docgen@^10.3.17:
+  version "10.3.17"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.3.17.tgz#75237cc3c7e04c5a923594f0894dda606987934d"
+  integrity sha512-EumD8CtEcs2O6m0nqXVxoVuiAqb/HSEBhEaLz9690iyItHyo8qfFo4e11qdv5i1lKdPSOgLcbgAl3EArp3cCKA==
   dependencies:
     "@jsii/spec" "^1.94.0"
     case "^1.6.3"
