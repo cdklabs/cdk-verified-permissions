@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
@@ -86,5 +87,30 @@ describe('Policy template reference existing policy template', () => {
 
     // THEN
     expect(policyTemplate.policyTemplateId).toBe(policyTemplateId);
+  });
+
+  test('Policy Template with Statement from file', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    // WHEN
+    new PolicyTemplate(stack, 'PolicyTemplate', {
+      statement: Statement.fromFile('test/statement.cedar'),
+      policyStore,
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyTemplate',
+      {
+        Statement: readFileSync('test/statement.cedar', 'utf-8'),
+      },
+    );
   });
 });

@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { ArnFormat, Aws, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -98,6 +99,34 @@ describe('Policy Store creation', () => {
         },
         Schema: {
           CedarJson: JSON.stringify(cedarJsonSchema),
+        },
+      },
+    );
+  });
+
+  test('Creating Policy Store with validation settings and schema (mode = STRICT) from file', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.STRICT,
+      },
+      schema: {
+        cedarJson: Statement.fromFile('test/schema.json'),
+      },
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyStore',
+      {
+        ValidationSettings: {
+          Mode: ValidationSettingsMode.STRICT,
+        },
+        Schema: {
+          CedarJson: readFileSync('test/schema.json', 'utf-8'),
         },
       },
     );

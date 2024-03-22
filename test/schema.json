@@ -1,0 +1,16 @@
+{
+    "PhotoApp": {
+      "entityTypes": {
+        "User": {},
+        "Photo": {}
+      },
+      "actions": {
+        "viewPhoto": {
+          "appliesTo": {
+            "principalTypes": ["User"],
+            "resourceTypes": ["Photo"]
+          }
+        }
+      }
+    }
+  }

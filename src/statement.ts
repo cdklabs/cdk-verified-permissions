@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 /*
- * Represents the Policy Statement.
+ * Represents a Cedar Statement (Schema or Policy).
  */
 export class Statement {
   /**
@@ -10,7 +10,7 @@ export class Statement {
    */
   public static fromInline(statement: string): string {
     if (statement.length === 0) {
-      throw new Error('Policies inline statement cannot be empty');
+      throw new Error('Statement cannot be empty');
     }
     return statement;
   }
@@ -22,7 +22,7 @@ export class Statement {
    */
   public static fromFile(path: string): string {
     if (path.length === 0) {
-      throw new Error('Policy path cannot be empty');
+      throw new Error('Path cannot be empty');
     }
     return readFileSync(path, 'utf-8');
   }
