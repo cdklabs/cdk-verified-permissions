@@ -30,12 +30,12 @@ describe('Statement creation errors', () => {
     // THEN
     expect(() => {
       Statement.fromInline('');
-    }).toThrow('Policies inline statement cannot be empty');
+    }).toThrow('Statement cannot be empty');
   });
 
   test('Creating a statement from and empty file path', () => {
     expect(() => {
       Statement.fromFile('');
-    }).toThrow('Policy path cannot be empty');
+    }).toThrow('Path cannot be empty');
   });
 });
