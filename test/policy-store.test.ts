@@ -75,12 +75,13 @@ describe('Policy Store creation', () => {
     );
   });
 
-  test('Creating Policy Store with validation settings and schema (mode = STRICT)', () => {
+  test('Creating Policy Store with validation settings, description and schema (mode = STRICT)', () => {
     // GIVEN
     const cedarJsonSchema = cedarJsonSchemaExample;
     const stack = new Stack(undefined, 'Stack');
 
     // WHEN
+    const description = 'Policy Store Description';
     new PolicyStore(stack, 'PolicyStore', {
       validationSettings: {
         mode: ValidationSettingsMode.STRICT,
@@ -88,6 +89,7 @@ describe('Policy Store creation', () => {
       schema: {
         cedarJson: JSON.stringify(cedarJsonSchema),
       },
+      description: description,
     });
 
     // THEN
@@ -100,6 +102,7 @@ describe('Policy Store creation', () => {
         Schema: {
           CedarJson: JSON.stringify(cedarJsonSchema),
         },
+        Description: description,
       },
     );
   });

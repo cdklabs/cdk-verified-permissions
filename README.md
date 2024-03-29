@@ -10,7 +10,7 @@ This construct is still versioned with alpha/v0 major version and we could intro
 
 ## Policy Store
 
-Define a Policy Store with defaults (No schema & Validation Settings Mode set to OFF):
+Define a Policy Store with defaults (No description, No schema & Validation Settings Mode set to OFF):
 
 ```ts
 const test = new PolicyStore(scope, "PolicyStore");
@@ -27,9 +27,60 @@ const test = new PolicyStore(scope, "PolicyStore", {
 });
 ```
 
-Define a Policy Store with Schema definition (a STRICT Validation Settings Mode is strongly suggested for Policy Stores with schemas):
+Define a Policy Store with Description and Schema definition (a STRICT Validation Settings Mode is strongly suggested for Policy Stores with schemas):
 
 ```ts
+const description = "PolicyStore description";
+const validationSettingsStrict = {
+  mode: ValidationSettingsMode.STRICT,
+};
+const cedarJsonSchema = {
+  PhotoApp: {
+    entityTypes: {
+      User: {},
+      Photo: {},
+    },
+    actions: {
+      viewPhoto: {
+        appliesTo: {
+          principalTypes: ["User"],
+          resourceTypes: ["Photo"],
+        },
+      },
+    },
+  },
+};
+const cedarSchema = {
+  cedarJson: JSON.stringify(cedarJsonSchema),
+};
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  schema: cedarSchema,
+  validationSettings: validationSettingsStrict,
+  description: description
+});
+```
+
+Define a Policy Store with Schema definition from file:
+
+```ts
+const validationSettingsStrict = {
+  mode: ValidationSettingsMode.STRICT,
+};
+const cedarSchema = {
+  cedarJson: Statement.fromFile("assets/policy-store-schema.json"),
+};
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  schema: cedarSchema,
+  validationSettings: validationSettingsStrict,
+});
+```
+
+## Identity Source
+
+Define Identity Source with required properties:
+
+```ts
+const userPool = new UserPool(scope, "UserPool"); // Creating a new Cognito UserPool
 const validationSettingsStrict = {
   mode: ValidationSettingsMode.STRICT,
 };
@@ -56,35 +107,13 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
   schema: cedarSchema,
   validationSettings: validationSettingsStrict,
 });
-```
-
-Define a Policy Store with Schema definition from file:
-
-```ts
-const validationSettingsStrict = {
-  mode: ValidationSettingsMode.STRICT,
-};
-const cedarSchema = {
-  cedarJson: Statement.fromFile("assets/policy-store-schema.json"),
-};
-const policyStore = new PolicyStore(scope, "PolicyStore", {
-  schema: cedarSchema,
-  validationSettings: validationSettingsStrict,
-});
-```
-
-## Identity Source
-
-Define Identity Source with required properties:
-
-```ts
-const userPool = new UserPool(scope, "UserPool"); // Creating a new Cognito UserPool
 new IdentitySource(scope, "IdentitySource", {
   configuration: {
     cognitoUserPoolConfiguration: {
       userPool: userPool,
     },
   },
+  policyStore: policyStore
 });
 ```
 

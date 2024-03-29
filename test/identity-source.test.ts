@@ -15,12 +15,19 @@ describe('Identity Source creation', () => {
 
     // WHEN
     const userPool = new UserPool(stack, 'UserPool');
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
     new IdentitySource(stack, 'IdentitySource', {
       configuration: {
         cognitoUserPoolConfiguration: {
           userPool: userPool,
         },
       },
+      policyStore: policyStore,
     });
 
     // THEN
@@ -34,6 +41,9 @@ describe('Identity Source creation', () => {
             ],
           },
         },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
       },
     });
   });
