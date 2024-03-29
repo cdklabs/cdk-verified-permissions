@@ -30,7 +30,6 @@ const test = new PolicyStore(scope, "PolicyStore", {
 Define a Policy Store with Description and Schema definition (a STRICT Validation Settings Mode is strongly suggested for Policy Stores with schemas):
 
 ```ts
-const description = "PolicyStore description";
 const validationSettingsStrict = {
   mode: ValidationSettingsMode.STRICT,
 };
@@ -56,7 +55,7 @@ const cedarSchema = {
 const policyStore = new PolicyStore(scope, "PolicyStore", {
   schema: cedarSchema,
   validationSettings: validationSettingsStrict,
-  description: description
+  description: "PolicyStore description"
 });
 ```
 
