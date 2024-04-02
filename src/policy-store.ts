@@ -81,7 +81,7 @@ export interface PolicyStoreProps {
    * This attribute is not required from an API point of view.
    * It represents the schema (in Cedar) to be applied to the PolicyStore.
    *
-   * @default - The schema (in Cedar) to be applied to the PolicyStore.
+   * @default - No schema.
    */
   readonly schema?: ISchema;
 
@@ -91,6 +91,13 @@ export interface PolicyStoreProps {
    * @default - If not provided, the Policy store will be created with ValidationSettingsMode = "OFF"
    */
   readonly validationSettings: IValidationSettings;
+
+  /**
+   * The policy store's description
+   *
+   * @default - No description.
+   */
+  readonly description?: string;
 }
 
 export interface AddPolicyOptions {
@@ -273,6 +280,11 @@ export class PolicyStore extends PolicyStoreBase {
    */
   readonly validationSettings: IValidationSettings;
 
+  /**
+   * Description of the Policy Store
+   */
+  readonly description?: string;
+
   constructor(
     scope: Construct,
     id: string,
@@ -291,6 +303,7 @@ export class PolicyStore extends PolicyStoreBase {
         }
         : undefined,
       validationSettings: props.validationSettings,
+      description: props.description,
     });
     this.policyStoreArn = this.getResourceArnAttribute(
       this.policyStore.attrArn,
@@ -304,6 +317,7 @@ export class PolicyStore extends PolicyStoreBase {
     this.policyStoreId = this.policyStore.attrPolicyStoreId;
     this.schema = props.schema;
     this.validationSettings = props.validationSettings;
+    this.description = props.description;
   }
 
   /**

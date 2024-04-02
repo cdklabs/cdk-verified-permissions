@@ -273,8 +273,8 @@ The Identity Source identifier.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceArn">identitySourceArn</a></code> | <code>string</code> | Identity Source ARN. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | Identity Source identifier. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.openIdIssuer">openIdIssuer</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
 
 ---
 
@@ -375,6 +375,16 @@ public readonly openIdIssuer: string;
 
 ---
 
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore"></a>
+
+```typescript
+public readonly policyStore: IPolicyStore;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+
+---
+
 ##### `userPoolArn`<sup>Required</sup> <a name="userPoolArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn"></a>
 
 ```typescript
@@ -382,16 +392,6 @@ public readonly userPoolArn: string;
 ```
 
 - *Type:* string
-
----
-
-##### `policyStore`<sup>Optional</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore"></a>
-
-```typescript
-public readonly policyStore: IPolicyStore;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
 
 ---
 
@@ -1043,6 +1043,7 @@ The PolicyStore's id.
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreId">policyStoreId</a></code> | <code>string</code> | ID of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreName">policyStoreName</a></code> | <code>string</code> | Name of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a></code> | Validation Settings of the Policy Store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.description">description</a></code> | <code>string</code> | Description of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a></code> | Schema definition of the Policy Store. |
 
 ---
@@ -1135,6 +1136,18 @@ public readonly validationSettings: IValidationSettings;
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a>
 
 Validation Settings of the Policy Store.
+
+---
+
+##### `description`<sup>Optional</sup> <a name="description" id="@cdklabs/cdk-verified-permissions.PolicyStore.property.description"></a>
+
+```typescript
+public readonly description: string;
+```
+
+- *Type:* string
+
+Description of the Policy Store.
 
 ---
 
@@ -1702,14 +1715,13 @@ Identity Source configuration.
 
 ---
 
-##### `policyStore`<sup>Optional</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.IdentitySourceProps.property.policyStore"></a>
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.IdentitySourceProps.property.policyStore"></a>
 
 ```typescript
 public readonly policyStore: IPolicyStore;
 ```
 
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
-- *Default:* No policy store is set for the identity source.
 
 Policy Store in which you want to store this identity source.
 
@@ -1928,6 +1940,7 @@ const policyStoreProps: PolicyStoreProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a></code> | The policy store's validation settings. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.description">description</a></code> | <code>string</code> | The policy store's description. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a></code> | This attribute is not required from an API point of view. |
 
 ---
@@ -1945,6 +1958,19 @@ The policy store's validation settings.
 
 ---
 
+##### `description`<sup>Optional</sup> <a name="description" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.description"></a>
+
+```typescript
+public readonly description: string;
+```
+
+- *Type:* string
+- *Default:* No description.
+
+The policy store's description.
+
+---
+
 ##### `schema`<sup>Optional</sup> <a name="schema" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema"></a>
 
 ```typescript
@@ -1952,7 +1978,7 @@ public readonly schema: ISchema;
 ```
 
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a>
-- *Default:* The schema (in Cedar) to be applied to the PolicyStore.
+- *Default:* No schema.
 
 This attribute is not required from an API point of view.
 

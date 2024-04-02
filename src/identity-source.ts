@@ -75,9 +75,8 @@ export interface IdentitySourceProps {
   /**
    * Policy Store in which you want to store this identity source
    *
-   * @default - No policy store is set for the identity source.
    */
-  readonly policyStore?: IPolicyStore;
+  readonly policyStore: IPolicyStore;
 
   /**
    * Principal entity type
@@ -195,7 +194,7 @@ export class IdentitySource extends IdentitySourceBase {
   readonly identitySourceId: string;
   readonly openIdIssuer: string;
   readonly userPoolArn: string;
-  readonly policyStore?: IPolicyStore;
+  readonly policyStore: IPolicyStore;
 
   constructor(scope: Construct, id: string, props: IdentitySourceProps) {
     super(scope, id);
@@ -211,7 +210,7 @@ export class IdentitySource extends IdentitySourceBase {
           userPoolArn: this.userPoolArn,
         },
       },
-      policyStoreId: props.policyStore?.policyStoreId,
+      policyStoreId: props.policyStore.policyStoreId,
       principalEntityType: props.principalEntityType,
     });
     this.discoveryUrl = this.identitySource.attrDetailsDiscoveryUrl;
