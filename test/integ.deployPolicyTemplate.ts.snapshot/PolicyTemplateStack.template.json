@@ -1,0 +1,87 @@
+{
+ "Resources": {
+  "PolicyStore888EE7DF": {
+   "Type": "AWS::VerifiedPermissions::PolicyStore",
+   "Properties": {
+    "ValidationSettings": {
+     "Mode": "OFF"
+    }
+   }
+  },
+  "PolicyTemplate4B2B158A": {
+   "Type": "AWS::VerifiedPermissions::PolicyTemplate",
+   "Properties": {
+    "PolicyStoreId": {
+     "Fn::GetAtt": [
+      "PolicyStore888EE7DF",
+      "PolicyStoreId"
+     ]
+    },
+    "Statement": "\n    permit (\n      principal == ?principal,\n      action in [TinyTodo::Action::\"ReadList\", TinyTodo::Action::\"ListTasks\"],\n      resource == ?resource\n    );"
+   }
+  },
+  "MyTestPolicy36C7ABC4": {
+   "Type": "AWS::VerifiedPermissions::Policy",
+   "Properties": {
+    "Definition": {
+     "TemplateLinked": {
+      "PolicyTemplateId": {
+       "Fn::GetAtt": [
+        "PolicyTemplate4B2B158A",
+        "PolicyTemplateId"
+       ]
+      },
+      "Principal": {
+       "EntityId": "exampleId",
+       "EntityType": "exampleType"
+      },
+      "Resource": {
+       "EntityId": "exampleId",
+       "EntityType": "exampleType"
+      }
+     }
+    },
+    "PolicyStoreId": {
+     "Fn::GetAtt": [
+      "PolicyStore888EE7DF",
+      "PolicyStoreId"
+     ]
+    }
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

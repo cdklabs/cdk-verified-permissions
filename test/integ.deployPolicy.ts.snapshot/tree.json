@@ -1,0 +1,162 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "PolicyTestStack": {
+        "id": "PolicyTestStack",
+        "path": "PolicyTestStack",
+        "children": {
+          "PolicyStore": {
+            "id": "PolicyStore",
+            "path": "PolicyTestStack/PolicyStore",
+            "children": {
+              "PolicyStore": {
+                "id": "PolicyStore",
+                "path": "PolicyTestStack/PolicyStore/PolicyStore",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::VerifiedPermissions::PolicyStore",
+                  "aws:cdk:cloudformation:props": {
+                    "validationSettings": {
+                      "mode": "OFF"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_verifiedpermissions.CfnPolicyStore",
+                  "version": "2.134.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.134.0"
+            }
+          },
+          "MyTestPolicy": {
+            "id": "MyTestPolicy",
+            "path": "PolicyTestStack/MyTestPolicy",
+            "children": {
+              "MyTestPolicy": {
+                "id": "MyTestPolicy",
+                "path": "PolicyTestStack/MyTestPolicy/MyTestPolicy",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::VerifiedPermissions::Policy",
+                  "aws:cdk:cloudformation:props": {
+                    "definition": {
+                      "static": {
+                        "statement": "permit(\n        principal,\n        action in [MyFirstApp::Action::\"Read\"],\n        resource\n    ) when {\n        true\n    };",
+                        "description": "Test policy assigned to the test store"
+                      }
+                    },
+                    "policyStoreId": {
+                      "Fn::GetAtt": [
+                        "PolicyStore888EE7DF",
+                        "PolicyStoreId"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_verifiedpermissions.CfnPolicy",
+                  "version": "2.134.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.134.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PolicyTestStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.134.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PolicyTestStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.134.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.134.0"
+        }
+      },
+      "PolicyTest": {
+        "id": "PolicyTest",
+        "path": "PolicyTest",
+        "children": {
+          "DefaultTest": {
+            "id": "DefaultTest",
+            "path": "PolicyTest/DefaultTest",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PolicyTest/DefaultTest/Default",
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.0.5"
+                }
+              },
+              "DeployAssert": {
+                "id": "DeployAssert",
+                "path": "PolicyTest/DefaultTest/DeployAssert",
+                "children": {
+                  "BootstrapVersion": {
+                    "id": "BootstrapVersion",
+                    "path": "PolicyTest/DefaultTest/DeployAssert/BootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnParameter",
+                      "version": "2.134.0"
+                    }
+                  },
+                  "CheckBootstrapVersion": {
+                    "id": "CheckBootstrapVersion",
+                    "path": "PolicyTest/DefaultTest/DeployAssert/CheckBootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnRule",
+                      "version": "2.134.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Stack",
+                  "version": "2.134.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/integ-tests-alpha.IntegTestCase",
+              "version": "2.134.0-alpha.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "@aws-cdk/integ-tests-alpha.IntegTest",
+          "version": "2.134.0-alpha.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.0.5"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.134.0"
+    }
+  }
+}
