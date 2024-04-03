@@ -1,0 +1,19 @@
+{
+  "version": "36.0.0",
+  "files": {
+    "0c0a55914d7f66e80e058a13a6ff9089236bee2010108ac3376ede5142b173bc": {
+      "source": {
+        "path": "IdentitySourceStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "0c0a55914d7f66e80e058a13a6ff9089236bee2010108ac3376ede5142b173bc.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

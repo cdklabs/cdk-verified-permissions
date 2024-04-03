@@ -1,0 +1,19 @@
+{
+  "version": "36.0.0",
+  "files": {
+    "2166b4fbadb0b44da8a48e67427459ff932ec376c38a1bbca4f2361fe333fdc7": {
+      "source": {
+        "path": "PolicyStoreStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "2166b4fbadb0b44da8a48e67427459ff932ec376c38a1bbca4f2361fe333fdc7.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

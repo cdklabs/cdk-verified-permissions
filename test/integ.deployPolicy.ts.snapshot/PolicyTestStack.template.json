@@ -1,0 +1,63 @@
+{
+ "Resources": {
+  "PolicyStore888EE7DF": {
+   "Type": "AWS::VerifiedPermissions::PolicyStore",
+   "Properties": {
+    "ValidationSettings": {
+     "Mode": "OFF"
+    }
+   }
+  },
+  "MyTestPolicy36C7ABC4": {
+   "Type": "AWS::VerifiedPermissions::Policy",
+   "Properties": {
+    "Definition": {
+     "Static": {
+      "Description": "Test policy assigned to the test store",
+      "Statement": "permit(\n        principal,\n        action in [MyFirstApp::Action::\"Read\"],\n        resource\n    ) when {\n        true\n    };"
+     }
+    },
+    "PolicyStoreId": {
+     "Fn::GetAtt": [
+      "PolicyStore888EE7DF",
+      "PolicyStoreId"
+     ]
+    }
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

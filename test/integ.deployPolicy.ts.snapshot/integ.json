@@ -1,0 +1,20 @@
+{
+  "version": "36.0.0",
+  "testCases": {
+    "PolicyTest/DefaultTest": {
+      "stacks": [
+        "PolicyTestStack"
+      ],
+      "regions": [
+        "${Token[AWS.Region.6]}"
+      ],
+      "cdkCommandOptions": {
+        "destroy": {
+          "enabled": true
+        }
+      },
+      "assertionStack": "PolicyTest/DefaultTest/DeployAssert",
+      "assertionStackName": "PolicyTestDefaultTestDeployAssertDFA08710"
+    }
+  }
+}

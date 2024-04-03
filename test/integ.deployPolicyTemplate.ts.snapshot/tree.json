@@ -1,0 +1,204 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "PolicyTemplateStack": {
+        "id": "PolicyTemplateStack",
+        "path": "PolicyTemplateStack",
+        "children": {
+          "PolicyStore": {
+            "id": "PolicyStore",
+            "path": "PolicyTemplateStack/PolicyStore",
+            "children": {
+              "PolicyStore": {
+                "id": "PolicyStore",
+                "path": "PolicyTemplateStack/PolicyStore/PolicyStore",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::VerifiedPermissions::PolicyStore",
+                  "aws:cdk:cloudformation:props": {
+                    "validationSettings": {
+                      "mode": "OFF"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_verifiedpermissions.CfnPolicyStore",
+                  "version": "2.134.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.134.0"
+            }
+          },
+          "PolicyTemplate": {
+            "id": "PolicyTemplate",
+            "path": "PolicyTemplateStack/PolicyTemplate",
+            "children": {
+              "PolicyTemplate": {
+                "id": "PolicyTemplate",
+                "path": "PolicyTemplateStack/PolicyTemplate/PolicyTemplate",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::VerifiedPermissions::PolicyTemplate",
+                  "aws:cdk:cloudformation:props": {
+                    "policyStoreId": {
+                      "Fn::GetAtt": [
+                        "PolicyStore888EE7DF",
+                        "PolicyStoreId"
+                      ]
+                    },
+                    "statement": "\n    permit (\n      principal == ?principal,\n      action in [TinyTodo::Action::\"ReadList\", TinyTodo::Action::\"ListTasks\"],\n      resource == ?resource\n    );"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_verifiedpermissions.CfnPolicyTemplate",
+                  "version": "2.134.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.134.0"
+            }
+          },
+          "MyTestPolicy": {
+            "id": "MyTestPolicy",
+            "path": "PolicyTemplateStack/MyTestPolicy",
+            "children": {
+              "MyTestPolicy": {
+                "id": "MyTestPolicy",
+                "path": "PolicyTemplateStack/MyTestPolicy/MyTestPolicy",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::VerifiedPermissions::Policy",
+                  "aws:cdk:cloudformation:props": {
+                    "definition": {
+                      "templateLinked": {
+                        "policyTemplateId": {
+                          "Fn::GetAtt": [
+                            "PolicyTemplate4B2B158A",
+                            "PolicyTemplateId"
+                          ]
+                        },
+                        "principal": {
+                          "entityId": "exampleId",
+                          "entityType": "exampleType"
+                        },
+                        "resource": {
+                          "entityId": "exampleId",
+                          "entityType": "exampleType"
+                        }
+                      }
+                    },
+                    "policyStoreId": {
+                      "Fn::GetAtt": [
+                        "PolicyStore888EE7DF",
+                        "PolicyStoreId"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_verifiedpermissions.CfnPolicy",
+                  "version": "2.134.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.134.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "PolicyTemplateStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.134.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "PolicyTemplateStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.134.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.134.0"
+        }
+      },
+      "PolicyTemplateTest": {
+        "id": "PolicyTemplateTest",
+        "path": "PolicyTemplateTest",
+        "children": {
+          "DefaultTest": {
+            "id": "DefaultTest",
+            "path": "PolicyTemplateTest/DefaultTest",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "PolicyTemplateTest/DefaultTest/Default",
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.0.5"
+                }
+              },
+              "DeployAssert": {
+                "id": "DeployAssert",
+                "path": "PolicyTemplateTest/DefaultTest/DeployAssert",
+                "children": {
+                  "BootstrapVersion": {
+                    "id": "BootstrapVersion",
+                    "path": "PolicyTemplateTest/DefaultTest/DeployAssert/BootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnParameter",
+                      "version": "2.134.0"
+                    }
+                  },
+                  "CheckBootstrapVersion": {
+                    "id": "CheckBootstrapVersion",
+                    "path": "PolicyTemplateTest/DefaultTest/DeployAssert/CheckBootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnRule",
+                      "version": "2.134.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Stack",
+                  "version": "2.134.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/integ-tests-alpha.IntegTestCase",
+              "version": "2.134.0-alpha.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "@aws-cdk/integ-tests-alpha.IntegTest",
+          "version": "2.134.0-alpha.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.0.5"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.134.0"
+    }
+  }
+}
