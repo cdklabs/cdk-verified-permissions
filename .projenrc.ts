@@ -4,7 +4,7 @@ const project = new CdklabsConstructLibrary({
   authorAddress: 'aws-avp-cdk-dev@amazon.com',
   description: 'L2 AWS CDK Constructs for Amazon Verified Permissions',
   keywords: ['cdk', 'aws-cdk', 'awscdk', 'aws', 'verified-permissions', 'authorization'],
-  cdkVersion: '2.135.0',
+  cdkVersion: '2.139.0',
   defaultReleaseBranch: 'main',
   devDeps: ['cdklabs-projen-project-types'],
   name: '@cdklabs/cdk-verified-permissions',
