@@ -59,6 +59,7 @@ describe('Identity Source creation', () => {
         mode: ValidationSettingsMode.OFF,
       },
     });
+    const cognitoGroupEntityType = 'test';
     const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
     new IdentitySource(stack, 'IdentitySource', {
       configuration: {
@@ -67,6 +68,9 @@ describe('Identity Source creation', () => {
             '&ExampleCogClientId;',
           ],
           userPool: userPool,
+          groupConfiguration: {
+            groupEntityType: cognitoGroupEntityType,
+          },
         },
       },
       policyStore: policyStore,
@@ -80,6 +84,9 @@ describe('Identity Source creation', () => {
           ClientIds: [
             '&ExampleCogClientId;',
           ],
+          GroupConfiguration: {
+            GroupEntityType: cognitoGroupEntityType,
+          },
           UserPoolArn: {
             'Fn::GetAtt': [
               getResourceLogicalId(userPool, CfnUserPool),

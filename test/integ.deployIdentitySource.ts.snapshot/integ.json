@@ -6,7 +6,7 @@
         "IdentitySourceStack"
       ],
       "regions": [
-        "${Token[AWS.Region.13]}"
+        "${Token[AWS.Region.11]}"
       ],
       "cdkCommandOptions": {
         "destroy": {

@@ -28,13 +28,13 @@
                 },
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_verifiedpermissions.CfnPolicyStore",
-                  "version": "2.134.0"
+                  "version": "2.139.0"
                 }
               }
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.Resource",
-              "version": "2.134.0"
+              "version": "2.139.0"
             }
           },
           "UserPool": {
@@ -75,13 +75,13 @@
                 },
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_cognito.CfnUserPool",
-                  "version": "2.134.0"
+                  "version": "2.139.0"
                 }
               }
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_cognito.UserPool",
-              "version": "2.134.0"
+              "version": "2.139.0"
             }
           },
           "UserPoolClient": {
@@ -119,13 +119,13 @@
                 },
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolClient",
-                  "version": "2.134.0"
+                  "version": "2.139.0"
                 }
               }
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_cognito.UserPoolClient",
-              "version": "2.134.0"
+              "version": "2.139.0"
             }
           },
           "IdentitySource": {
@@ -150,6 +150,9 @@
                             "UserPool6BA7E5F2",
                             "Arn"
                           ]
+                        },
+                        "groupConfiguration": {
+                          "groupEntityType": "test"
                         }
                       }
                     },
@@ -164,13 +167,13 @@
                 },
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_verifiedpermissions.CfnIdentitySource",
-                  "version": "2.134.0"
+                  "version": "2.139.0"
                 }
               }
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.Resource",
-              "version": "2.134.0"
+              "version": "2.139.0"
             }
           },
           "BootstrapVersion": {
@@ -178,7 +181,7 @@
             "path": "IdentitySourceStack/BootstrapVersion",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnParameter",
-              "version": "2.134.0"
+              "version": "2.139.0"
             }
           },
           "CheckBootstrapVersion": {
@@ -186,13 +189,13 @@
             "path": "IdentitySourceStack/CheckBootstrapVersion",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnRule",
-              "version": "2.134.0"
+              "version": "2.139.0"
             }
           }
         },
         "constructInfo": {
           "fqn": "aws-cdk-lib.Stack",
-          "version": "2.134.0"
+          "version": "2.139.0"
         }
       },
       "IdentitySourceTest": {
@@ -220,7 +223,7 @@
                     "path": "IdentitySourceTest/DefaultTest/DeployAssert/BootstrapVersion",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.CfnParameter",
-                      "version": "2.134.0"
+                      "version": "2.139.0"
                     }
                   },
                   "CheckBootstrapVersion": {
@@ -228,25 +231,25 @@
                     "path": "IdentitySourceTest/DefaultTest/DeployAssert/CheckBootstrapVersion",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.CfnRule",
-                      "version": "2.134.0"
+                      "version": "2.139.0"
                     }
                   }
                 },
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.Stack",
-                  "version": "2.134.0"
+                  "version": "2.139.0"
                 }
               }
             },
             "constructInfo": {
               "fqn": "@aws-cdk/integ-tests-alpha.IntegTestCase",
-              "version": "2.134.0-alpha.0"
+              "version": "2.139.0-alpha.0"
             }
           }
         },
         "constructInfo": {
           "fqn": "@aws-cdk/integ-tests-alpha.IntegTest",
-          "version": "2.134.0-alpha.0"
+          "version": "2.139.0-alpha.0"
         }
       },
       "Tree": {
@@ -260,7 +263,7 @@
     },
     "constructInfo": {
       "fqn": "aws-cdk-lib.App",
-      "version": "2.134.0"
+      "version": "2.139.0"
     }
   }
 }
