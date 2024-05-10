@@ -78,6 +78,9 @@
         "Ref": "UserPoolClient2F5918F7"
        }
       ],
+      "GroupConfiguration": {
+       "GroupEntityType": "test"
+      },
       "UserPoolArn": {
        "Fn::GetAtt": [
         "UserPool6BA7E5F2",

@@ -275,6 +275,7 @@ The Identity Source identifier.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.openIdIssuer">openIdIssuer</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType">cognitoGroupEntityType</a></code> | <code>string</code> | *No description.* |
 
 ---
 
@@ -389,6 +390,16 @@ public readonly policyStore: IPolicyStore;
 
 ```typescript
 public readonly userPoolArn: string;
+```
+
+- *Type:* string
+
+---
+
+##### `cognitoGroupEntityType`<sup>Optional</sup> <a name="cognitoGroupEntityType" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType"></a>
+
+```typescript
+public readonly cognitoGroupEntityType: string;
 ```
 
 - *Type:* string
@@ -1522,6 +1533,36 @@ The id of the Policy.
 
 ---
 
+### CognitoGroupConfiguration <a name="CognitoGroupConfiguration" id="@cdklabs/cdk-verified-permissions.CognitoGroupConfiguration"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.CognitoGroupConfiguration.Initializer"></a>
+
+```typescript
+import { CognitoGroupConfiguration } from '@cdklabs/cdk-verified-permissions'
+
+const cognitoGroupConfiguration: CognitoGroupConfiguration = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.CognitoGroupConfiguration.property.groupEntityType">groupEntityType</a></code> | <code>string</code> | The name of the schema entity type that's mapped to the user pool group. |
+
+---
+
+##### `groupEntityType`<sup>Required</sup> <a name="groupEntityType" id="@cdklabs/cdk-verified-permissions.CognitoGroupConfiguration.property.groupEntityType"></a>
+
+```typescript
+public readonly groupEntityType: string;
+```
+
+- *Type:* string
+
+The name of the schema entity type that's mapped to the user pool group.
+
+---
+
 ### CognitoUserPoolConfiguration <a name="CognitoUserPoolConfiguration" id="@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration.Initializer"></a>
@@ -1538,6 +1579,7 @@ const cognitoUserPoolConfiguration: CognitoUserPoolConfiguration = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration.property.userPool">userPool</a></code> | <code>aws-cdk-lib.aws_cognito.IUserPool</code> | Cognito User Pool. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration.property.clientIds">clientIds</a></code> | <code>string[]</code> | Client identifiers. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration.property.groupConfiguration">groupConfiguration</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.CognitoGroupConfiguration">CognitoGroupConfiguration</a></code> | Cognito Group Configuration. |
 
 ---
 
@@ -1564,6 +1606,19 @@ public readonly clientIds: string[];
 - *Default:* empty list.
 
 Client identifiers.
+
+---
+
+##### `groupConfiguration`<sup>Optional</sup> <a name="groupConfiguration" id="@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration.property.groupConfiguration"></a>
+
+```typescript
+public readonly groupConfiguration: CognitoGroupConfiguration;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.CognitoGroupConfiguration">CognitoGroupConfiguration</a>
+- *Default:* no Cognito Group configuration provided
+
+Cognito Group Configuration.
 
 ---
 

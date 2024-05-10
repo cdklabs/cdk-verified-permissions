@@ -40,11 +40,15 @@ class IdentitySourceStack extends Stack {
     const userPoolClient = new UserPoolClient(this, 'UserPoolClient', {
       userPool: userPool,
     });
+    const cognitoGroupEntityType = 'test';
     new IdentitySource(this, 'IdentitySource', {
       configuration: {
         cognitoUserPoolConfiguration: {
           clientIds: [userPoolClient.userPoolClientId],
           userPool: userPool,
+          groupConfiguration: {
+            groupEntityType: cognitoGroupEntityType,
+          },
         },
       },
       policyStore: policyStore,

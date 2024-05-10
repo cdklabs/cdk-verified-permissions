@@ -4,6 +4,14 @@ import { ArnFormat, IResource, Lazy, Resource, Stack } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 import { IPolicyStore } from './policy-store';
 
+export interface CognitoGroupConfiguration {
+
+  /**
+   * The name of the schema entity type that's mapped to the user pool group
+   */
+  readonly groupEntityType: string;
+}
+
 export interface CognitoUserPoolConfiguration {
   /**
    * Client identifiers.
@@ -11,6 +19,13 @@ export interface CognitoUserPoolConfiguration {
    * @default - empty list.
    */
   readonly clientIds?: string[];
+
+  /**
+   * Cognito Group Configuration
+   *
+   * @default - no Cognito Group configuration provided
+   */
+  readonly groupConfiguration?: CognitoGroupConfiguration;
 
   /**
    * Cognito User Pool.
@@ -194,6 +209,7 @@ export class IdentitySource extends IdentitySourceBase {
   readonly identitySourceId: string;
   readonly openIdIssuer: string;
   readonly userPoolArn: string;
+  readonly cognitoGroupEntityType?: string;
   readonly policyStore: IPolicyStore;
 
   constructor(scope: Construct, id: string, props: IdentitySourceProps) {
@@ -203,11 +219,17 @@ export class IdentitySource extends IdentitySourceBase {
       props.configuration.cognitoUserPoolConfiguration.clientIds ?? [];
     this.userPoolArn =
       props.configuration.cognitoUserPoolConfiguration.userPool.userPoolArn;
+    const cognitoGroupConfiguration = props.configuration.cognitoUserPoolConfiguration.groupConfiguration?.groupEntityType
+      ? {
+        groupEntityType: props.configuration.cognitoUserPoolConfiguration.groupConfiguration.groupEntityType,
+      }
+      : undefined;
     this.identitySource = new CfnIdentitySource(this, id, {
       configuration: {
         cognitoUserPoolConfiguration: {
           clientIds: Lazy.list({ produce: () => this.clientIds }),
           userPoolArn: this.userPoolArn,
+          groupConfiguration: cognitoGroupConfiguration,
         },
       },
       policyStoreId: props.policyStore.policyStoreId,
@@ -222,6 +244,7 @@ export class IdentitySource extends IdentitySourceBase {
     });
     this.openIdIssuer = this.identitySource.attrDetailsOpenIdIssuer;
     this.policyStore = props.policyStore;
+    this.cognitoGroupEntityType = cognitoGroupConfiguration?.groupEntityType;
   }
 
   /**

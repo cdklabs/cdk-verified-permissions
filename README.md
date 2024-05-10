@@ -145,12 +145,16 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
   schema: cedarSchema,
   validationSettings: validationSettingsStrict,
 });
+const cognitoGroupEntityType = 'test';
 const userPool = new UserPool(scope, "UserPool"); // Creating a new Cognito UserPool
 new IdentitySource(scope, "IdentitySource", {
   configuration: {
     cognitoUserPoolConfiguration: {
       clientIds: ["&ExampleCogClientId;"],
       userPool: userPool,
+      groupConfiguration: {
+        groupEntityType: cognitoGroupEntityType,
+      },
     },
   },
   policyStore: policyStore,
