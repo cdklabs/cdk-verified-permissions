@@ -78,7 +78,8 @@
     "aws-cdk",
     "awscdk",
     "cdk",
-    "verified-permissions"
+    "verified-permissions",
+    "verifiedpermissions"
   ],
   "engines": {
     "node": ">= 18.12.0"
