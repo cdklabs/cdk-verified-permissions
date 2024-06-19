@@ -1,6 +1,6 @@
 import { IUserPool, IUserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { CfnIdentitySource } from 'aws-cdk-lib/aws-verifiedpermissions';
-import { ArnFormat, IResource, Lazy, Resource, Stack } from 'aws-cdk-lib/core';
+import { IResource, Lazy, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 import { IPolicyStore } from './policy-store';
 
@@ -46,13 +46,6 @@ export interface IdentitySourceConfiguration {
 
 export interface IIdentitySource extends IResource {
   /**
-   * Identity Source ARN.
-   *
-   * @attribute
-   */
-  readonly identitySourceArn: string;
-
-  /**
    * Identity Source identifier.
    *
    * @attribute
@@ -61,17 +54,10 @@ export interface IIdentitySource extends IResource {
 }
 
 abstract class IdentitySourceBase extends Resource implements IIdentitySource {
-  abstract readonly identitySourceArn: string;
   abstract readonly identitySourceId: string;
 }
 
 export interface IdentitySourceAttributes {
-  /**
-   * The identity Source ARN.
-   *
-   * @attribute
-   */
-  readonly identitySourceArn?: string;
 
   /**
    * The identity Source identifier
@@ -103,23 +89,6 @@ export interface IdentitySourceProps {
 
 export class IdentitySource extends IdentitySourceBase {
   /**
-   * Create an Identity Source from its ARN
-   *
-   * @param scope The parent creating construct (usually `this`).
-   * @param id The construct's name.
-   * @param identitySourceArn The Identity Source ARN.
-   */
-  public static fromIdentitySourceArn(
-    scope: Construct,
-    id: string,
-    identitySourceArn: string,
-  ): IIdentitySource {
-    return IdentitySource.fromIdentitySourceAttributes(scope, id, {
-      identitySourceArn,
-    });
-  }
-
-  /**
    * Creates Identity Source from its attributes
    *
    * @param scope The parent creating construct (usually `this`).
@@ -132,57 +101,24 @@ export class IdentitySource extends IdentitySourceBase {
     attrs: IdentitySourceAttributes,
   ): IIdentitySource {
     class Import extends IdentitySourceBase {
-      readonly identitySourceArn: string;
       readonly identitySourceId: string;
 
-      constructor(identitySourceArn: string, identitySourceId: string) {
+      constructor(identitySourceId: string) {
         super(scope, id);
 
-        this.identitySourceArn = identitySourceArn;
         this.identitySourceId = identitySourceId;
       }
     }
-
-    let identitySourceArn: string;
-    let identitySourceId: string;
-    const stack = Stack.of(scope);
-
     if (!attrs.identitySourceId) {
-      if (!attrs.identitySourceArn) {
-        throw new Error(
-          'One of identitySourceId or identitySourceArn is required!',
-        );
-      }
-
-      identitySourceArn = attrs.identitySourceArn;
-      const maybeId = stack.splitArn(
-        attrs.identitySourceArn,
-        ArnFormat.SLASH_RESOURCE_NAME,
-      ).resourceName;
-
-      if (!maybeId) {
-        throw new Error(
-          `ARN for IdentitySource must be in the form: ${ArnFormat.SLASH_RESOURCE_NAME}`,
-        );
-      }
-
-      identitySourceId = maybeId;
-    } else {
-      if (attrs.identitySourceArn) {
-        throw new Error(
-          'Only one of identitySourceArn or identitySourceId can be provided',
-        );
-      }
-
-      identitySourceId = attrs.identitySourceId;
-      identitySourceArn = stack.formatArn({
-        resource: 'identity-source',
-        resourceName: attrs.identitySourceId,
-        service: 'verifiedpermissions',
-      });
+      throw new Error(
+        'identitySourceId is required!',
+      );
     }
 
-    return new Import(identitySourceArn, identitySourceId);
+    let identitySourceId: string;
+    identitySourceId = attrs.identitySourceId;
+
+    return new Import(identitySourceId);
   }
 
   /**
@@ -205,7 +141,6 @@ export class IdentitySource extends IdentitySourceBase {
   private readonly identitySource: CfnIdentitySource;
   readonly clientIds: string[];
   readonly discoveryUrl: string;
-  readonly identitySourceArn: string;
   readonly identitySourceId: string;
   readonly openIdIssuer: string;
   readonly userPoolArn: string;
@@ -237,11 +172,6 @@ export class IdentitySource extends IdentitySourceBase {
     });
     this.discoveryUrl = this.identitySource.attrDetailsDiscoveryUrl;
     this.identitySourceId = this.identitySource.attrIdentitySourceId;
-    this.identitySourceArn = this.stack.formatArn({
-      resource: 'identity-source',
-      resourceName: this.identitySourceId,
-      service: 'verifiedpermissions',
-    });
     this.openIdIssuer = this.identitySource.attrDetailsOpenIdIssuer;
     this.policyStore = props.policyStore;
     this.cognitoGroupEntityType = cognitoGroupConfiguration?.groupEntityType;
