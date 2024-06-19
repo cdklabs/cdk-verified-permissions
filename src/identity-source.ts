@@ -64,7 +64,7 @@ export interface IdentitySourceAttributes {
    *
    * @attribute
    */
-  readonly identitySourceId?: string;
+  readonly identitySourceId: string;
 }
 
 export interface IdentitySourceProps {
@@ -108,11 +108,6 @@ export class IdentitySource extends IdentitySourceBase {
 
         this.identitySourceId = identitySourceId;
       }
-    }
-    if (!attrs.identitySourceId) {
-      throw new Error(
-        'identitySourceId is required!',
-      );
     }
 
     let identitySourceId: string;

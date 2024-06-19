@@ -105,16 +105,6 @@ describe('Identity Source creation', () => {
 
 describe('Identity Source reference existing Identity Source', () => {
 
-  test('Referencing existing Identity Source without providing Identity Source id', () => {
-    // GIVEN
-    const stack = new Stack();
-
-    // THEN
-    expect(
-      () => IdentitySource.fromIdentitySourceAttributes(stack, 'ImportedIdentitySource', {}),
-    ).toThrow(/identitySourceId is required!/);
-  });
-
   test('Referencing existing Identity Source providing Identity Source identifier', () => {
     // GIVEN
     const stack = new Stack();

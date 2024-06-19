@@ -1635,7 +1635,7 @@ const identitySourceAttributes: IdentitySourceAttributes = { ... }
 
 ---
 
-##### `identitySourceId`<sup>Optional</sup> <a name="identitySourceId" id="@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceId"></a>
+##### `identitySourceId`<sup>Required</sup> <a name="identitySourceId" id="@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceId"></a>
 
 ```typescript
 public readonly identitySourceId: string;
