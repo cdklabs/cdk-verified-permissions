@@ -103,7 +103,6 @@ The User Pool Client Construct.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.isOwnedResource">isOwnedResource</a></code> | Returns true if the construct was created by CDK, and false otherwise. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.fromIdentitySourceArn">fromIdentitySourceArn</a></code> | Create an Identity Source from its ARN. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.fromIdentitySourceAttributes">fromIdentitySourceAttributes</a></code> | Creates Identity Source from its attributes. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.fromIdentitySourceId">fromIdentitySourceId</a></code> | Create an Identity Source from its identifier. |
 
@@ -156,40 +155,6 @@ Check whether the given construct is a Resource.
 ###### `construct`<sup>Required</sup> <a name="construct" id="@cdklabs/cdk-verified-permissions.IdentitySource.isResource.parameter.construct"></a>
 
 - *Type:* constructs.IConstruct
-
----
-
-##### `fromIdentitySourceArn` <a name="fromIdentitySourceArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.fromIdentitySourceArn"></a>
-
-```typescript
-import { IdentitySource } from '@cdklabs/cdk-verified-permissions'
-
-IdentitySource.fromIdentitySourceArn(scope: Construct, id: string, identitySourceArn: string)
-```
-
-Create an Identity Source from its ARN.
-
-###### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-verified-permissions.IdentitySource.fromIdentitySourceArn.parameter.scope"></a>
-
-- *Type:* constructs.Construct
-
-The parent creating construct (usually `this`).
-
----
-
-###### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-verified-permissions.IdentitySource.fromIdentitySourceArn.parameter.id"></a>
-
-- *Type:* string
-
-The construct's name.
-
----
-
-###### `identitySourceArn`<sup>Required</sup> <a name="identitySourceArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.fromIdentitySourceArn.parameter.identitySourceArn"></a>
-
-- *Type:* string
-
-The Identity Source ARN.
 
 ---
 
@@ -270,7 +235,6 @@ The Identity Source identifier.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.clientIds">clientIds</a></code> | <code>string[]</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.discoveryUrl">discoveryUrl</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceArn">identitySourceArn</a></code> | <code>string</code> | Identity Source ARN. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | Identity Source identifier. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.openIdIssuer">openIdIssuer</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | *No description.* |
@@ -339,18 +303,6 @@ public readonly discoveryUrl: string;
 ```
 
 - *Type:* string
-
----
-
-##### `identitySourceArn`<sup>Required</sup> <a name="identitySourceArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceArn"></a>
-
-```typescript
-public readonly identitySourceArn: string;
-```
-
-- *Type:* string
-
-Identity Source ARN.
 
 ---
 
@@ -1679,24 +1631,11 @@ const identitySourceAttributes: IdentitySourceAttributes = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceArn">identitySourceArn</a></code> | <code>string</code> | The identity Source ARN. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | The identity Source identifier. |
 
 ---
 
-##### `identitySourceArn`<sup>Optional</sup> <a name="identitySourceArn" id="@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceArn"></a>
-
-```typescript
-public readonly identitySourceArn: string;
-```
-
-- *Type:* string
-
-The identity Source ARN.
-
----
-
-##### `identitySourceId`<sup>Optional</sup> <a name="identitySourceId" id="@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceId"></a>
+##### `identitySourceId`<sup>Required</sup> <a name="identitySourceId" id="@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceId"></a>
 
 ```typescript
 public readonly identitySourceId: string;
@@ -2313,7 +2252,6 @@ The actual statement.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.identitySourceArn">identitySourceArn</a></code> | <code>string</code> | Identity Source ARN. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | Identity Source identifier. |
 
 ---
@@ -2358,18 +2296,6 @@ public readonly stack: Stack;
 - *Type:* aws-cdk-lib.Stack
 
 The stack in which this resource is defined.
-
----
-
-##### `identitySourceArn`<sup>Required</sup> <a name="identitySourceArn" id="@cdklabs/cdk-verified-permissions.IIdentitySource.property.identitySourceArn"></a>
-
-```typescript
-public readonly identitySourceArn: string;
-```
-
-- *Type:* string
-
-Identity Source ARN.
 
 ---
 
