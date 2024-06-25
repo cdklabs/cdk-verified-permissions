@@ -337,7 +337,16 @@
       },
       "steps": [
         {
-          "exec": "echo No dependencies to upgrade."
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade @cedar-policy/cedar-wasm"
+        },
+        {
+          "exec": "npx projen"
+        },
+        {
+          "spawn": "post-upgrade"
         }
       ]
     },

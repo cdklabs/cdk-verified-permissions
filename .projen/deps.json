@@ -88,6 +88,11 @@
       "type": "build"
     },
     {
+      "name": "@cedar-policy/cedar-wasm",
+      "version": "3.2.3",
+      "type": "bundled"
+    },
+    {
       "name": "@aws-cdk/integ-runner",
       "version": "latest",
       "type": "devenv"

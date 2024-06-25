@@ -29,11 +29,10 @@ class IdentitySourceStack extends Stack {
         },
       },
     };
-    const cedarSchema = {
-      cedarJson: JSON.stringify(cedarJsonSchema),
-    };
     const policyStore = new PolicyStore(this, 'PolicyStore', {
-      schema: cedarSchema,
+      schema: {
+        cedarJson: JSON.stringify(cedarJsonSchema),
+      },
       validationSettings: validationSettingsStrict,
     });
     const userPool = new UserPool(this, 'UserPool');

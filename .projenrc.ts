@@ -7,6 +7,7 @@ const project = new CdklabsConstructLibrary({
   cdkVersion: '2.139.0',
   defaultReleaseBranch: 'main',
   devDeps: ['cdklabs-projen-project-types'],
+  bundledDeps: ['@cedar-policy/cedar-wasm@3.2.3'],
   name: '@cdklabs/cdk-verified-permissions',
   projenrcTs: true,
   majorVersion: 0,

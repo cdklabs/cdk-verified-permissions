@@ -1,7 +1,10 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { ArnFormat, IResource, Resource, Stack } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
+import { checkParseSchema, validatePolicy } from './cedar-helpers';
 import { Policy, PolicyDefinitionProperty } from './policy';
 import {
   AUTH_ACTIONS,
@@ -295,7 +298,9 @@ export class PolicyStore extends PolicyStoreBase {
     },
   ) {
     super(scope, id);
-
+    if (props.schema) {
+      checkParseSchema(props.schema.cedarJson);
+    }
     this.policyStore = new CfnPolicyStore(this, id, {
       schema: props.schema
         ? {
@@ -333,6 +338,46 @@ export class PolicyStore extends PolicyStoreBase {
         definition: policyOption.policyConfiguration,
       });
     });
+    return policies;
+  }
+
+  /**
+   * Takes in an absolute path to a directory containing .cedar files and adds the contents of each
+   * .cedar file as policies to this policy store. Parses the policies with cedar-wasm and, if the policy store has a schema,
+   * performs semantic validation of the policies as well.
+   * @param absolutePath a string representing an absolute path to the directory containing your policies
+   * @returns An array of created Policy constructs.
+   */
+  public addPoliciesFromPath(absolutePath: string): Policy[] {
+    if (!fs.statSync(absolutePath).isDirectory()) {
+      throw new Error(
+        `The path ${absolutePath} does not appear to be a directory`,
+      );
+    }
+    const policyFileNames = fs
+      .readdirSync(absolutePath)
+      .map((f) => path.join(absolutePath, f))
+      .filter((f) => !fs.statSync(f).isDirectory() && f.endsWith('.cedar'));
+
+    if (this.validationSettings.mode === ValidationSettingsMode.STRICT) {
+      if (!this.schema) {
+        throw new Error(
+          'A schema must exist when adding policies to a policy store with strict validation mode.',
+        );
+      }
+      for (const policyFile of policyFileNames) {
+        const policyStatement = fs.readFileSync(policyFile, 'utf-8');
+        validatePolicy(policyStatement, this.schema.cedarJson);
+      }
+    }
+
+    const policies = policyFileNames.map((cedarFile) =>
+      Policy.fromFile(this, cedarFile, {
+        path: cedarFile,
+        policyStore: this,
+      }),
+    );
+
     return policies;
   }
 }

@@ -59,21 +59,6 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
 });
 ```
 
-Define a Policy Store with Schema definition from file:
-
-```ts
-const validationSettingsStrict = {
-  mode: ValidationSettingsMode.STRICT,
-};
-const cedarSchema = {
-  cedarJson: Statement.fromFile("assets/policy-store-schema.json"),
-};
-const policyStore = new PolicyStore(scope, "PolicyStore", {
-  schema: cedarSchema,
-  validationSettings: validationSettingsStrict,
-});
-```
-
 ## Identity Source
 
 Define Identity Source with required properties:
@@ -164,6 +149,18 @@ new IdentitySource(scope, "IdentitySource", {
 
 ## Policy
 
+Load all the `.cedar` files in a given folder and define Policy objects for each of them. All policies will be associated with the same policy store.
+
+```ts
+const validationSettingsStrict = {
+  mode: ValidationSettingsMode.STRICT,
+};
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  validationSettings: validationSettingsStrict,
+});
+policyStore.addPoliciesFromPath('/path/to/my-policies');
+```
+
 Define a Policy and add it to a specific Policy Store:
 
 ```ts
@@ -245,15 +242,12 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
 });
 
 // Create a policy and add it to the policy store
-const policy = new Policy(scope, "MyTestPolicy", {
-  definition: {
-    static: {
-      statement: Statement.fromFile("assets/policy-statement.cedar"),
-      description,
-    },
-  },
-  policyStore: policyStore,
-});
+const policyFromFileProps = {
+  policyStore,
+  path: '/path/to/policy-statement.cedar',
+  description: 'the policy description',
+};
+const policy = Policy.fromFile(scope, "MyTestPolicy", policyFromFileProps);
 ```
 
 ## Policy Template
@@ -267,11 +261,12 @@ const validationSettingsOff = {
 const policyStore = new PolicyStore(scope, "PolicyStore", {
   validationSettings: validationSettingsOff,
 });
-new PolicyTemplate(scope, "PolicyTemplate", {
+const templateFromFileProps = {
+  policyStore,
+  path: '/path/to/template-statement.cedar',
   description: "Allows sharing photos in full access mode",
-  policyStore: policyStore,
-  statement: Statement.fromFile("assets/template-statement.cedar"),
-});
+};
+const template = PolicyTemplate.fromFile(scope, "PolicyTemplate", templateFromFileProps);
 ```
 
 # Notes

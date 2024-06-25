@@ -1,11 +1,10 @@
-import { readFileSync } from 'fs';
+import * as fs from 'fs';
 import { Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 import { PolicyTemplate } from '../src/policy-template';
-import { Statement } from '../src/statement';
 
 const policyTemplateStatement = `
 permit (
@@ -26,7 +25,7 @@ describe('Policy Template creation', () => {
 
     // WHEN
     new PolicyTemplate(stack, 'PolicyTemplate', {
-      statement: Statement.fromInline(policyTemplateStatement),
+      statement: policyTemplateStatement,
       policyStore: policyStore,
     });
 
@@ -37,6 +36,23 @@ describe('Policy Template creation', () => {
         Statement: policyTemplateStatement,
       },
     );
+  });
+
+  test('Policy Template with invalid statement throws', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    expect(()=> {
+      new PolicyTemplate(stack, 'PolicyTemplate', {
+        statement: 'invalid statement',
+        policyStore: policyStore,
+      });
+    }).toThrow();
   });
 
   test('Policy Template creation with Statement and Description and PolicyStore', () => {
@@ -50,7 +66,7 @@ describe('Policy Template creation', () => {
 
     // WHEN
     new PolicyTemplate(stack, 'PolicyTemplate', {
-      statement: Statement.fromInline(policyTemplateStatement),
+      statement: policyTemplateStatement,
       description: 'Test Description for Policy Template',
       policyStore: policyStore,
     });
@@ -89,7 +105,7 @@ describe('Policy template reference existing policy template', () => {
     expect(policyTemplate.policyTemplateId).toBe(policyTemplateId);
   });
 
-  test('Policy Template with Statement from file', () => {
+  test('Policy Template from file', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
@@ -100,17 +116,35 @@ describe('Policy template reference existing policy template', () => {
     });
 
     // WHEN
-    new PolicyTemplate(stack, 'PolicyTemplate', {
-      statement: Statement.fromFile('test/statement.cedar'),
+    PolicyTemplate.fromFile(stack, 'PolicyTemplate', {
       policyStore,
+      path: 'test/test-policies/template.cedar',
     });
 
     // THEN
     Template.fromStack(stack).hasResourceProperties(
       'AWS::VerifiedPermissions::PolicyTemplate',
       {
-        Statement: readFileSync('test/statement.cedar', 'utf-8'),
+        Statement: fs.readFileSync('test/test-policies/template.cedar', 'utf-8'),
       },
     );
+  });
+
+  test('Policy Template from file, with invalid file (no slots)', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    expect(() => {
+      PolicyTemplate.fromFile(stack, 'PolicyTemplate', {
+        policyStore,
+        path: 'test/test-policies/statement.cedar',
+      });
+    }).toThrow();
   });
 });
