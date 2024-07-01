@@ -1,4 +1,6 @@
-import { readFileSync } from 'fs';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as cedar from '@cedar-policy/cedar-wasm/nodejs';
 import { ArnFormat, Aws, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -15,19 +17,71 @@ import {
   READ_ACTIONS,
   WRITE_ACTIONS,
 } from '../src/private/permissions';
-import { Statement } from '../src/statement';
 
-const cedarJsonSchemaExample = {
-  PhotoApp: {
-    entityTypes: {
-      User: {},
-      Photo: {},
-    },
-    actions: {
-      viewPhoto: {
-        appliesTo: {
-          principalTypes: ['User'],
-          resourceTypes: ['Photo'],
+const exampleSchema: cedar.Schema = {
+  json: {
+    PhotoApp: {
+      commonTypes: {
+        ContextInfo: {
+          type: 'Record',
+          attributes: {
+            pathParameters: {
+              type: 'Set',
+              element: { type: 'String' },
+            },
+            userAgent: {
+              type: 'String',
+            },
+          },
+        },
+      },
+      entityTypes: {
+        User: {
+          shape: {
+            type: 'Record',
+            attributes: {
+              userId: {
+                type: 'String',
+              },
+              favoriteFootballers: {
+                type: 'Set',
+                element: { type: 'String' },
+              },
+              dependents: {
+                type: 'Set',
+                element: {
+                  type: 'Entity',
+                  name: 'User',
+                },
+              },
+            },
+          },
+        },
+        Photo: {
+          shape: {
+            type: 'Record',
+            attributes: {
+              photoId: {
+                type: 'String',
+              },
+              caption: {
+                type: 'String',
+              },
+              owner: {
+                type: 'Entity',
+                name: 'User',
+              },
+            },
+          },
+        },
+      },
+      actions: {
+        viewPhoto: {
+          appliesTo: {
+            principalTypes: ['User'],
+            resourceTypes: ['Photo'],
+            context: { type: 'ContextInfo' },
+          },
         },
       },
     },
@@ -77,7 +131,6 @@ describe('Policy Store creation', () => {
 
   test('Creating Policy Store with validation settings, description and schema (mode = STRICT)', () => {
     // GIVEN
-    const cedarJsonSchema = cedarJsonSchemaExample;
     const stack = new Stack(undefined, 'Stack');
 
     // WHEN
@@ -87,7 +140,7 @@ describe('Policy Store creation', () => {
         mode: ValidationSettingsMode.STRICT,
       },
       schema: {
-        cedarJson: JSON.stringify(cedarJsonSchema),
+        cedarJson: JSON.stringify(exampleSchema.json),
       },
       description: description,
     });
@@ -100,39 +153,27 @@ describe('Policy Store creation', () => {
           Mode: ValidationSettingsMode.STRICT,
         },
         Schema: {
-          CedarJson: JSON.stringify(cedarJsonSchema),
+          CedarJson: JSON.stringify(exampleSchema.json),
         },
         Description: description,
       },
     );
   });
 
-  test('Creating Policy Store with validation settings and schema (mode = STRICT) from file', () => {
+  test('Creating Policy Store with unparseable schema', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
-    // WHEN
-    new PolicyStore(stack, 'PolicyStore', {
-      validationSettings: {
-        mode: ValidationSettingsMode.STRICT,
-      },
-      schema: {
-        cedarJson: Statement.fromFile('test/schema.json'),
-      },
-    });
-
-    // THEN
-    Template.fromStack(stack).hasResourceProperties(
-      'AWS::VerifiedPermissions::PolicyStore',
-      {
-        ValidationSettings: {
-          Mode: ValidationSettingsMode.STRICT,
+    expect(() => {
+      new PolicyStore(stack, 'PolicyStore', {
+        schema: {
+          cedarJson: 'unparseable',
         },
-        Schema: {
-          CedarJson: readFileSync('test/schema.json', 'utf-8'),
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
         },
-      },
-    );
+      });
+    }).toThrow('Schema is invalid');
   });
 });
 
@@ -338,8 +379,8 @@ describe('Policy Store add Policies', () => {
     });
     const policyId = 'MyBeautifulPolicy';
     const staticDefinition = {
-      description: description,
-      statement: Statement.fromInline(statement),
+      description,
+      statement,
     };
     const policiesToBeAdded: AddPolicyOptions[] = [
       {
@@ -469,5 +510,115 @@ describe('Policy Store reference existing policy store', () => {
     expect(() =>
       PolicyStore.fromPolicyStoreAttributes(stack, 'ImportedPolicyStore', {}),
     ).toThrow(/One of policyStoreId or policyStoreArn is required!/);
+  });
+});
+
+
+describe('Policy store with policies from a path', () => {
+  test('Creating Policy Store and adding policies to it from a path', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.STRICT,
+      },
+      schema: {
+        cedarJson: JSON.stringify(exampleSchema.json),
+      },
+      description: 'PhotoApp',
+    });
+
+    policyStore.addPoliciesFromPath(path.join(__dirname, 'test-policies', 'all-valid'));
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyStore',
+      {
+        ValidationSettings: {
+          Mode: ValidationSettingsMode.STRICT,
+        },
+        Schema: {
+          CedarJson: JSON.stringify(exampleSchema.json),
+        },
+      },
+    );
+
+    const policyDefns = Template.fromStack(stack).findResources('AWS::VerifiedPermissions::Policy');
+    expect(Object.keys(policyDefns)).toHaveLength(2);
+    const statements = Object.values(policyDefns).map(cfnPolicy => cfnPolicy.Properties.Definition.Static.Statement);
+    expect(statements).toStrictEqual([
+      fs.readFileSync('test/test-policies/all-valid/policy1.cedar', 'utf-8'),
+      fs.readFileSync('test/test-policies/all-valid/policy2.cedar', 'utf-8'),
+    ]);
+  });
+
+  test('fails if the path is not a directory', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+    const filePath = 'test/policy-store.test.ts';
+    const pStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.STRICT,
+      },
+    });
+
+    expect(() => {
+      pStore.addPoliciesFromPath(filePath);
+    }).toThrow(`The path ${filePath} does not appear to be a directory`);
+  });
+
+  test('importing policies by path should fail if there is no schema', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    expect(() => {
+      const pStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+      });
+      pStore.addPoliciesFromPath(path.join(__dirname, 'test-policies', 'all-valid'));
+    }).toThrow('A schema must exist');
+  });
+
+  test('importing policies by path should fail if one of the policies is invalid', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    expect(() => {
+      const pStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+        schema: {
+          cedarJson: JSON.stringify(exampleSchema.json),
+        },
+      });
+      pStore.addPoliciesFromPath(path.join(__dirname, 'test-policies'));
+    }).toThrow('could not be parsed');
+  });
+
+  test('importing a semantically invalid policy should fail', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    expect(() => {
+      const pStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+        schema: {
+          cedarJson: JSON.stringify({
+            X: {
+              entityTypes: {},
+              actions: {},
+            },
+          }),
+        },
+      });
+      pStore.addPoliciesFromPath(path.join(__dirname, 'test-policies', 'all-valid'));
+    }).toThrow('could not be validated against the schema');
   });
 });

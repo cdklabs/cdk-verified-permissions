@@ -1,6 +1,8 @@
+import * as fs from 'fs';
 import { CfnPolicyTemplate } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { IResource, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
+import { checkParseTemplate } from './cedar-helpers';
 import { IPolicyStore } from './policy-store';
 
 export interface IPolicyTemplate extends IResource {
@@ -33,6 +35,21 @@ export interface PolicyTemplateProps {
    * @default - The policy store to attach the new or updated policy template.
    */
   readonly policyStore: IPolicyStore;
+}
+
+export interface ITemplateFromFileProps {
+  /**
+   * The path to the file to be read which contains a single cedar statement representing a policy template
+   */
+  readonly path: string;
+  /**
+   * The policy store that the policy template will be created under.
+   */
+  readonly policyStore: IPolicyStore;
+  /**
+   * The description of the plicy template
+   */
+  readonly description?: string;
 }
 
 export interface PolicyTemplateAttributes {
@@ -92,6 +109,20 @@ export class PolicyTemplate extends PolicyTemplateBase {
     return new Import(policyTemplateId);
   }
 
+  public static fromFile(
+    scope: Construct,
+    id: string,
+    props: ITemplateFromFileProps,
+  ): PolicyTemplate {
+    const templateFileContents = fs.readFileSync(props.path).toString();
+    checkParseTemplate(templateFileContents);
+    return new PolicyTemplate(scope, id, {
+      statement: templateFileContents,
+      description: props.description,
+      policyStore: props.policyStore,
+    });
+  }
+
   private readonly policyTemplate: CfnPolicyTemplate;
   /**
    * The ID of the policy template.
@@ -117,7 +148,7 @@ export class PolicyTemplate extends PolicyTemplateBase {
 
   constructor(scope: Construct, id: string, props: PolicyTemplateProps) {
     super(scope, id);
-
+    checkParseTemplate(props.statement);
     this.policyTemplate = new CfnPolicyTemplate(this, id, {
       statement: props.statement,
       description: props.description,

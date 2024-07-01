@@ -1,3 +1,4 @@
+import path from 'path';
 import { Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import {
@@ -5,10 +6,9 @@ import {
   CfnPolicyTemplate,
 } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
-import { Policy, PolicyType } from '../src/policy';
+import { Policy, PolicyDefinitionProperty, PolicyType } from '../src/policy';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 import { PolicyTemplate } from '../src/policy-template';
-import { Statement } from '../src/statement';
 
 describe('Policy creation', () => {
   // Example static statement to reuse
@@ -43,7 +43,7 @@ when { true };`;
     const policy = new Policy(stack, 'MyTestPolicy', {
       definition: {
         static: {
-          statement: Statement.fromInline(statementString),
+          statement: statementString,
           description,
         },
       },
@@ -75,13 +75,13 @@ when { true };`;
     expect(policy.policyType).toEqual(PolicyType.STATIC);
     expect(policy.definition).toEqual({
       static: {
-        statement: Statement.fromInline(statementString),
+        statement: statementString,
         description,
       },
     });
   });
 
-  test('Creating a policy with a static definition from path', () => {
+  test('Creating a policy with an invalid static definition should throw', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
@@ -92,40 +92,17 @@ when { true };`;
       },
     });
 
-    // Create a policy and add it to the policy store
-    const policy = new Policy(stack, 'MyTestPolicy', {
-      definition: {
-        static: {
-          statement: Statement.fromFile('test/statement.cedar'),
-          description,
-        },
-      },
-      policyStore: policyStore,
-    });
-
-    // THEN
-    // Validate Cfn properties
-    Template.fromStack(stack).hasResourceProperties(
-      'AWS::VerifiedPermissions::Policy',
-      {
-        Definition: {
-          Static: {
-            Description: description,
-            Statement: statementString,
+    expect(() => {
+      new Policy(stack, 'MyTestPolicy', {
+        definition: {
+          static: {
+            statement: 'invalid policy',
+            description,
           },
         },
-        PolicyStoreId: {
-          'Fn::GetAtt': [
-            getResourceLogicalId(policyStore, CfnPolicyStore),
-            'PolicyStoreId',
-          ],
-        },
-      },
-    );
-
-    // Validate construct properties
-    expect(policy.policyId).toBeDefined();
-    expect(policy.policyType).toEqual(PolicyType.STATIC);
+        policyStore: policyStore,
+      });
+    }).toThrow();
   });
 
   test('Creating a policy with a static definition from path', () => {
@@ -140,14 +117,10 @@ when { true };`;
     });
 
     // Create a policy and add it to the policy store
-    const policy = new Policy(stack, 'MyTestPolicy', {
-      definition: {
-        static: {
-          statement: Statement.fromFile('test/statement.cedar'),
-          description,
-        },
-      },
-      policyStore: policyStore,
+    const policy = Policy.fromFile(stack, 'MyTestPolicy', {
+      policyStore,
+      description,
+      path: 'test/test-policies/statement.cedar',
     });
 
     // THEN
@@ -186,7 +159,7 @@ when { true };`;
       },
     });
     const template = new PolicyTemplate(stack, 'PolicyTemplate', {
-      statement: Statement.fromInline(policyTemplateStatement),
+      statement: policyTemplateStatement,
       policyStore: policyStore,
     });
 
@@ -268,7 +241,7 @@ when { true };`;
       },
     });
     const template = new PolicyTemplate(stack, 'PolicyTemplate', {
-      statement: Statement.fromInline(policyTemplateStatement),
+      statement: policyTemplateStatement,
       policyStore: policyStore,
     });
 
@@ -277,7 +250,7 @@ when { true };`;
       new Policy(stack, 'MyTestPolicy', {
         definition: {
           static: {
-            statement: Statement.fromInline(statementString),
+            statement: statementString,
           },
           templateLinked: {
             policyTemplate: template,
@@ -303,6 +276,29 @@ when { true };`;
     expect(() => {
       new Policy(stack, 'MyTestPolicy', {
         definition: {},
+        policyStore: policyStore,
+      });
+    }).toThrow('Policy must either be static or templateLinked');
+  });
+
+  test('Creating a policy with an unknown definition type should throw an error', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    // THEN
+    expect(() => {
+      const policyDefinitionProperty: PolicyDefinitionProperty = {
+        blah: {},
+      } as unknown as PolicyDefinitionProperty;
+      new Policy(stack, 'MyTestPolicy', {
+        definition: policyDefinitionProperty,
         policyStore: policyStore,
       });
     }).toThrow('Policy must either be static or templateLinked');
@@ -336,6 +332,56 @@ when { true };`;
 
       // THEN
       expect(policy.policyId).toBe(policyId);
+    });
+  });
+
+  describe('Import policy from file', () => {
+    test('Importing a syntactically valid policy from a file should succeed', () => {
+      // GIVEN
+      const stack = new Stack();
+      const policyStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+      });
+
+      // WHEN
+      const policy = Policy.fromFile(
+        stack,
+        'ImportedPolicy',
+        {
+          path: path.join(__dirname, 'test-policies', 'all-valid', 'policy1.cedar'),
+          policyStore,
+        },
+      );
+
+      // THEN
+      expect(policy.policyId).toBeDefined();
+      expect(policy.policyType).toEqual(PolicyType.STATIC);
+      const policyStatement = policy.definition.static?.statement;
+      expect(policyStatement).toEqual('permit(principal, action, resource);');
+    });
+
+    test('Importing a syntactically invalid policy from a file should fail', () => {
+      // GIVEN
+      const stack = new Stack();
+      const policyStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+      });
+
+      // THEN
+      expect(() => {
+        Policy.fromFile(
+          stack,
+          'ImportedPolicy',
+          {
+            path: path.join(__dirname, 'test-policies', 'invalidPolicy1.cedar'),
+            policyStore,
+          },
+        );
+      }).toThrow('Invalid policy statement');
     });
   });
 });
