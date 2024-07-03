@@ -59,6 +59,30 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
 });
 ```
 
+## Schemas
+
+If you want to have type safety when defining a schema, you can accomplish this in typescript. Simply use the `Schema` type exported by the `@cedar-policy/cedar-wasm`.
+
+You can also generate a simple schema from a swagger file using the static function `schemaFromOpenApiSpec` in the PolicyStore consrtuct. This functionality replicates what you can find in the AWS Verified Permissions console.
+
+```ts
+const validationSettingsStrict = {
+  mode: ValidationSettingsMode.STRICT,
+};
+const cedarJsonSchema = PolicyStore.schemaFromOpenApiSpec(
+  'path/to/swaggerfile.json',
+  'UserGroup',
+);
+const cedarSchema = {
+  cedarJson: JSON.stringify(cedarJsonSchema),
+};
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  schema: cedarSchema,
+  validationSettings: validationSettingsStrict,
+  description: "Policy store with schema generated from API Gateway",
+});
+```
+
 ## Identity Source
 
 Define Identity Source with required properties:
