@@ -40,3 +40,63 @@ export function validatePolicy(policyStatement: string, schemaStr: string) {
     );
   }
 }
+
+export function cleanUpApiNameForNamespace(apiName: string): string {
+  const validCedarName = apiName.replace(/[^a-zA-Z0-9_]/g, '').trim();
+  if (validCedarName.length === 0) {
+    return 'ImportedApi';
+  }
+  if (/[0-9_]/.exec(validCedarName[0])) {
+    return `Api${validCedarName}`;
+  }
+  return validCedarName;
+}
+
+export function buildSchema(
+  namespace: string,
+  actionNames: string[],
+  principalGroupType?: string,
+): Record<string, Record<string, any>> {
+  const additionalEntities: Record<string, any> = {};
+  if (principalGroupType) {
+    additionalEntities[principalGroupType] = {
+      shape: {
+        type: 'Record',
+        attributes: {},
+      },
+    };
+  }
+  const actions = actionNames.reduce((acc, actionName) => {
+    return {
+      ...acc,
+      [actionName]: {
+        appliesTo: {
+          context: { type: 'Record', attributes: {} },
+          principalTypes: ['User'],
+          resourceTypes: ['Application'],
+        },
+      },
+    };
+  }, {});
+  return {
+    [namespace]: {
+      entityTypes: {
+        ...additionalEntities,
+        User: {
+          shape: {
+            type: 'Record',
+            attributes: {},
+          },
+          memberOfTypes: principalGroupType ? [principalGroupType] : [],
+        },
+        Application: {
+          shape: {
+            type: 'Record',
+            attributes: {},
+          },
+        },
+      },
+      actions,
+    },
+  };
+}
