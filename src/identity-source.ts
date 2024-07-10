@@ -229,12 +229,11 @@ export class IdentitySource extends IdentitySourceBase {
     });
   }
 
-  private readonly identitySource: CfnIdentitySource;
+  readonly identitySource: CfnIdentitySource;
   readonly clientIds: string[];
-  readonly discoveryUrl: string;
   readonly identitySourceId: string;
-  readonly openIdIssuer: string;
-  readonly userPoolArn: string;
+  readonly issuer: string;
+  readonly userPoolArn?: string;
   readonly cognitoGroupEntityType?: string;
   readonly policyStore: IPolicyStore;
 
@@ -244,6 +243,7 @@ export class IdentitySource extends IdentitySourceBase {
     if (props.configuration.cognitoUserPoolConfiguration && props.configuration.openIdConnectConfiguration) { throw new Error('Only one between cognitoUserPoolConfiguration or openIdConnectConfiguration must be defined'); }
 
     let cfnConfiguration: CfnIdentitySource.IdentitySourceConfigurationProperty;
+    let issuer: string;
 
     if (props.configuration.cognitoUserPoolConfiguration) {
 
@@ -261,6 +261,7 @@ export class IdentitySource extends IdentitySourceBase {
         },
       };
       this.cognitoGroupEntityType = cognitoGroupConfiguration?.groupEntityType;
+      issuer = 'COGNITO';
     } else if (props.configuration.openIdConnectConfiguration) {
 
       if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly && props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) { throw new Error('Only one token selection method between accessTokenOnly and identityTokenOnly must be defined'); }
@@ -296,6 +297,7 @@ export class IdentitySource extends IdentitySourceBase {
           tokenSelection: tokenSelection,
         },
       };
+      issuer = props.configuration.openIdConnectConfiguration.issuer;
     } else {
       throw new Error('One Identity provider configuration between cognitoUserPoolConfiguration and openIdConnectConfiguration must be defined');
     }
@@ -304,10 +306,10 @@ export class IdentitySource extends IdentitySourceBase {
       policyStoreId: props.policyStore.policyStoreId,
       principalEntityType: props.principalEntityType,
     });
-    this.userPoolArn = this.identitySource.attrDetailsUserPoolArn;
-    this.discoveryUrl = this.identitySource.attrDetailsDiscoveryUrl;
+
+    this.userPoolArn = props.configuration.cognitoUserPoolConfiguration?.userPool.userPoolArn || undefined;
     this.identitySourceId = this.identitySource.attrIdentitySourceId;
-    this.openIdIssuer = this.identitySource.attrDetailsOpenIdIssuer;
+    this.issuer = issuer;
     this.policyStore = props.policyStore;
 
   }
@@ -318,6 +320,7 @@ export class IdentitySource extends IdentitySourceBase {
    * @param userPoolClient The User Pool Client Construct.
    */
   public addUserPoolClient(userPoolClient: IUserPoolClient): void {
+    // TODO: to be fixed, only possible if in cognito mode
     this.addClientId(userPoolClient.userPoolClientId);
   }
 
@@ -327,6 +330,7 @@ export class IdentitySource extends IdentitySourceBase {
    * @param clientId The clientId
    */
   public addClientId(clientId: string) {
+    // TODO: to be fixed, only possible if in cognito mode or idtoken mode
     this.clientIds.push(clientId);
   }
 
