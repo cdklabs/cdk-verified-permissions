@@ -46,6 +46,8 @@ new IdentitySource(scope: Construct, id: string, props: IdentitySourceProps)
 | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addAudience">addAudience</a></code> | Add an audience to the list. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client. |
 
 ---
@@ -77,6 +79,38 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 ###### `policy`<sup>Required</sup> <a name="policy" id="@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy.parameter.policy"></a>
 
 - *Type:* aws-cdk-lib.RemovalPolicy
+
+---
+
+##### `addAudience` <a name="addAudience" id="@cdklabs/cdk-verified-permissions.IdentitySource.addAudience"></a>
+
+```typescript
+public addAudience(audience: string): void
+```
+
+Add an audience to the list.
+
+###### `audience`<sup>Required</sup> <a name="audience" id="@cdklabs/cdk-verified-permissions.IdentitySource.addAudience.parameter.audience"></a>
+
+- *Type:* string
+
+the audience to be added.
+
+---
+
+##### `addClientId` <a name="addClientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId"></a>
+
+```typescript
+public addClientId(clientId: string): void
+```
+
+Add a clientId to the list.
+
+###### `clientId`<sup>Required</sup> <a name="clientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId.parameter.clientId"></a>
+
+- *Type:* string
+
+The clientId to be added.
 
 ---
 
@@ -233,13 +267,14 @@ The Identity Source identifier.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.audiences">audiences</a></code> | <code>string[]</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.clientIds">clientIds</a></code> | <code>string[]</code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.discoveryUrl">discoveryUrl</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySource">identitySource</a></code> | <code>aws-cdk-lib.aws_verifiedpermissions.CfnIdentitySource</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | Identity Source identifier. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.openIdIssuer">openIdIssuer</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.issuer">issuer</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType">cognitoGroupEntityType</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
 
 ---
 
@@ -286,6 +321,16 @@ The stack in which this resource is defined.
 
 ---
 
+##### `audiences`<sup>Required</sup> <a name="audiences" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.audiences"></a>
+
+```typescript
+public readonly audiences: string[];
+```
+
+- *Type:* string[]
+
+---
+
 ##### `clientIds`<sup>Required</sup> <a name="clientIds" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.clientIds"></a>
 
 ```typescript
@@ -296,13 +341,13 @@ public readonly clientIds: string[];
 
 ---
 
-##### `discoveryUrl`<sup>Required</sup> <a name="discoveryUrl" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.discoveryUrl"></a>
+##### `identitySource`<sup>Required</sup> <a name="identitySource" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySource"></a>
 
 ```typescript
-public readonly discoveryUrl: string;
+public readonly identitySource: CfnIdentitySource;
 ```
 
-- *Type:* string
+- *Type:* aws-cdk-lib.aws_verifiedpermissions.CfnIdentitySource
 
 ---
 
@@ -318,10 +363,10 @@ Identity Source identifier.
 
 ---
 
-##### `openIdIssuer`<sup>Required</sup> <a name="openIdIssuer" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.openIdIssuer"></a>
+##### `issuer`<sup>Required</sup> <a name="issuer" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.issuer"></a>
 
 ```typescript
-public readonly openIdIssuer: string;
+public readonly issuer: string;
 ```
 
 - *Type:* string
@@ -338,20 +383,20 @@ public readonly policyStore: IPolicyStore;
 
 ---
 
-##### `userPoolArn`<sup>Required</sup> <a name="userPoolArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn"></a>
+##### `cognitoGroupEntityType`<sup>Optional</sup> <a name="cognitoGroupEntityType" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType"></a>
 
 ```typescript
-public readonly userPoolArn: string;
+public readonly cognitoGroupEntityType: string;
 ```
 
 - *Type:* string
 
 ---
 
-##### `cognitoGroupEntityType`<sup>Optional</sup> <a name="cognitoGroupEntityType" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType"></a>
+##### `userPoolArn`<sup>Optional</sup> <a name="userPoolArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn"></a>
 
 ```typescript
-public readonly cognitoGroupEntityType: string;
+public readonly userPoolArn: string;
 ```
 
 - *Type:* string
