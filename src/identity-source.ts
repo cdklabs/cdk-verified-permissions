@@ -4,6 +4,11 @@ import { IResource, Lazy, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 import { IPolicyStore } from './policy-store';
 
+enum ConfigurationMode {
+  COGNITO = 'COGNITO',
+  OIDC_ACCESS_TOKEN = 'OIDC_ACCESS_TOKEN',
+  OIDC_ID_TOKEN = 'OIDC_ID_TOKEN'
+}
 export interface CognitoGroupConfiguration {
 
   /**
@@ -228,9 +233,10 @@ export class IdentitySource extends IdentitySourceBase {
       identitySourceId,
     });
   }
-
+  private readonly configurationMode: ConfigurationMode;
   readonly identitySource: CfnIdentitySource;
   readonly clientIds: string[];
+  readonly audiences: string[];
   readonly identitySourceId: string;
   readonly issuer: string;
   readonly userPoolArn?: string;
@@ -244,10 +250,9 @@ export class IdentitySource extends IdentitySourceBase {
 
     let cfnConfiguration: CfnIdentitySource.IdentitySourceConfigurationProperty;
     let issuer: string;
-
     if (props.configuration.cognitoUserPoolConfiguration) {
-
       this.clientIds = props.configuration.cognitoUserPoolConfiguration.clientIds ?? [];
+      this.audiences = [];
       const cognitoGroupConfiguration = props.configuration.cognitoUserPoolConfiguration.groupConfiguration?.groupEntityType
         ? {
           groupEntityType: props.configuration.cognitoUserPoolConfiguration.groupConfiguration.groupEntityType,
@@ -262,6 +267,7 @@ export class IdentitySource extends IdentitySourceBase {
       };
       this.cognitoGroupEntityType = cognitoGroupConfiguration?.groupEntityType;
       issuer = 'COGNITO';
+      this.configurationMode = ConfigurationMode.COGNITO;
     } else if (props.configuration.openIdConnectConfiguration) {
 
       if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly && props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) { throw new Error('Only one token selection method between accessTokenOnly and identityTokenOnly must be defined'); }
@@ -269,20 +275,24 @@ export class IdentitySource extends IdentitySourceBase {
       let tokenSelection: CfnIdentitySource.OpenIdConnectTokenSelectionProperty;
       if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly) {
         this.clientIds = [];
+        this.audiences = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences ?? [];
         tokenSelection = {
           accessTokenOnly: {
-            audiences: props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences,
+            audiences: Lazy.list({ produce: () => this.audiences }),
             principalIdClaim: props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.principalIdClaim,
           },
         };
+        this.configurationMode = ConfigurationMode.OIDC_ACCESS_TOKEN;
       } else if (props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) {
-        this.clientIds = props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.clientIds || [];
+        this.clientIds = props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.clientIds ?? [];
+        this.audiences = [];
         tokenSelection = {
           identityTokenOnly: {
             clientIds: Lazy.list({ produce: () => this.clientIds }),
             principalIdClaim: props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.principalIdClaim,
           },
         };
+        this.configurationMode = ConfigurationMode.OIDC_ID_TOKEN;
       } else {
         throw new Error('One token selection method between accessTokenOnly and identityTokenOnly must be defined');
       }
@@ -298,6 +308,7 @@ export class IdentitySource extends IdentitySourceBase {
         },
       };
       issuer = props.configuration.openIdConnectConfiguration.issuer;
+
     } else {
       throw new Error('One Identity provider configuration between cognitoUserPoolConfiguration and openIdConnectConfiguration must be defined');
     }
@@ -320,18 +331,31 @@ export class IdentitySource extends IdentitySourceBase {
    * @param userPoolClient The User Pool Client Construct.
    */
   public addUserPoolClient(userPoolClient: IUserPoolClient): void {
-    // TODO: to be fixed, only possible if in cognito mode
+    if (this.configurationMode != ConfigurationMode.COGNITO)
+      throw new Error('Cannot add User Pool Client when IdentitySource auth provider is not Cognito');
     this.addClientId(userPoolClient.userPoolClientId);
   }
 
   /**
    * Add a clientId to the list
    *
-   * @param clientId The clientId
+   * @param clientId The clientId to be added
    */
   public addClientId(clientId: string) {
-    // TODO: to be fixed, only possible if in cognito mode or idtoken mode
+    if (this.configurationMode != ConfigurationMode.COGNITO && this.configurationMode != ConfigurationMode.OIDC_ID_TOKEN)
+      throw new Error('Cannot add client id when IdentitySource auth provider is not Cognito or OIDC with ID Token');
     this.clientIds.push(clientId);
+  }
+
+  /**
+   * Add an audience to the list 
+   * 
+   * @param audience the audience to be added
+   */
+  public addAudience(audience: string) {
+    if (this.configurationMode != ConfigurationMode.OIDC_ACCESS_TOKEN)
+      throw new Error('Cannot add audience when IdentitySource auth provider is not OIDC with Access Token');
+    this.audiences.push(audience);
   }
 
 }
