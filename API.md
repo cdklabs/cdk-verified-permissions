@@ -46,7 +46,6 @@ new IdentitySource(scope: Construct, id: string, props: IdentitySourceProps)
 | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client. |
 
 ---
@@ -78,22 +77,6 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 ###### `policy`<sup>Required</sup> <a name="policy" id="@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy.parameter.policy"></a>
 
 - *Type:* aws-cdk-lib.RemovalPolicy
-
----
-
-##### `addClientId` <a name="addClientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId"></a>
-
-```typescript
-public addClientId(clientId: string): void
-```
-
-Add a clientId to the list.
-
-###### `clientId`<sup>Required</sup> <a name="clientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId.parameter.clientId"></a>
-
-- *Type:* string
-
-The clientId.
 
 ---
 
