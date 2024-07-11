@@ -246,7 +246,9 @@ export class IdentitySource extends IdentitySourceBase {
   constructor(scope: Construct, id: string, props: IdentitySourceProps) {
     super(scope, id);
 
-    if (props.configuration.cognitoUserPoolConfiguration && props.configuration.openIdConnectConfiguration) { throw new Error('Only one between cognitoUserPoolConfiguration or openIdConnectConfiguration must be defined'); }
+    if (props.configuration.cognitoUserPoolConfiguration && props.configuration.openIdConnectConfiguration) {
+      throw new Error('Only one between cognitoUserPoolConfiguration or openIdConnectConfiguration must be defined');
+    }
 
     let cfnConfiguration: CfnIdentitySource.IdentitySourceConfigurationProperty;
     let issuer: string;
@@ -331,7 +333,9 @@ export class IdentitySource extends IdentitySourceBase {
    * @param userPoolClient The User Pool Client Construct.
    */
   public addUserPoolClient(userPoolClient: IUserPoolClient): void {
-    if (this.configurationMode != ConfigurationMode.COGNITO) {throw new Error('Cannot add User Pool Client when IdentitySource auth provider is not Cognito');}
+    if (this.configurationMode != ConfigurationMode.COGNITO) {
+      throw new Error('Cannot add User Pool Client when IdentitySource auth provider is not Cognito');
+    }
     this.addClientId(userPoolClient.userPoolClientId);
   }
 
@@ -341,7 +345,9 @@ export class IdentitySource extends IdentitySourceBase {
    * @param clientId The clientId to be added
    */
   public addClientId(clientId: string) {
-    if (this.configurationMode != ConfigurationMode.COGNITO && this.configurationMode != ConfigurationMode.OIDC_ID_TOKEN) {throw new Error('Cannot add client id when IdentitySource auth provider is not Cognito or OIDC with ID Token');}
+    if (this.configurationMode != ConfigurationMode.COGNITO && this.configurationMode != ConfigurationMode.OIDC_ID_TOKEN) {
+      throw new Error('Cannot add client id when IdentitySource auth provider is not Cognito or OIDC with ID Token');
+    }
     this.clientIds.push(clientId);
   }
 
@@ -351,7 +357,9 @@ export class IdentitySource extends IdentitySourceBase {
    * @param audience the audience to be added
    */
   public addAudience(audience: string) {
-    if (this.configurationMode != ConfigurationMode.OIDC_ACCESS_TOKEN) {throw new Error('Cannot add audience when IdentitySource auth provider is not OIDC with Access Token');}
+    if (this.configurationMode != ConfigurationMode.OIDC_ACCESS_TOKEN) {
+      throw new Error('Cannot add audience when IdentitySource auth provider is not OIDC with Access Token');
+    }
     this.audiences.push(audience);
   }
 

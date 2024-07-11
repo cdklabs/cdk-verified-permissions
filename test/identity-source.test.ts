@@ -7,9 +7,9 @@ import { IdentitySource } from '../src/identity-source';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 
 
-describe('Identity Source creation', () => {
+describe('Identity Source creation with Cognito config', () => {
 
-  test('Creating Identity Source with required properties', () => {
+  test('Creating Identity Source with Cognito config', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
@@ -48,7 +48,7 @@ describe('Identity Source creation', () => {
     });
   });
 
-  test('Creating Identity Source with all properties', () => {
+  test('Creating Identity Source with Cognito config and all the properties', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
@@ -120,7 +120,7 @@ describe('Identity Source reference existing Identity Source', () => {
 });
 
 describe('User Pool Client addition', () => {
-  test('Adding a User Pool Client', () => {
+  test('Adding a User Pool Client to Identity Source configured with Cognito', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
@@ -165,5 +165,679 @@ describe('User Pool Client addition', () => {
         'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
       },
     });
+  });
+
+  test('Adding a User Pool Client to Identity Source configured with OIDC, should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const userPool = new UserPool(stack, 'UserPool');
+    const userPoolClient = new UserPoolClient(stack, 'UserPoolClient', { userPool: userPool });
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const identitySource = new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: 'https://iamanidp.com',
+          tokenSelection: {
+            accessTokenOnly: {
+              audiences: ['aud1'],
+              principalIdClaim: 'sub',
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+      principalEntityType: 'TestType',
+    });
+
+    // THEN
+    expect(() => {
+      identitySource.addUserPoolClient(userPoolClient);
+    }).toThrow('Cannot add User Pool Client when IdentitySource auth provider is not Cognito');
+
+  });
+});
+
+describe('Client addition to OIDC configured Identity Source', () => {
+  test('Adding a Client to Identity Source configured with OIDC and token selection = access token - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const identitySource = new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: 'https://iamanidp.com',
+          tokenSelection: {
+            accessTokenOnly: {
+              audiences: ['aud1'],
+              principalIdClaim: 'sub',
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+      principalEntityType: 'TestType',
+    });
+
+    // THEN
+    expect(() => {
+      identitySource.addClientId('testClientId');
+    }).toThrow('Cannot add client id when IdentitySource auth provider is not Cognito or OIDC with ID Token');
+  });
+
+  test('Adding a Client to Identity Source configured with OIDC and token selection = identity token', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
+    const issuer = 'https://iamanidp.com';
+    const entityIdPrefix = 'prefix';
+    const groupClaim = 'group';
+    const groupEntityType = 'UserGroup';
+    const principalIdClaim = 'sub';
+    const identitySource = new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: issuer,
+          entityIdPrefix: entityIdPrefix,
+          groupConfiguration: {
+            groupClaim: groupClaim,
+            groupEntityType: groupEntityType,
+          },
+          tokenSelection: {
+            identityTokenOnly: {
+              clientIds: [],
+              principalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    const clientToBeAdded = 'client1';
+    identitySource.addClientId(clientToBeAdded);
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
+      Configuration: {
+        OpenIdConnectConfiguration: {
+          Issuer: issuer,
+          EntityIdPrefix: entityIdPrefix,
+          GroupConfiguration: {
+            GroupClaim: groupClaim,
+            GroupEntityType: groupEntityType,
+          },
+          TokenSelection: {
+            IdentityTokenOnly: {
+              ClientIds: [clientToBeAdded],
+              PrincipalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+      },
+    });
+
+  });
+
+  test('Adding a Client to Identity Source configured with Cognito', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const userPool = new UserPool(stack, 'UserPool');
+    const userPoolClient = new UserPoolClient(stack, 'UserPoolClient', { userPool: userPool });
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
+    const identitySource = new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        cognitoUserPoolConfiguration: {
+          userPool: userPool,
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    identitySource.addClientId(userPoolClient.userPoolClientId);
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
+      Configuration: {
+        CognitoUserPoolConfiguration: {
+          ClientIds: [
+            Match.objectEquals({
+              Ref: Match.stringLikeRegexp('UserPoolClient*'),
+            }),
+          ],
+          UserPoolArn: {
+            'Fn::GetAtt': [
+              getResourceLogicalId(userPool, CfnUserPool),
+              'Arn',
+            ],
+          },
+        },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+      },
+    });
+  });
+
+});
+
+describe('Audience addition to OIDC configured Identity Source', () => {
+  test('Adding an Audience to Identity Source configured with OIDC and token selection = id token - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const identitySource = new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: 'https://iamanidp.com',
+          tokenSelection: {
+            identityTokenOnly: {
+              clientIds: ['client1'],
+              principalIdClaim: 'sub',
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+      principalEntityType: 'TestType',
+    });
+
+    // THEN
+    expect(() => {
+      identitySource.addAudience('TestAudience');
+    }).toThrow('Cannot add audience when IdentitySource auth provider is not OIDC with Access Token');
+  });
+  test('Adding a Client to Identity Source configured with Cognito - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const userPool = new UserPool(stack, 'UserPool');
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const identitySource = new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        cognitoUserPoolConfiguration: {
+          userPool: userPool,
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    // THEN
+    expect(() => {
+      identitySource.addAudience('TestAudience');
+    }).toThrow('Cannot add audience when IdentitySource auth provider is not OIDC with Access Token');
+
+  });
+  test('Adding an Audience to Identity Source configured with OIDC and token selection = access token', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
+    const issuer = 'https://iamanidp.com';
+    const principalIdClaim = 'sub';
+    const entityIdPrefix = 'prefix';
+    const groupClaim = 'group';
+    const groupEntityType = 'GroupType';
+    const identitySource = new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: issuer,
+          entityIdPrefix: entityIdPrefix,
+          groupConfiguration: {
+            groupClaim: groupClaim,
+            groupEntityType: groupEntityType,
+          },
+          tokenSelection: {
+            accessTokenOnly: {
+              audiences: [],
+              principalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+      principalEntityType: 'TestType',
+    });
+
+    const audienceToBeAdded = 'TestAudience';
+    identitySource.addAudience(audienceToBeAdded);
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
+      Configuration: {
+        OpenIdConnectConfiguration: {
+          Issuer: issuer,
+          EntityIdPrefix: entityIdPrefix,
+          GroupConfiguration: {
+            GroupClaim: groupClaim,
+            GroupEntityType: groupEntityType,
+          },
+          TokenSelection: {
+            AccessTokenOnly: {
+              Audiences: [audienceToBeAdded],
+              PrincipalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+      },
+    });
+  });
+});
+
+describe('Identity Source creation with OIDC config', () => {
+  test('Creating Identity Source with OIDC and token selection = access token', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
+    const issuer = 'https://iamanidp.com';
+    const principalIdClaim = 'sub';
+    const entityIdPrefix = 'prefix';
+    const groupClaim = 'group';
+    const groupEntityType = 'GroupType';
+    new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: issuer,
+          entityIdPrefix: entityIdPrefix,
+          groupConfiguration: {
+            groupClaim: groupClaim,
+            groupEntityType: groupEntityType,
+          },
+          tokenSelection: {
+            accessTokenOnly: {
+              audiences: [],
+              principalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+      principalEntityType: 'TestType',
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
+      Configuration: {
+        OpenIdConnectConfiguration: {
+          Issuer: issuer,
+          EntityIdPrefix: entityIdPrefix,
+          GroupConfiguration: {
+            GroupClaim: groupClaim,
+            GroupEntityType: groupEntityType,
+          },
+          TokenSelection: {
+            AccessTokenOnly: {
+              Audiences: [],
+              PrincipalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+      },
+    });
+  });
+
+  test('Creating Identity Source with OIDC and token selection = access token and audiences not set', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
+    const issuer = 'https://iamanidp.com';
+    const principalIdClaim = 'sub';
+    const entityIdPrefix = 'prefix';
+    const groupClaim = 'group';
+    const groupEntityType = 'GroupType';
+    new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: issuer,
+          entityIdPrefix: entityIdPrefix,
+          groupConfiguration: {
+            groupClaim: groupClaim,
+            groupEntityType: groupEntityType,
+          },
+          tokenSelection: {
+            accessTokenOnly: {
+              principalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+      principalEntityType: 'TestType',
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
+      Configuration: {
+        OpenIdConnectConfiguration: {
+          Issuer: issuer,
+          EntityIdPrefix: entityIdPrefix,
+          GroupConfiguration: {
+            GroupClaim: groupClaim,
+            GroupEntityType: groupEntityType,
+          },
+          TokenSelection: {
+            AccessTokenOnly: {
+              Audiences: [],
+              PrincipalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+      },
+    });
+  });
+
+  test('Creating Identity Source with OIDC and token selection = identity token', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
+    const issuer = 'https://iamanidp.com';
+    const entityIdPrefix = 'prefix';
+    const groupClaim = 'group';
+    const groupEntityType = 'UserGroup';
+    const principalIdClaim = 'sub';
+    new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: issuer,
+          entityIdPrefix: entityIdPrefix,
+          groupConfiguration: {
+            groupClaim: groupClaim,
+            groupEntityType: groupEntityType,
+          },
+          tokenSelection: {
+            identityTokenOnly: {
+              clientIds: [],
+              principalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
+      Configuration: {
+        OpenIdConnectConfiguration: {
+          Issuer: issuer,
+          EntityIdPrefix: entityIdPrefix,
+          GroupConfiguration: {
+            GroupClaim: groupClaim,
+            GroupEntityType: groupEntityType,
+          },
+          TokenSelection: {
+            IdentityTokenOnly: {
+              ClientIds: [],
+              PrincipalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+      },
+    });
+  });
+
+  test('Creating Identity Source with OIDC and token selection = identity token and client ids not set', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
+    const issuer = 'https://iamanidp.com';
+    const entityIdPrefix = 'prefix';
+    const groupClaim = 'group';
+    const groupEntityType = 'UserGroup';
+    const principalIdClaim = 'sub';
+    new IdentitySource(stack, 'IdentitySource', {
+      configuration: {
+        openIdConnectConfiguration: {
+          issuer: issuer,
+          entityIdPrefix: entityIdPrefix,
+          groupConfiguration: {
+            groupClaim: groupClaim,
+            groupEntityType: groupEntityType,
+          },
+          tokenSelection: {
+            identityTokenOnly: {
+              principalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
+      Configuration: {
+        OpenIdConnectConfiguration: {
+          Issuer: issuer,
+          EntityIdPrefix: entityIdPrefix,
+          GroupConfiguration: {
+            GroupClaim: groupClaim,
+            GroupEntityType: groupEntityType,
+          },
+          TokenSelection: {
+            IdentityTokenOnly: {
+              ClientIds: [],
+              PrincipalIdClaim: principalIdClaim,
+            },
+          },
+        },
+      },
+      PolicyStoreId: {
+        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+      },
+    });
+  });
+
+  test('Creating Identity Source with OIDC and token selection = access token and identity token - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    expect(() => {
+      new IdentitySource(stack, 'IdentitySource', {
+        configuration: {
+          openIdConnectConfiguration: {
+            issuer: 'https://test.com',
+            entityIdPrefix: 'prefix',
+            groupConfiguration: {
+              groupClaim: 'group',
+              groupEntityType: 'GroupType',
+            },
+            tokenSelection: {
+              accessTokenOnly: {
+                audiences: [],
+                principalIdClaim: 'sub',
+              },
+              identityTokenOnly: {
+                clientIds: [],
+                principalIdClaim: 'sub',
+              },
+            },
+          },
+        },
+        policyStore: policyStore,
+        principalEntityType: 'TestType',
+      });
+    }).toThrow('Only one token selection method between accessTokenOnly and identityTokenOnly must be defined');
+  });
+
+  test('Creating Identity Source with OIDC and without token selection - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    expect(() => {
+      new IdentitySource(stack, 'IdentitySource', {
+        configuration: {
+          openIdConnectConfiguration: {
+            issuer: 'https://test.com',
+            entityIdPrefix: 'prefix',
+            groupConfiguration: {
+              groupClaim: 'group',
+              groupEntityType: 'GroupType',
+            },
+            tokenSelection: {
+            },
+          },
+        },
+        policyStore: policyStore,
+        principalEntityType: 'TestType',
+      });
+    }).toThrow('One token selection method between accessTokenOnly and identityTokenOnly must be defined');
+  });
+});
+
+
+describe('Limit cases tests', () => {
+  test('Creating Identity Source without Cognito and OIDC configurations - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    expect(() => {
+      new IdentitySource(stack, 'IdentitySource', {
+        configuration: {
+        },
+        policyStore: policyStore,
+        principalEntityType: 'TestType',
+      });
+    }).toThrow('One Identity provider configuration between cognitoUserPoolConfiguration and openIdConnectConfiguration must be defined');
+  });
+  test('Creating Identity Source with both Cognito and OIDC configurations - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const userPool = new UserPool(stack, 'UserPool');
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    expect(() => {
+      new IdentitySource(stack, 'IdentitySource', {
+        configuration: {
+          cognitoUserPoolConfiguration: {
+            userPool: userPool,
+          },
+          openIdConnectConfiguration: {
+            issuer: 'https://test.com',
+            entityIdPrefix: 'prefix',
+            groupConfiguration: {
+              groupClaim: 'group',
+              groupEntityType: 'GroupType',
+            },
+            tokenSelection: {
+              accessTokenOnly: {
+                audiences: [],
+                principalIdClaim: 'sub',
+              },
+            },
+          },
+        },
+        policyStore: policyStore,
+        principalEntityType: 'TestType',
+      });
+    }).toThrow('Only one between cognitoUserPoolConfiguration or openIdConnectConfiguration must be defined');
   });
 });
