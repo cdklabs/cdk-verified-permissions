@@ -61,7 +61,7 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
 
 ## Schemas
 
-If you want to have type safety when defining a schema, you can accomplish this in typescript. Simply use the `Schema` type exported by the `@cedar-policy/cedar-wasm`.
+If you want to have type safety when defining a schema, you can accomplish this **<ins>only</ins>** in typescript. Simply use the `Schema` type exported by the `@cedar-policy/cedar-wasm`.
 
 You can also generate a simple schema from a swagger file using the static function `schemaFromOpenApiSpec` in the PolicyStore construct. This functionality replicates what you can find in the AWS Verified Permissions console.
 
@@ -85,7 +85,7 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
 
 ## Identity Source
 
-Define Identity Source with required properties:
+Define Identity Source with Cognito Configuration and required properties:
 
 ```ts
 const userPool = new UserPool(scope, "UserPool"); // Creating a new Cognito UserPool
@@ -125,7 +125,7 @@ new IdentitySource(scope, "IdentitySource", {
 });
 ```
 
-Define Identity Source with all the properties:
+Define Identity Source with Cognito Configuration and all properties:
 
 ```ts
 const validationSettingsStrict = {
@@ -168,6 +168,115 @@ new IdentitySource(scope, "IdentitySource", {
   },
   policyStore: policyStore,
   principalEntityType: "PETEXAMPLEabcdefg111111",
+});
+```
+
+Define Identity Source with OIDC Configuration and Access Token selection config:
+```ts
+const validationSettingsStrict = {
+  mode: ValidationSettingsMode.STRICT,
+};
+const cedarJsonSchema = {
+  PhotoApp: {
+    entityTypes: {
+      User: {},
+      Photo: {},
+    },
+    actions: {
+      viewPhoto: {
+        appliesTo: {
+          principalTypes: ["User"],
+          resourceTypes: ["Photo"],
+        },
+      },
+    },
+  },
+};
+const cedarSchema = {
+  cedarJson: JSON.stringify(cedarJsonSchema),
+};
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  schema: cedarSchema,
+  validationSettings: validationSettingsStrict,
+});
+const issuer = 'https://iamanidp.com';
+const principalIdClaim = 'sub';
+const entityIdPrefix = 'prefix';
+const groupClaim = 'group';
+const groupEntityType = 'GroupType';
+new IdentitySource(scope, 'IdentitySource', {
+  configuration: {
+    openIdConnectConfiguration: {
+      issuer: issuer,
+      entityIdPrefix: entityIdPrefix,
+      groupConfiguration: {
+        groupClaim: groupClaim,
+        groupEntityType: groupEntityType,
+      },
+      tokenSelection: {
+        accessTokenOnly: {
+          audiences: [],
+          principalIdClaim: principalIdClaim,
+        },
+      },
+    },
+  },
+  policyStore: policyStore,
+  principalEntityType: 'TestType',
+});
+```
+
+Define Identity Source with OIDC Configuration and Identity Token selection config:
+```ts
+const validationSettingsStrict = {
+  mode: ValidationSettingsMode.STRICT,
+};
+const cedarJsonSchema = {
+  PhotoApp: {
+    entityTypes: {
+      User: {},
+      Photo: {},
+    },
+    actions: {
+      viewPhoto: {
+        appliesTo: {
+          principalTypes: ["User"],
+          resourceTypes: ["Photo"],
+        },
+      },
+    },
+  },
+};
+const cedarSchema = {
+  cedarJson: JSON.stringify(cedarJsonSchema),
+};
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  schema: cedarSchema,
+  validationSettings: validationSettingsStrict,
+});
+const issuer = 'https://iamanidp.com';
+const entityIdPrefix = 'prefix';
+const groupClaim = 'group';
+const groupEntityType = 'UserGroup';
+const principalIdClaim = 'sub';
+new IdentitySource(scope, 'IdentitySource', {
+  configuration: {
+    openIdConnectConfiguration: {
+      issuer: issuer,
+      entityIdPrefix: entityIdPrefix,
+      groupConfiguration: {
+        groupClaim: groupClaim,
+        groupEntityType: groupEntityType,
+      },
+      tokenSelection: {
+        identityTokenOnly: {
+          clientIds: [],
+          principalIdClaim: principalIdClaim,
+        },
+      },
+    },
+  },
+  policyStore: policyStore,
 });
 ```
 

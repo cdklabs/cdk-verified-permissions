@@ -234,14 +234,17 @@ export class IdentitySource extends IdentitySourceBase {
     });
   }
   private readonly configurationMode: ConfigurationMode;
-  readonly identitySource: CfnIdentitySource;
+  private readonly identitySource: CfnIdentitySource;
   readonly clientIds: string[];
-  readonly audiences: string[];
   readonly identitySourceId: string;
   readonly issuer: string;
   readonly userPoolArn?: string;
   readonly cognitoGroupEntityType?: string;
   readonly policyStore: IPolicyStore;
+  readonly audiencesOIDC: string[];
+  readonly principalIdClaimOIDC?: string;
+  readonly groupConfigGroupClaimOIDC?: string;
+  readonly groupConfigGroupEntityTypeOIDC?: string;
 
   constructor(scope: Construct, id: string, props: IdentitySourceProps) {
     super(scope, id);
@@ -254,7 +257,7 @@ export class IdentitySource extends IdentitySourceBase {
     let issuer: string;
     if (props.configuration.cognitoUserPoolConfiguration) {
       this.clientIds = props.configuration.cognitoUserPoolConfiguration.clientIds ?? [];
-      this.audiences = [];
+      this.audiencesOIDC = [];
       const cognitoGroupConfiguration = props.configuration.cognitoUserPoolConfiguration.groupConfiguration?.groupEntityType
         ? {
           groupEntityType: props.configuration.cognitoUserPoolConfiguration.groupConfiguration.groupEntityType,
@@ -277,23 +280,25 @@ export class IdentitySource extends IdentitySourceBase {
       let tokenSelection: CfnIdentitySource.OpenIdConnectTokenSelectionProperty;
       if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly) {
         this.clientIds = [];
-        this.audiences = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences ?? [];
+        this.audiencesOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences ?? [];
         tokenSelection = {
           accessTokenOnly: {
-            audiences: Lazy.list({ produce: () => this.audiences }),
+            audiences: Lazy.list({ produce: () => this.audiencesOIDC }),
             principalIdClaim: props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.principalIdClaim,
           },
         };
+        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.principalIdClaim;
         this.configurationMode = ConfigurationMode.OIDC_ACCESS_TOKEN;
       } else if (props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) {
         this.clientIds = props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.clientIds ?? [];
-        this.audiences = [];
+        this.audiencesOIDC = [];
         tokenSelection = {
           identityTokenOnly: {
             clientIds: Lazy.list({ produce: () => this.clientIds }),
             principalIdClaim: props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.principalIdClaim,
           },
         };
+        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.principalIdClaim;
         this.configurationMode = ConfigurationMode.OIDC_ID_TOKEN;
       } else {
         throw new Error('One token selection method between accessTokenOnly and identityTokenOnly must be defined');
@@ -309,8 +314,9 @@ export class IdentitySource extends IdentitySourceBase {
           tokenSelection: tokenSelection,
         },
       };
+      this.groupConfigGroupClaimOIDC = props.configuration.openIdConnectConfiguration.groupConfiguration?.groupClaim;
+      this.groupConfigGroupEntityTypeOIDC = props.configuration.openIdConnectConfiguration.groupConfiguration?.groupEntityType;
       issuer = props.configuration.openIdConnectConfiguration.issuer;
-
     } else {
       throw new Error('One Identity provider configuration between cognitoUserPoolConfiguration and openIdConnectConfiguration must be defined');
     }
@@ -360,7 +366,7 @@ export class IdentitySource extends IdentitySourceBase {
     if (this.configurationMode != ConfigurationMode.OIDC_ACCESS_TOKEN) {
       throw new Error('Cannot add audience when IdentitySource auth provider is not OIDC with Access Token');
     }
-    this.audiences.push(audience);
+    this.audiencesOIDC.push(audience);
   }
 
 }

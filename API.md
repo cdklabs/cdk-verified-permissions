@@ -267,13 +267,15 @@ The Identity Source identifier.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.audiences">audiences</a></code> | <code>string[]</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.audiencesOIDC">audiencesOIDC</a></code> | <code>string[]</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.clientIds">clientIds</a></code> | <code>string[]</code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySource">identitySource</a></code> | <code>aws-cdk-lib.aws_verifiedpermissions.CfnIdentitySource</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | Identity Source identifier. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.issuer">issuer</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType">cognitoGroupEntityType</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupClaimOIDC">groupConfigGroupClaimOIDC</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupEntityTypeOIDC">groupConfigGroupEntityTypeOIDC</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.principalIdClaimOIDC">principalIdClaimOIDC</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
 
 ---
@@ -321,10 +323,10 @@ The stack in which this resource is defined.
 
 ---
 
-##### `audiences`<sup>Required</sup> <a name="audiences" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.audiences"></a>
+##### `audiencesOIDC`<sup>Required</sup> <a name="audiencesOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.audiencesOIDC"></a>
 
 ```typescript
-public readonly audiences: string[];
+public readonly audiencesOIDC: string[];
 ```
 
 - *Type:* string[]
@@ -338,16 +340,6 @@ public readonly clientIds: string[];
 ```
 
 - *Type:* string[]
-
----
-
-##### `identitySource`<sup>Required</sup> <a name="identitySource" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySource"></a>
-
-```typescript
-public readonly identitySource: CfnIdentitySource;
-```
-
-- *Type:* aws-cdk-lib.aws_verifiedpermissions.CfnIdentitySource
 
 ---
 
@@ -387,6 +379,36 @@ public readonly policyStore: IPolicyStore;
 
 ```typescript
 public readonly cognitoGroupEntityType: string;
+```
+
+- *Type:* string
+
+---
+
+##### `groupConfigGroupClaimOIDC`<sup>Optional</sup> <a name="groupConfigGroupClaimOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupClaimOIDC"></a>
+
+```typescript
+public readonly groupConfigGroupClaimOIDC: string;
+```
+
+- *Type:* string
+
+---
+
+##### `groupConfigGroupEntityTypeOIDC`<sup>Optional</sup> <a name="groupConfigGroupEntityTypeOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupEntityTypeOIDC"></a>
+
+```typescript
+public readonly groupConfigGroupEntityTypeOIDC: string;
+```
+
+- *Type:* string
+
+---
+
+##### `principalIdClaimOIDC`<sup>Optional</sup> <a name="principalIdClaimOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.principalIdClaimOIDC"></a>
+
+```typescript
+public readonly principalIdClaimOIDC: string;
 ```
 
 - *Type:* string
