@@ -423,6 +423,7 @@ describe('Audience addition to OIDC configured Identity Source', () => {
     const entityIdPrefix = 'prefix';
     const groupClaim = 'group';
     const groupEntityType = 'GroupType';
+    const existingAudience = 'audience';
     const identitySource = new IdentitySource(stack, 'IdentitySource', {
       configuration: {
         openIdConnectConfiguration: {
@@ -434,7 +435,7 @@ describe('Audience addition to OIDC configured Identity Source', () => {
           },
           tokenSelection: {
             accessTokenOnly: {
-              audiences: [],
+              audiences: [existingAudience],
               principalIdClaim: principalIdClaim,
             },
           },
@@ -459,7 +460,7 @@ describe('Audience addition to OIDC configured Identity Source', () => {
           },
           TokenSelection: {
             AccessTokenOnly: {
-              Audiences: [audienceToBeAdded],
+              Audiences: [existingAudience, audienceToBeAdded],
               PrincipalIdClaim: principalIdClaim,
             },
           },
@@ -489,6 +490,7 @@ describe('Identity Source creation with OIDC config', () => {
     const entityIdPrefix = 'prefix';
     const groupClaim = 'group';
     const groupEntityType = 'GroupType';
+    const audience = 'testAudience';
     new IdentitySource(stack, 'IdentitySource', {
       configuration: {
         openIdConnectConfiguration: {
@@ -500,7 +502,7 @@ describe('Identity Source creation with OIDC config', () => {
           },
           tokenSelection: {
             accessTokenOnly: {
-              audiences: [],
+              audiences: [audience],
               principalIdClaim: principalIdClaim,
             },
           },
@@ -522,7 +524,7 @@ describe('Identity Source creation with OIDC config', () => {
           },
           TokenSelection: {
             AccessTokenOnly: {
-              Audiences: [],
+              Audiences: [audience],
               PrincipalIdClaim: principalIdClaim,
             },
           },
@@ -534,7 +536,7 @@ describe('Identity Source creation with OIDC config', () => {
     });
   });
 
-  test('Creating Identity Source with OIDC and token selection = access token and audiences not set', () => {
+  test('Creating Identity Source with OIDC and token selection = access token and audiences not set - should throw', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
@@ -544,54 +546,76 @@ describe('Identity Source creation with OIDC config', () => {
         mode: ValidationSettingsMode.OFF,
       },
     });
-    const policyStoreLogicalId = getResourceLogicalId(policyStore, CfnPolicyStore);
     const issuer = 'https://iamanidp.com';
     const principalIdClaim = 'sub';
     const entityIdPrefix = 'prefix';
     const groupClaim = 'group';
     const groupEntityType = 'GroupType';
-    new IdentitySource(stack, 'IdentitySource', {
-      configuration: {
-        openIdConnectConfiguration: {
-          issuer: issuer,
-          entityIdPrefix: entityIdPrefix,
-          groupConfiguration: {
-            groupClaim: groupClaim,
-            groupEntityType: groupEntityType,
-          },
-          tokenSelection: {
-            accessTokenOnly: {
-              principalIdClaim: principalIdClaim,
-            },
-          },
-        },
-      },
-      policyStore: policyStore,
-      principalEntityType: 'TestType',
-    });
 
     // THEN
-    Template.fromStack(stack).hasResourceProperties('AWS::VerifiedPermissions::IdentitySource', {
-      Configuration: {
-        OpenIdConnectConfiguration: {
-          Issuer: issuer,
-          EntityIdPrefix: entityIdPrefix,
-          GroupConfiguration: {
-            GroupClaim: groupClaim,
-            GroupEntityType: groupEntityType,
-          },
-          TokenSelection: {
-            AccessTokenOnly: {
-              Audiences: [],
-              PrincipalIdClaim: principalIdClaim,
+    expect(() => {
+      new IdentitySource(stack, 'IdentitySource', {
+        configuration: {
+          openIdConnectConfiguration: {
+            issuer: issuer,
+            entityIdPrefix: entityIdPrefix,
+            groupConfiguration: {
+              groupClaim: groupClaim,
+              groupEntityType: groupEntityType,
+            },
+            tokenSelection: {
+              accessTokenOnly: {
+                principalIdClaim: principalIdClaim,
+              },
             },
           },
         },
-      },
-      PolicyStoreId: {
-        'Fn::GetAtt': [policyStoreLogicalId, 'PolicyStoreId'],
+        policyStore: policyStore,
+        principalEntityType: 'TestType',
+      });
+    }).toThrow('At least one audience is expected in OIDC Access token selection mode');
+  });
+
+
+  test('Creating Identity Source with OIDC and token selection = access token and audiences empty - should throw', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
       },
     });
+    const issuer = 'https://iamanidp.com';
+    const principalIdClaim = 'sub';
+    const entityIdPrefix = 'prefix';
+    const groupClaim = 'group';
+    const groupEntityType = 'GroupType';
+
+    // THEN
+    expect(() => {
+      new IdentitySource(stack, 'IdentitySource', {
+        configuration: {
+          openIdConnectConfiguration: {
+            issuer: issuer,
+            entityIdPrefix: entityIdPrefix,
+            groupConfiguration: {
+              groupClaim: groupClaim,
+              groupEntityType: groupEntityType,
+            },
+            tokenSelection: {
+              accessTokenOnly: {
+                principalIdClaim: principalIdClaim,
+                audiences: [],
+              },
+            },
+          },
+        },
+        policyStore: policyStore,
+        principalEntityType: 'TestType',
+      });
+    }).toThrow('At least one audience is expected in OIDC Access token selection mode');
   });
 
   test('Creating Identity Source with OIDC and token selection = identity token', () => {
@@ -735,7 +759,7 @@ describe('Identity Source creation with OIDC config', () => {
             },
             tokenSelection: {
               accessTokenOnly: {
-                audiences: [],
+                audiences: ['testAudience'],
                 principalIdClaim: 'sub',
               },
               identityTokenOnly: {
@@ -829,7 +853,7 @@ describe('Limit cases tests', () => {
             },
             tokenSelection: {
               accessTokenOnly: {
-                audiences: [],
+                audiences: ['testAudience'],
                 principalIdClaim: 'sub',
               },
             },

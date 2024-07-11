@@ -215,7 +215,7 @@ new IdentitySource(scope, 'IdentitySource', {
       },
       tokenSelection: {
         accessTokenOnly: {
-          audiences: [],
+          audiences: ['testAudience'],
           principalIdClaim: principalIdClaim,
         },
       },

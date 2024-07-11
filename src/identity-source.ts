@@ -275,12 +275,19 @@ export class IdentitySource extends IdentitySourceBase {
       this.configurationMode = ConfigurationMode.COGNITO;
     } else if (props.configuration.openIdConnectConfiguration) {
 
-      if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly && props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) { throw new Error('Only one token selection method between accessTokenOnly and identityTokenOnly must be defined'); }
+      if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly &&
+        props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) {
+        throw new Error('Only one token selection method between accessTokenOnly and identityTokenOnly must be defined');
+      }
 
       let tokenSelection: CfnIdentitySource.OpenIdConnectTokenSelectionProperty;
       if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly) {
+        if (!props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences ||
+          props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences.length == 0) {
+          throw new Error('At least one audience is expected in OIDC Access token selection mode');
+        }
         this.clientIds = [];
-        this.audiencesOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences ?? [];
+        this.audiencesOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences;
         tokenSelection = {
           accessTokenOnly: {
             audiences: Lazy.list({ produce: () => this.audiencesOIDC }),
