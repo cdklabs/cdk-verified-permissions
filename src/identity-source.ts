@@ -277,7 +277,7 @@ export class IdentitySource extends IdentitySourceBase {
 
       if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly &&
         props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) {
-        throw new Error('Only one token selection method between accessTokenOnly and identityTokenOnly must be defined');
+        throw new Error('Exactly one token selection method between accessTokenOnly and identityTokenOnly must be defined');
       }
 
       let tokenSelection: CfnIdentitySource.OpenIdConnectTokenSelectionProperty;
