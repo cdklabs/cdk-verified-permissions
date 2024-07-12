@@ -88,21 +88,6 @@ export interface OpenIdConnectIdentityTokenConfiguration {
   readonly principalIdClaim?: string;
 }
 
-export interface OpenIdConnectTokenSelection {
-  /**
-   * The OIDC configuration for processing access tokens
-   *
-   * @default - no Access Token Config
-   */
-  readonly accessTokenOnly?: OpenIdConnectAccessTokenConfiguration;
-
-  /**
-   * The OIDC configuration for processing identity (ID) tokens
-   *
-   * @default - no ID Token Config
-   */
-  readonly identityTokenOnly?: OpenIdConnectIdentityTokenConfiguration;
-}
 
 export interface OpenIdConnectConfiguration {
   /**
@@ -126,9 +111,20 @@ export interface OpenIdConnectConfiguration {
   readonly issuer: string;
 
   /**
-   * The token type that you want to process from your OIDC identity provider
+   * The configuration for processing access tokens from your OIDC identity provider
+   * Exactly one between accessTokenOnly and identityTokenOnly must be defined
+   *
+   * @default - no Access Token Config
    */
-  readonly tokenSelection: OpenIdConnectTokenSelection;
+  readonly accessTokenOnly?: OpenIdConnectAccessTokenConfiguration;
+
+  /**
+   * The configuration for processing identity (ID) tokens from your OIDC identity provider
+   * Exactly one between accessTokenOnly and identityTokenOnly must be defined
+   *
+   * @default - no ID Token Config
+   */
+  readonly identityTokenOnly?: OpenIdConnectIdentityTokenConfiguration;
 }
 
 export interface IdentitySourceConfiguration {
@@ -275,37 +271,37 @@ export class IdentitySource extends IdentitySourceBase {
       this.configurationMode = ConfigurationMode.COGNITO;
     } else if (props.configuration.openIdConnectConfiguration) {
 
-      if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly &&
-        props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) {
+      if (props.configuration.openIdConnectConfiguration.accessTokenOnly &&
+        props.configuration.openIdConnectConfiguration.identityTokenOnly) {
         throw new Error('Exactly one token selection method between accessTokenOnly and identityTokenOnly must be defined');
       }
 
       let tokenSelection: CfnIdentitySource.OpenIdConnectTokenSelectionProperty;
-      if (props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly) {
-        if (!props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences ||
-          props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences.length == 0) {
+      if (props.configuration.openIdConnectConfiguration.accessTokenOnly) {
+        if (!props.configuration.openIdConnectConfiguration.accessTokenOnly.audiences ||
+          props.configuration.openIdConnectConfiguration.accessTokenOnly.audiences.length == 0) {
           throw new Error('At least one audience is expected in OIDC Access token selection mode');
         }
         this.clientIds = [];
-        this.audiencesOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.audiences;
+        this.audiencesOIDC = props.configuration.openIdConnectConfiguration.accessTokenOnly.audiences;
         tokenSelection = {
           accessTokenOnly: {
             audiences: Lazy.list({ produce: () => this.audiencesOIDC }),
-            principalIdClaim: props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.principalIdClaim,
+            principalIdClaim: props.configuration.openIdConnectConfiguration.accessTokenOnly.principalIdClaim,
           },
         };
-        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.accessTokenOnly.principalIdClaim;
+        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.accessTokenOnly.principalIdClaim;
         this.configurationMode = ConfigurationMode.OIDC_ACCESS_TOKEN;
-      } else if (props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly) {
-        this.clientIds = props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.clientIds ?? [];
+      } else if (props.configuration.openIdConnectConfiguration.identityTokenOnly) {
+        this.clientIds = props.configuration.openIdConnectConfiguration.identityTokenOnly.clientIds ?? [];
         this.audiencesOIDC = [];
         tokenSelection = {
           identityTokenOnly: {
             clientIds: Lazy.list({ produce: () => this.clientIds }),
-            principalIdClaim: props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.principalIdClaim,
+            principalIdClaim: props.configuration.openIdConnectConfiguration.identityTokenOnly.principalIdClaim,
           },
         };
-        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.tokenSelection.identityTokenOnly.principalIdClaim;
+        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.identityTokenOnly.principalIdClaim;
         this.configurationMode = ConfigurationMode.OIDC_ID_TOKEN;
       } else {
         throw new Error('One token selection method between accessTokenOnly and identityTokenOnly must be defined');
@@ -358,7 +354,7 @@ export class IdentitySource extends IdentitySourceBase {
    * The method can be called only when the Identity Source is configured with one of these configs:
    *  - Cognito auth provider
    *  - OIDC auth provider and ID Token Selection mode
-   * 
+   *
    * @param clientId The clientId to be added
    */
   public addClientId(clientId: string) {
@@ -369,7 +365,7 @@ export class IdentitySource extends IdentitySourceBase {
   }
 
   /**
-   * Add an audience to the list. 
+   * Add an audience to the list.
    * The method can be called only when the Identity Source is configured with OIDC auth provider and Access Token Selection mode
    *
    * @param audience the audience to be added

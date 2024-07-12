@@ -213,11 +213,9 @@ new IdentitySource(scope, 'IdentitySource', {
         groupClaim: groupClaim,
         groupEntityType: groupEntityType,
       },
-      tokenSelection: {
-        accessTokenOnly: {
-          audiences: ['testAudience'],
-          principalIdClaim: principalIdClaim,
-        },
+      accessTokenOnly: {
+        audiences: ['testAudience'],
+        principalIdClaim: principalIdClaim,
       },
     },
   },
@@ -268,11 +266,9 @@ new IdentitySource(scope, 'IdentitySource', {
         groupClaim: groupClaim,
         groupEntityType: groupEntityType,
       },
-      tokenSelection: {
-        identityTokenOnly: {
-          clientIds: [],
-          principalIdClaim: principalIdClaim,
-        },
+      identityTokenOnly: {
+        clientIds: [],
+        principalIdClaim: principalIdClaim,
       },
     },
   },

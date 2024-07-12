@@ -183,11 +183,9 @@ describe('User Pool Client addition', () => {
       configuration: {
         openIdConnectConfiguration: {
           issuer: 'https://iamanidp.com',
-          tokenSelection: {
-            accessTokenOnly: {
-              audiences: ['aud1'],
-              principalIdClaim: 'sub',
-            },
+          accessTokenOnly: {
+            audiences: ['aud1'],
+            principalIdClaim: 'sub',
           },
         },
       },
@@ -218,11 +216,9 @@ describe('Client addition to OIDC configured Identity Source', () => {
       configuration: {
         openIdConnectConfiguration: {
           issuer: 'https://iamanidp.com',
-          tokenSelection: {
-            accessTokenOnly: {
-              audiences: ['aud1'],
-              principalIdClaim: 'sub',
-            },
+          accessTokenOnly: {
+            audiences: ['aud1'],
+            principalIdClaim: 'sub',
           },
         },
       },
@@ -261,11 +257,9 @@ describe('Client addition to OIDC configured Identity Source', () => {
             groupClaim: groupClaim,
             groupEntityType: groupEntityType,
           },
-          tokenSelection: {
-            identityTokenOnly: {
-              clientIds: [],
-              principalIdClaim: principalIdClaim,
-            },
+          identityTokenOnly: {
+            clientIds: [],
+            principalIdClaim: principalIdClaim,
           },
         },
       },
@@ -364,11 +358,9 @@ describe('Audience addition to OIDC configured Identity Source', () => {
       configuration: {
         openIdConnectConfiguration: {
           issuer: 'https://iamanidp.com',
-          tokenSelection: {
-            identityTokenOnly: {
-              clientIds: ['client1'],
-              principalIdClaim: 'sub',
-            },
+          identityTokenOnly: {
+            clientIds: ['client1'],
+            principalIdClaim: 'sub',
           },
         },
       },
@@ -433,11 +425,9 @@ describe('Audience addition to OIDC configured Identity Source', () => {
             groupClaim: groupClaim,
             groupEntityType: groupEntityType,
           },
-          tokenSelection: {
-            accessTokenOnly: {
-              audiences: [existingAudience],
-              principalIdClaim: principalIdClaim,
-            },
+          accessTokenOnly: {
+            audiences: [existingAudience],
+            principalIdClaim: principalIdClaim,
           },
         },
       },
@@ -500,11 +490,9 @@ describe('Identity Source creation with OIDC config', () => {
             groupClaim: groupClaim,
             groupEntityType: groupEntityType,
           },
-          tokenSelection: {
-            accessTokenOnly: {
-              audiences: [audience],
-              principalIdClaim: principalIdClaim,
-            },
+          accessTokenOnly: {
+            audiences: [audience],
+            principalIdClaim: principalIdClaim,
           },
         },
       },
@@ -563,10 +551,8 @@ describe('Identity Source creation with OIDC config', () => {
               groupClaim: groupClaim,
               groupEntityType: groupEntityType,
             },
-            tokenSelection: {
-              accessTokenOnly: {
-                principalIdClaim: principalIdClaim,
-              },
+            accessTokenOnly: {
+              principalIdClaim: principalIdClaim,
             },
           },
         },
@@ -604,11 +590,9 @@ describe('Identity Source creation with OIDC config', () => {
               groupClaim: groupClaim,
               groupEntityType: groupEntityType,
             },
-            tokenSelection: {
-              accessTokenOnly: {
-                principalIdClaim: principalIdClaim,
-                audiences: [],
-              },
+            accessTokenOnly: {
+              principalIdClaim: principalIdClaim,
+              audiences: [],
             },
           },
         },
@@ -643,11 +627,9 @@ describe('Identity Source creation with OIDC config', () => {
             groupClaim: groupClaim,
             groupEntityType: groupEntityType,
           },
-          tokenSelection: {
-            identityTokenOnly: {
-              clientIds: [],
-              principalIdClaim: principalIdClaim,
-            },
+          identityTokenOnly: {
+            clientIds: [],
+            principalIdClaim: principalIdClaim,
           },
         },
       },
@@ -703,10 +685,8 @@ describe('Identity Source creation with OIDC config', () => {
             groupClaim: groupClaim,
             groupEntityType: groupEntityType,
           },
-          tokenSelection: {
-            identityTokenOnly: {
-              principalIdClaim: principalIdClaim,
-            },
+          identityTokenOnly: {
+            principalIdClaim: principalIdClaim,
           },
         },
       },
@@ -757,15 +737,13 @@ describe('Identity Source creation with OIDC config', () => {
               groupClaim: 'group',
               groupEntityType: 'GroupType',
             },
-            tokenSelection: {
-              accessTokenOnly: {
-                audiences: ['testAudience'],
-                principalIdClaim: 'sub',
-              },
-              identityTokenOnly: {
-                clientIds: [],
-                principalIdClaim: 'sub',
-              },
+            accessTokenOnly: {
+              audiences: ['testAudience'],
+              principalIdClaim: 'sub',
+            },
+            identityTokenOnly: {
+              clientIds: [],
+              principalIdClaim: 'sub',
             },
           },
         },
@@ -794,8 +772,6 @@ describe('Identity Source creation with OIDC config', () => {
             groupConfiguration: {
               groupClaim: 'group',
               groupEntityType: 'GroupType',
-            },
-            tokenSelection: {
             },
           },
         },
@@ -851,11 +827,9 @@ describe('Limit cases tests', () => {
               groupClaim: 'group',
               groupEntityType: 'GroupType',
             },
-            tokenSelection: {
-              accessTokenOnly: {
-                audiences: ['testAudience'],
-                principalIdClaim: 'sub',
-              },
+            accessTokenOnly: {
+              audiences: ['testAudience'],
+              principalIdClaim: 'sub',
             },
           },
         },

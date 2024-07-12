@@ -47,8 +47,8 @@ new IdentitySource(scope: Construct, id: string, props: IdentitySourceProps)
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addAudience">addAudience</a></code> | Add an audience to the list. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list The method can be called only when the Identity Source is configured with one of these configs:  - Cognito auth provider  - OIDC auth provider and ID Token Selection mode. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client The method can be called only when the Identity Source is configured with Cognito auth provider. |
 
 ---
 
@@ -90,6 +90,8 @@ public addAudience(audience: string): void
 
 Add an audience to the list.
 
+The method can be called only when the Identity Source is configured with OIDC auth provider and Access Token Selection mode
+
 ###### `audience`<sup>Required</sup> <a name="audience" id="@cdklabs/cdk-verified-permissions.IdentitySource.addAudience.parameter.audience"></a>
 
 - *Type:* string
@@ -104,7 +106,7 @@ the audience to be added.
 public addClientId(clientId: string): void
 ```
 
-Add a clientId to the list.
+Add a clientId to the list The method can be called only when the Identity Source is configured with one of these configs:  - Cognito auth provider  - OIDC auth provider and ID Token Selection mode.
 
 ###### `clientId`<sup>Required</sup> <a name="clientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId.parameter.clientId"></a>
 
@@ -120,7 +122,7 @@ The clientId to be added.
 public addUserPoolClient(userPoolClient: IUserPoolClient): void
 ```
 
-Add a User Pool Client.
+Add a User Pool Client The method can be called only when the Identity Source is configured with Cognito auth provider.
 
 ###### `userPoolClient`<sup>Required</sup> <a name="userPoolClient" id="@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient.parameter.userPoolClient"></a>
 
@@ -1992,9 +1994,10 @@ const openIdConnectConfiguration: OpenIdConnectConfiguration = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.issuer">issuer</a></code> | <code>string</code> | The issuer URL of an OIDC identity provider. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.tokenSelection">tokenSelection</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection">OpenIdConnectTokenSelection</a></code> | The token type that you want to process from your OIDC identity provider. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.accessTokenOnly">accessTokenOnly</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration">OpenIdConnectAccessTokenConfiguration</a></code> | The configuration for processing access tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.entityIdPrefix">entityIdPrefix</a></code> | <code>string</code> | A descriptive string that you want to prefix to user entities from your OIDC identity provider. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.groupConfiguration">groupConfiguration</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration">OpenIdConnectGroupConfiguration</a></code> | The claim in OIDC identity provider tokens that indicates a user's group membership, and the entity type that you want to map it to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.identityTokenOnly">identityTokenOnly</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration">OpenIdConnectIdentityTokenConfiguration</a></code> | The configuration for processing identity (ID) tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined. |
 
 ---
 
@@ -2012,15 +2015,16 @@ This URL must have an OIDC discovery endpoint at the path .well-known/openid-con
 
 ---
 
-##### `tokenSelection`<sup>Required</sup> <a name="tokenSelection" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.tokenSelection"></a>
+##### `accessTokenOnly`<sup>Optional</sup> <a name="accessTokenOnly" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.accessTokenOnly"></a>
 
 ```typescript
-public readonly tokenSelection: OpenIdConnectTokenSelection;
+public readonly accessTokenOnly: OpenIdConnectAccessTokenConfiguration;
 ```
 
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection">OpenIdConnectTokenSelection</a>
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration">OpenIdConnectAccessTokenConfiguration</a>
+- *Default:* no Access Token Config
 
-The token type that you want to process from your OIDC identity provider.
+The configuration for processing access tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined.
 
 ---
 
@@ -2047,6 +2051,19 @@ public readonly groupConfiguration: OpenIdConnectGroupConfiguration;
 - *Default:* no Group Config
 
 The claim in OIDC identity provider tokens that indicates a user's group membership, and the entity type that you want to map it to.
+
+---
+
+##### `identityTokenOnly`<sup>Optional</sup> <a name="identityTokenOnly" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.identityTokenOnly"></a>
+
+```typescript
+public readonly identityTokenOnly: OpenIdConnectIdentityTokenConfiguration;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration">OpenIdConnectIdentityTokenConfiguration</a>
+- *Default:* no ID Token Config
+
+The configuration for processing identity (ID) tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined.
 
 ---
 
@@ -2135,51 +2152,6 @@ public readonly principalIdClaim: string;
 - *Default:* no principal claim
 
 The claim that determines the principal in OIDC access tokens.
-
----
-
-### OpenIdConnectTokenSelection <a name="OpenIdConnectTokenSelection" id="@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection"></a>
-
-#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection.Initializer"></a>
-
-```typescript
-import { OpenIdConnectTokenSelection } from '@cdklabs/cdk-verified-permissions'
-
-const openIdConnectTokenSelection: OpenIdConnectTokenSelection = { ... }
-```
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection.property.accessTokenOnly">accessTokenOnly</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration">OpenIdConnectAccessTokenConfiguration</a></code> | The OIDC configuration for processing access tokens. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection.property.identityTokenOnly">identityTokenOnly</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration">OpenIdConnectIdentityTokenConfiguration</a></code> | The OIDC configuration for processing identity (ID) tokens. |
-
----
-
-##### `accessTokenOnly`<sup>Optional</sup> <a name="accessTokenOnly" id="@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection.property.accessTokenOnly"></a>
-
-```typescript
-public readonly accessTokenOnly: OpenIdConnectAccessTokenConfiguration;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration">OpenIdConnectAccessTokenConfiguration</a>
-- *Default:* no Access Token Config
-
-The OIDC configuration for processing access tokens.
-
----
-
-##### `identityTokenOnly`<sup>Optional</sup> <a name="identityTokenOnly" id="@cdklabs/cdk-verified-permissions.OpenIdConnectTokenSelection.property.identityTokenOnly"></a>
-
-```typescript
-public readonly identityTokenOnly: OpenIdConnectIdentityTokenConfiguration;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration">OpenIdConnectIdentityTokenConfiguration</a>
-- *Default:* no ID Token Config
-
-The OIDC configuration for processing identity (ID) tokens.
 
 ---
 
