@@ -47,8 +47,8 @@ new IdentitySource(scope: Construct, id: string, props: IdentitySourceProps)
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addAudience">addAudience</a></code> | Add an audience to the list. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list The method can be called only when the Identity Source is configured with one of these configs:  - Cognito auth provider  - OIDC auth provider and ID Token Selection mode. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client The method can be called only when the Identity Source is configured with Cognito auth provider. |
 
 ---
 
@@ -90,6 +90,8 @@ public addAudience(audience: string): void
 
 Add an audience to the list.
 
+The method can be called only when the Identity Source is configured with OIDC auth provider and Access Token Selection mode
+
 ###### `audience`<sup>Required</sup> <a name="audience" id="@cdklabs/cdk-verified-permissions.IdentitySource.addAudience.parameter.audience"></a>
 
 - *Type:* string
@@ -104,7 +106,7 @@ the audience to be added.
 public addClientId(clientId: string): void
 ```
 
-Add a clientId to the list.
+Add a clientId to the list The method can be called only when the Identity Source is configured with one of these configs:  - Cognito auth provider  - OIDC auth provider and ID Token Selection mode.
 
 ###### `clientId`<sup>Required</sup> <a name="clientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId.parameter.clientId"></a>
 
@@ -120,7 +122,7 @@ The clientId to be added.
 public addUserPoolClient(userPoolClient: IUserPoolClient): void
 ```
 
-Add a User Pool Client.
+Add a User Pool Client The method can be called only when the Identity Source is configured with Cognito auth provider.
 
 ###### `userPoolClient`<sup>Required</sup> <a name="userPoolClient" id="@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient.parameter.userPoolClient"></a>
 

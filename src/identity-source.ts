@@ -358,7 +358,7 @@ export class IdentitySource extends IdentitySourceBase {
    * The method can be called only when the Identity Source is configured with one of these configs:
    *  - Cognito auth provider
    *  - OIDC auth provider and ID Token Selection mode
-   * 
+   *
    * @param clientId The clientId to be added
    */
   public addClientId(clientId: string) {
@@ -369,7 +369,7 @@ export class IdentitySource extends IdentitySourceBase {
   }
 
   /**
-   * Add an audience to the list. 
+   * Add an audience to the list.
    * The method can be called only when the Identity Source is configured with OIDC auth provider and Access Token Selection mode
    *
    * @param audience the audience to be added
