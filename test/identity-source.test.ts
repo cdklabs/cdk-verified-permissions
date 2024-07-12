@@ -233,7 +233,7 @@ describe('Client addition to OIDC configured Identity Source', () => {
     // THEN
     expect(() => {
       identitySource.addClientId('testClientId');
-    }).toThrow('Cannot add client id when IdentitySource auth provider is not Cognito or OIDC with ID Token');
+    }).toThrow('Adding a Client ID is only supported for the auth providers Cognito or OIDC with configured with ID Token');
   });
 
   test('Adding a Client to Identity Source configured with OIDC and token selection = identity token', () => {
@@ -772,7 +772,7 @@ describe('Identity Source creation with OIDC config', () => {
         policyStore: policyStore,
         principalEntityType: 'TestType',
       });
-    }).toThrow('Only one token selection method between accessTokenOnly and identityTokenOnly must be defined');
+    }).toThrow('Exactly one token selection method between accessTokenOnly and identityTokenOnly must be defined');
   });
 
   test('Creating Identity Source with OIDC and without token selection - should throw', () => {

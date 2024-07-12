@@ -342,6 +342,7 @@ export class IdentitySource extends IdentitySourceBase {
 
   /**
    * Add a User Pool Client
+   * The method can be called only when the Identity Source is configured with Cognito auth provider
    *
    * @param userPoolClient The User Pool Client Construct.
    */
@@ -354,18 +355,22 @@ export class IdentitySource extends IdentitySourceBase {
 
   /**
    * Add a clientId to the list
-   *
+   * The method can be called only when the Identity Source is configured with one of these configs:
+   *  - Cognito auth provider
+   *  - OIDC auth provider and ID Token Selection mode
+   * 
    * @param clientId The clientId to be added
    */
   public addClientId(clientId: string) {
     if (this.configurationMode != ConfigurationMode.COGNITO && this.configurationMode != ConfigurationMode.OIDC_ID_TOKEN) {
-      throw new Error('Cannot add client id when IdentitySource auth provider is not Cognito or OIDC with ID Token');
+      throw new Error('Adding a Client ID is only supported for the auth providers Cognito or OIDC with configured with ID Token');
     }
     this.clientIds.push(clientId);
   }
 
   /**
-   * Add an audience to the list
+   * Add an audience to the list. 
+   * The method can be called only when the Identity Source is configured with OIDC auth provider and Access Token Selection mode
    *
    * @param audience the audience to be added
    */
