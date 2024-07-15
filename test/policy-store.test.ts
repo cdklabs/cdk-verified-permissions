@@ -661,4 +661,31 @@ describe('generating schemas from OpenApi specs', () => {
     // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
     expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
   });
+  test('generate schema from openApi spec without userGroups', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const schema = PolicyStore.schemaFromOpenApiSpec(
+      path.join(__dirname, 'podcastappswagger.json'),
+
+    );
+    const pStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.STRICT,
+      },
+      schema: {
+        cedarJson: JSON.stringify(schema),
+      },
+    });
+
+    // THEN
+    expect(pStore.schema?.cedarJson).toBeDefined();
+    expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
+      'User',
+      'Application',
+    ]);
+    // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
+    expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+  });
 });

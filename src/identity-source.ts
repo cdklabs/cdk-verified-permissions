@@ -4,6 +4,11 @@ import { IResource, Lazy, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 import { IPolicyStore } from './policy-store';
 
+enum ConfigurationMode {
+  COGNITO = 'COGNITO',
+  OIDC_ACCESS_TOKEN = 'OIDC_ACCESS_TOKEN',
+  OIDC_ID_TOKEN = 'OIDC_ID_TOKEN'
+}
 export interface CognitoGroupConfiguration {
 
   /**
@@ -35,37 +40,111 @@ export interface CognitoUserPoolConfiguration {
   readonly userPool: IUserPool;
 }
 
+export interface OpenIdConnectGroupConfiguration {
+  /**
+   * The token claim that you want Verified Permissions to interpret as group membership
+   *
+   */
+  readonly groupClaim: string;
+
+  /**
+   * The policy store entity type that you want to map your users' group claim to
+   *
+   */
+  readonly groupEntityType: string;
+}
+
+export interface OpenIdConnectAccessTokenConfiguration {
+  /**
+   * The access token aud claim values that you want to accept in your policy store
+   *
+   * @default - no audiences
+   *
+   */
+  readonly audiences?: string[];
+
+  /**
+   * The claim that determines the principal in OIDC access tokens
+   *
+   * @default - no principal claim
+   */
+  readonly principalIdClaim?: string;
+}
+
+export interface OpenIdConnectIdentityTokenConfiguration {
+  /**
+   * The ID token audience, or client ID, claim values that you want to accept in your policy store from an OIDC identity provider
+   *
+   * @default - no client IDs
+   *
+   */
+  readonly clientIds?: string[];
+
+  /**
+   * The claim that determines the principal in OIDC access tokens
+   *
+   * @default - no principal claim
+   */
+  readonly principalIdClaim?: string;
+}
+
+
+export interface OpenIdConnectConfiguration {
+  /**
+   * A descriptive string that you want to prefix to user entities from your OIDC identity provider
+   *
+   * @default - no Entity ID Prefix
+   */
+  readonly entityIdPrefix?: string;
+
+  /**
+   * The claim in OIDC identity provider tokens that indicates a user's group membership, and the entity type that you want to map it to
+   *
+   * @default - no Group Config
+   */
+  readonly groupConfiguration?: OpenIdConnectGroupConfiguration;
+
+  /**
+   * The issuer URL of an OIDC identity provider. This URL must have an OIDC discovery endpoint at the path .well-known/openid-configuration
+   *
+   */
+  readonly issuer: string;
+
+  /**
+   * The configuration for processing access tokens from your OIDC identity provider
+   * Exactly one between accessTokenOnly and identityTokenOnly must be defined
+   *
+   * @default - no Access Token Config
+   */
+  readonly accessTokenOnly?: OpenIdConnectAccessTokenConfiguration;
+
+  /**
+   * The configuration for processing identity (ID) tokens from your OIDC identity provider
+   * Exactly one between accessTokenOnly and identityTokenOnly must be defined
+   *
+   * @default - no ID Token Config
+   */
+  readonly identityTokenOnly?: OpenIdConnectIdentityTokenConfiguration;
+}
+
 export interface IdentitySourceConfiguration {
   /**
    * Cognito User Pool Configuration.
    *
-   * @attribute
-   */
-  readonly cognitoUserPoolConfiguration: CognitoUserPoolConfiguration;
-}
-
-export interface IIdentitySource extends IResource {
-  /**
-   * Identity Source identifier.
+   * @default - no Cognito User Pool Config
    *
-   * @attribute
    */
-  readonly identitySourceId: string;
-}
-
-abstract class IdentitySourceBase extends Resource implements IIdentitySource {
-  abstract readonly identitySourceId: string;
-}
-
-export interface IdentitySourceAttributes {
+  readonly cognitoUserPoolConfiguration?: CognitoUserPoolConfiguration;
 
   /**
-   * The identity Source identifier
+   * OpenID Connect Idp configuration
    *
-   * @attribute
+   * @default - no OpenID Provider config
+   *
    */
-  readonly identitySourceId: string;
+  readonly openIdConnectConfiguration?: OpenIdConnectConfiguration;
 }
+
 
 export interface IdentitySourceProps {
   /**
@@ -86,6 +165,24 @@ export interface IdentitySourceProps {
    */
   readonly principalEntityType?: string;
 }
+
+export interface IIdentitySource extends IResource {
+  /**
+   * Identity Source identifier.
+   *
+   * @attribute
+   */
+  readonly identitySourceId: string;
+}
+
+abstract class IdentitySourceBase extends Resource implements IIdentitySource {
+  abstract readonly identitySourceId: string;
+}
+
+export interface IdentitySourceAttributes {
+  readonly identitySourceId: string;
+}
+
 
 export class IdentitySource extends IdentitySourceBase {
   /**
@@ -132,52 +229,152 @@ export class IdentitySource extends IdentitySourceBase {
       identitySourceId,
     });
   }
-
+  private readonly configurationMode: ConfigurationMode;
   private readonly identitySource: CfnIdentitySource;
   readonly clientIds: string[];
-  readonly discoveryUrl: string;
   readonly identitySourceId: string;
-  readonly openIdIssuer: string;
-  readonly userPoolArn: string;
+  readonly issuer: string;
+  readonly userPoolArn?: string;
   readonly cognitoGroupEntityType?: string;
   readonly policyStore: IPolicyStore;
+  readonly audiencesOIDC: string[];
+  readonly principalIdClaimOIDC?: string;
+  readonly groupConfigGroupClaimOIDC?: string;
+  readonly groupConfigGroupEntityTypeOIDC?: string;
 
   constructor(scope: Construct, id: string, props: IdentitySourceProps) {
     super(scope, id);
 
-    this.clientIds =
-      props.configuration.cognitoUserPoolConfiguration.clientIds ?? [];
-    this.userPoolArn =
-      props.configuration.cognitoUserPoolConfiguration.userPool.userPoolArn;
-    const cognitoGroupConfiguration = props.configuration.cognitoUserPoolConfiguration.groupConfiguration?.groupEntityType
-      ? {
-        groupEntityType: props.configuration.cognitoUserPoolConfiguration.groupConfiguration.groupEntityType,
-      }
-      : undefined;
-    this.identitySource = new CfnIdentitySource(this, id, {
-      configuration: {
+    if (props.configuration.cognitoUserPoolConfiguration && props.configuration.openIdConnectConfiguration) {
+      throw new Error('Only one between cognitoUserPoolConfiguration or openIdConnectConfiguration must be defined');
+    }
+
+    let cfnConfiguration: CfnIdentitySource.IdentitySourceConfigurationProperty;
+    let issuer: string;
+    if (props.configuration.cognitoUserPoolConfiguration) {
+      this.clientIds = props.configuration.cognitoUserPoolConfiguration.clientIds ?? [];
+      this.audiencesOIDC = [];
+      const cognitoGroupConfiguration = props.configuration.cognitoUserPoolConfiguration.groupConfiguration?.groupEntityType
+        ? {
+          groupEntityType: props.configuration.cognitoUserPoolConfiguration.groupConfiguration.groupEntityType,
+        }
+        : undefined;
+      cfnConfiguration = {
         cognitoUserPoolConfiguration: {
           clientIds: Lazy.list({ produce: () => this.clientIds }),
-          userPoolArn: this.userPoolArn,
+          userPoolArn: props.configuration.cognitoUserPoolConfiguration.userPool.userPoolArn,
           groupConfiguration: cognitoGroupConfiguration,
         },
-      },
+      };
+      this.cognitoGroupEntityType = cognitoGroupConfiguration?.groupEntityType;
+      issuer = 'COGNITO';
+      this.configurationMode = ConfigurationMode.COGNITO;
+    } else if (props.configuration.openIdConnectConfiguration) {
+
+      if (props.configuration.openIdConnectConfiguration.accessTokenOnly &&
+        props.configuration.openIdConnectConfiguration.identityTokenOnly) {
+        throw new Error('Exactly one token selection method between accessTokenOnly and identityTokenOnly must be defined');
+      }
+
+      let tokenSelection: CfnIdentitySource.OpenIdConnectTokenSelectionProperty;
+      if (props.configuration.openIdConnectConfiguration.accessTokenOnly) {
+        if (!props.configuration.openIdConnectConfiguration.accessTokenOnly.audiences ||
+          props.configuration.openIdConnectConfiguration.accessTokenOnly.audiences.length == 0) {
+          throw new Error('At least one audience is expected in OIDC Access token selection mode');
+        }
+        this.clientIds = [];
+        this.audiencesOIDC = props.configuration.openIdConnectConfiguration.accessTokenOnly.audiences;
+        tokenSelection = {
+          accessTokenOnly: {
+            audiences: Lazy.list({ produce: () => this.audiencesOIDC }),
+            principalIdClaim: props.configuration.openIdConnectConfiguration.accessTokenOnly.principalIdClaim,
+          },
+        };
+        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.accessTokenOnly.principalIdClaim;
+        this.configurationMode = ConfigurationMode.OIDC_ACCESS_TOKEN;
+      } else if (props.configuration.openIdConnectConfiguration.identityTokenOnly) {
+        this.clientIds = props.configuration.openIdConnectConfiguration.identityTokenOnly.clientIds ?? [];
+        this.audiencesOIDC = [];
+        tokenSelection = {
+          identityTokenOnly: {
+            clientIds: Lazy.list({ produce: () => this.clientIds }),
+            principalIdClaim: props.configuration.openIdConnectConfiguration.identityTokenOnly.principalIdClaim,
+          },
+        };
+        this.principalIdClaimOIDC = props.configuration.openIdConnectConfiguration.identityTokenOnly.principalIdClaim;
+        this.configurationMode = ConfigurationMode.OIDC_ID_TOKEN;
+      } else {
+        throw new Error('One token selection method between accessTokenOnly and identityTokenOnly must be defined');
+      }
+      cfnConfiguration = {
+        openIdConnectConfiguration: {
+          issuer: props.configuration.openIdConnectConfiguration.issuer,
+          entityIdPrefix: props.configuration.openIdConnectConfiguration.entityIdPrefix,
+          groupConfiguration: props.configuration.openIdConnectConfiguration.groupConfiguration ? {
+            groupClaim: props.configuration.openIdConnectConfiguration.groupConfiguration.groupClaim,
+            groupEntityType: props.configuration.openIdConnectConfiguration.groupConfiguration.groupEntityType,
+          } : undefined,
+          tokenSelection: tokenSelection,
+        },
+      };
+      this.groupConfigGroupClaimOIDC = props.configuration.openIdConnectConfiguration.groupConfiguration?.groupClaim;
+      this.groupConfigGroupEntityTypeOIDC = props.configuration.openIdConnectConfiguration.groupConfiguration?.groupEntityType;
+      issuer = props.configuration.openIdConnectConfiguration.issuer;
+    } else {
+      throw new Error('One Identity provider configuration between cognitoUserPoolConfiguration and openIdConnectConfiguration must be defined');
+    }
+    this.identitySource = new CfnIdentitySource(this, id, {
+      configuration: cfnConfiguration,
       policyStoreId: props.policyStore.policyStoreId,
       principalEntityType: props.principalEntityType,
     });
-    this.discoveryUrl = this.identitySource.attrDetailsDiscoveryUrl;
+
+    this.userPoolArn = props.configuration.cognitoUserPoolConfiguration?.userPool.userPoolArn || undefined;
     this.identitySourceId = this.identitySource.attrIdentitySourceId;
-    this.openIdIssuer = this.identitySource.attrDetailsOpenIdIssuer;
+    this.issuer = issuer;
     this.policyStore = props.policyStore;
-    this.cognitoGroupEntityType = cognitoGroupConfiguration?.groupEntityType;
+
   }
 
   /**
    * Add a User Pool Client
+   * The method can be called only when the Identity Source is configured with Cognito auth provider
    *
    * @param userPoolClient The User Pool Client Construct.
    */
   public addUserPoolClient(userPoolClient: IUserPoolClient): void {
-    this.clientIds.push(userPoolClient.userPoolClientId);
+    if (this.configurationMode != ConfigurationMode.COGNITO) {
+      throw new Error('Cannot add User Pool Client when IdentitySource auth provider is not Cognito');
+    }
+    this.addClientId(userPoolClient.userPoolClientId);
   }
+
+  /**
+   * Add a clientId to the list
+   * The method can be called only when the Identity Source is configured with one of these configs:
+   *  - Cognito auth provider
+   *  - OIDC auth provider and ID Token Selection mode
+   *
+   * @param clientId The clientId to be added
+   */
+  public addClientId(clientId: string) {
+    if (this.configurationMode != ConfigurationMode.COGNITO && this.configurationMode != ConfigurationMode.OIDC_ID_TOKEN) {
+      throw new Error('Adding a Client ID is only supported for the auth providers Cognito or OIDC with configured with ID Token');
+    }
+    this.clientIds.push(clientId);
+  }
+
+  /**
+   * Add an audience to the list.
+   * The method can be called only when the Identity Source is configured with OIDC auth provider and Access Token Selection mode
+   *
+   * @param audience the audience to be added
+   */
+  public addAudience(audience: string) {
+    if (this.configurationMode != ConfigurationMode.OIDC_ACCESS_TOKEN) {
+      throw new Error('Cannot add audience when IdentitySource auth provider is not OIDC with Access Token');
+    }
+    this.audiencesOIDC.push(audience);
+  }
+
 }

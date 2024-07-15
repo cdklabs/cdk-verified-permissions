@@ -46,7 +46,9 @@ new IdentitySource(scope: Construct, id: string, props: IdentitySourceProps)
 | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addAudience">addAudience</a></code> | Add an audience to the list. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list The method can be called only when the Identity Source is configured with one of these configs:  - Cognito auth provider  - OIDC auth provider and ID Token Selection mode. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient">addUserPoolClient</a></code> | Add a User Pool Client The method can be called only when the Identity Source is configured with Cognito auth provider. |
 
 ---
 
@@ -80,13 +82,47 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
 ---
 
+##### `addAudience` <a name="addAudience" id="@cdklabs/cdk-verified-permissions.IdentitySource.addAudience"></a>
+
+```typescript
+public addAudience(audience: string): void
+```
+
+Add an audience to the list.
+
+The method can be called only when the Identity Source is configured with OIDC auth provider and Access Token Selection mode
+
+###### `audience`<sup>Required</sup> <a name="audience" id="@cdklabs/cdk-verified-permissions.IdentitySource.addAudience.parameter.audience"></a>
+
+- *Type:* string
+
+the audience to be added.
+
+---
+
+##### `addClientId` <a name="addClientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId"></a>
+
+```typescript
+public addClientId(clientId: string): void
+```
+
+Add a clientId to the list The method can be called only when the Identity Source is configured with one of these configs:  - Cognito auth provider  - OIDC auth provider and ID Token Selection mode.
+
+###### `clientId`<sup>Required</sup> <a name="clientId" id="@cdklabs/cdk-verified-permissions.IdentitySource.addClientId.parameter.clientId"></a>
+
+- *Type:* string
+
+The clientId to be added.
+
+---
+
 ##### `addUserPoolClient` <a name="addUserPoolClient" id="@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient"></a>
 
 ```typescript
 public addUserPoolClient(userPoolClient: IUserPoolClient): void
 ```
 
-Add a User Pool Client.
+Add a User Pool Client The method can be called only when the Identity Source is configured with Cognito auth provider.
 
 ###### `userPoolClient`<sup>Required</sup> <a name="userPoolClient" id="@cdklabs/cdk-verified-permissions.IdentitySource.addUserPoolClient.parameter.userPoolClient"></a>
 
@@ -233,13 +269,16 @@ The Identity Source identifier.
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.audiencesOIDC">audiencesOIDC</a></code> | <code>string[]</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.clientIds">clientIds</a></code> | <code>string[]</code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.discoveryUrl">discoveryUrl</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | Identity Source identifier. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.openIdIssuer">openIdIssuer</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.issuer">issuer</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType">cognitoGroupEntityType</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupClaimOIDC">groupConfigGroupClaimOIDC</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupEntityTypeOIDC">groupConfigGroupEntityTypeOIDC</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.principalIdClaimOIDC">principalIdClaimOIDC</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn">userPoolArn</a></code> | <code>string</code> | *No description.* |
 
 ---
 
@@ -286,6 +325,16 @@ The stack in which this resource is defined.
 
 ---
 
+##### `audiencesOIDC`<sup>Required</sup> <a name="audiencesOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.audiencesOIDC"></a>
+
+```typescript
+public readonly audiencesOIDC: string[];
+```
+
+- *Type:* string[]
+
+---
+
 ##### `clientIds`<sup>Required</sup> <a name="clientIds" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.clientIds"></a>
 
 ```typescript
@@ -293,16 +342,6 @@ public readonly clientIds: string[];
 ```
 
 - *Type:* string[]
-
----
-
-##### `discoveryUrl`<sup>Required</sup> <a name="discoveryUrl" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.discoveryUrl"></a>
-
-```typescript
-public readonly discoveryUrl: string;
-```
-
-- *Type:* string
 
 ---
 
@@ -318,10 +357,10 @@ Identity Source identifier.
 
 ---
 
-##### `openIdIssuer`<sup>Required</sup> <a name="openIdIssuer" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.openIdIssuer"></a>
+##### `issuer`<sup>Required</sup> <a name="issuer" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.issuer"></a>
 
 ```typescript
-public readonly openIdIssuer: string;
+public readonly issuer: string;
 ```
 
 - *Type:* string
@@ -338,20 +377,50 @@ public readonly policyStore: IPolicyStore;
 
 ---
 
-##### `userPoolArn`<sup>Required</sup> <a name="userPoolArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn"></a>
+##### `cognitoGroupEntityType`<sup>Optional</sup> <a name="cognitoGroupEntityType" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType"></a>
 
 ```typescript
-public readonly userPoolArn: string;
+public readonly cognitoGroupEntityType: string;
 ```
 
 - *Type:* string
 
 ---
 
-##### `cognitoGroupEntityType`<sup>Optional</sup> <a name="cognitoGroupEntityType" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.cognitoGroupEntityType"></a>
+##### `groupConfigGroupClaimOIDC`<sup>Optional</sup> <a name="groupConfigGroupClaimOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupClaimOIDC"></a>
 
 ```typescript
-public readonly cognitoGroupEntityType: string;
+public readonly groupConfigGroupClaimOIDC: string;
+```
+
+- *Type:* string
+
+---
+
+##### `groupConfigGroupEntityTypeOIDC`<sup>Optional</sup> <a name="groupConfigGroupEntityTypeOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.groupConfigGroupEntityTypeOIDC"></a>
+
+```typescript
+public readonly groupConfigGroupEntityTypeOIDC: string;
+```
+
+- *Type:* string
+
+---
+
+##### `principalIdClaimOIDC`<sup>Optional</sup> <a name="principalIdClaimOIDC" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.principalIdClaimOIDC"></a>
+
+```typescript
+public readonly principalIdClaimOIDC: string;
+```
+
+- *Type:* string
+
+---
+
+##### `userPoolArn`<sup>Optional</sup> <a name="userPoolArn" id="@cdklabs/cdk-verified-permissions.IdentitySource.property.userPoolArn"></a>
+
+```typescript
+public readonly userPoolArn: string;
 ```
 
 - *Type:* string
@@ -1749,7 +1818,7 @@ const identitySourceAttributes: IdentitySourceAttributes = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | The identity Source identifier. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySourceAttributes.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | *No description.* |
 
 ---
 
@@ -1760,8 +1829,6 @@ public readonly identitySourceId: string;
 ```
 
 - *Type:* string
-
-The identity Source identifier.
 
 ---
 
@@ -1780,18 +1847,33 @@ const identitySourceConfiguration: IdentitySourceConfiguration = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySourceConfiguration.property.cognitoUserPoolConfiguration">cognitoUserPoolConfiguration</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration">CognitoUserPoolConfiguration</a></code> | Cognito User Pool Configuration. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySourceConfiguration.property.openIdConnectConfiguration">openIdConnectConfiguration</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration">OpenIdConnectConfiguration</a></code> | OpenID Connect Idp configuration. |
 
 ---
 
-##### `cognitoUserPoolConfiguration`<sup>Required</sup> <a name="cognitoUserPoolConfiguration" id="@cdklabs/cdk-verified-permissions.IdentitySourceConfiguration.property.cognitoUserPoolConfiguration"></a>
+##### `cognitoUserPoolConfiguration`<sup>Optional</sup> <a name="cognitoUserPoolConfiguration" id="@cdklabs/cdk-verified-permissions.IdentitySourceConfiguration.property.cognitoUserPoolConfiguration"></a>
 
 ```typescript
 public readonly cognitoUserPoolConfiguration: CognitoUserPoolConfiguration;
 ```
 
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.CognitoUserPoolConfiguration">CognitoUserPoolConfiguration</a>
+- *Default:* no Cognito User Pool Config
 
 Cognito User Pool Configuration.
+
+---
+
+##### `openIdConnectConfiguration`<sup>Optional</sup> <a name="openIdConnectConfiguration" id="@cdklabs/cdk-verified-permissions.IdentitySourceConfiguration.property.openIdConnectConfiguration"></a>
+
+```typescript
+public readonly openIdConnectConfiguration: OpenIdConnectConfiguration;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration">OpenIdConnectConfiguration</a>
+- *Default:* no OpenID Provider config
+
+OpenID Connect Idp configuration.
 
 ---
 
@@ -1849,6 +1931,227 @@ public readonly principalEntityType: string;
 - *Default:* No principal entity type for the identity source.
 
 Principal entity type.
+
+---
+
+### OpenIdConnectAccessTokenConfiguration <a name="OpenIdConnectAccessTokenConfiguration" id="@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration.Initializer"></a>
+
+```typescript
+import { OpenIdConnectAccessTokenConfiguration } from '@cdklabs/cdk-verified-permissions'
+
+const openIdConnectAccessTokenConfiguration: OpenIdConnectAccessTokenConfiguration = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration.property.audiences">audiences</a></code> | <code>string[]</code> | The access token aud claim values that you want to accept in your policy store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration.property.principalIdClaim">principalIdClaim</a></code> | <code>string</code> | The claim that determines the principal in OIDC access tokens. |
+
+---
+
+##### `audiences`<sup>Optional</sup> <a name="audiences" id="@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration.property.audiences"></a>
+
+```typescript
+public readonly audiences: string[];
+```
+
+- *Type:* string[]
+- *Default:* no audiences
+
+The access token aud claim values that you want to accept in your policy store.
+
+---
+
+##### `principalIdClaim`<sup>Optional</sup> <a name="principalIdClaim" id="@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration.property.principalIdClaim"></a>
+
+```typescript
+public readonly principalIdClaim: string;
+```
+
+- *Type:* string
+- *Default:* no principal claim
+
+The claim that determines the principal in OIDC access tokens.
+
+---
+
+### OpenIdConnectConfiguration <a name="OpenIdConnectConfiguration" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.Initializer"></a>
+
+```typescript
+import { OpenIdConnectConfiguration } from '@cdklabs/cdk-verified-permissions'
+
+const openIdConnectConfiguration: OpenIdConnectConfiguration = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.issuer">issuer</a></code> | <code>string</code> | The issuer URL of an OIDC identity provider. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.accessTokenOnly">accessTokenOnly</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration">OpenIdConnectAccessTokenConfiguration</a></code> | The configuration for processing access tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.entityIdPrefix">entityIdPrefix</a></code> | <code>string</code> | A descriptive string that you want to prefix to user entities from your OIDC identity provider. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.groupConfiguration">groupConfiguration</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration">OpenIdConnectGroupConfiguration</a></code> | The claim in OIDC identity provider tokens that indicates a user's group membership, and the entity type that you want to map it to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.identityTokenOnly">identityTokenOnly</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration">OpenIdConnectIdentityTokenConfiguration</a></code> | The configuration for processing identity (ID) tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined. |
+
+---
+
+##### `issuer`<sup>Required</sup> <a name="issuer" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.issuer"></a>
+
+```typescript
+public readonly issuer: string;
+```
+
+- *Type:* string
+
+The issuer URL of an OIDC identity provider.
+
+This URL must have an OIDC discovery endpoint at the path .well-known/openid-configuration
+
+---
+
+##### `accessTokenOnly`<sup>Optional</sup> <a name="accessTokenOnly" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.accessTokenOnly"></a>
+
+```typescript
+public readonly accessTokenOnly: OpenIdConnectAccessTokenConfiguration;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectAccessTokenConfiguration">OpenIdConnectAccessTokenConfiguration</a>
+- *Default:* no Access Token Config
+
+The configuration for processing access tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined.
+
+---
+
+##### `entityIdPrefix`<sup>Optional</sup> <a name="entityIdPrefix" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.entityIdPrefix"></a>
+
+```typescript
+public readonly entityIdPrefix: string;
+```
+
+- *Type:* string
+- *Default:* no Entity ID Prefix
+
+A descriptive string that you want to prefix to user entities from your OIDC identity provider.
+
+---
+
+##### `groupConfiguration`<sup>Optional</sup> <a name="groupConfiguration" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.groupConfiguration"></a>
+
+```typescript
+public readonly groupConfiguration: OpenIdConnectGroupConfiguration;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration">OpenIdConnectGroupConfiguration</a>
+- *Default:* no Group Config
+
+The claim in OIDC identity provider tokens that indicates a user's group membership, and the entity type that you want to map it to.
+
+---
+
+##### `identityTokenOnly`<sup>Optional</sup> <a name="identityTokenOnly" id="@cdklabs/cdk-verified-permissions.OpenIdConnectConfiguration.property.identityTokenOnly"></a>
+
+```typescript
+public readonly identityTokenOnly: OpenIdConnectIdentityTokenConfiguration;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration">OpenIdConnectIdentityTokenConfiguration</a>
+- *Default:* no ID Token Config
+
+The configuration for processing identity (ID) tokens from your OIDC identity provider Exactly one between accessTokenOnly and identityTokenOnly must be defined.
+
+---
+
+### OpenIdConnectGroupConfiguration <a name="OpenIdConnectGroupConfiguration" id="@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration.Initializer"></a>
+
+```typescript
+import { OpenIdConnectGroupConfiguration } from '@cdklabs/cdk-verified-permissions'
+
+const openIdConnectGroupConfiguration: OpenIdConnectGroupConfiguration = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration.property.groupClaim">groupClaim</a></code> | <code>string</code> | The token claim that you want Verified Permissions to interpret as group membership. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration.property.groupEntityType">groupEntityType</a></code> | <code>string</code> | The policy store entity type that you want to map your users' group claim to. |
+
+---
+
+##### `groupClaim`<sup>Required</sup> <a name="groupClaim" id="@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration.property.groupClaim"></a>
+
+```typescript
+public readonly groupClaim: string;
+```
+
+- *Type:* string
+
+The token claim that you want Verified Permissions to interpret as group membership.
+
+---
+
+##### `groupEntityType`<sup>Required</sup> <a name="groupEntityType" id="@cdklabs/cdk-verified-permissions.OpenIdConnectGroupConfiguration.property.groupEntityType"></a>
+
+```typescript
+public readonly groupEntityType: string;
+```
+
+- *Type:* string
+
+The policy store entity type that you want to map your users' group claim to.
+
+---
+
+### OpenIdConnectIdentityTokenConfiguration <a name="OpenIdConnectIdentityTokenConfiguration" id="@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration.Initializer"></a>
+
+```typescript
+import { OpenIdConnectIdentityTokenConfiguration } from '@cdklabs/cdk-verified-permissions'
+
+const openIdConnectIdentityTokenConfiguration: OpenIdConnectIdentityTokenConfiguration = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration.property.clientIds">clientIds</a></code> | <code>string[]</code> | The ID token audience, or client ID, claim values that you want to accept in your policy store from an OIDC identity provider. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration.property.principalIdClaim">principalIdClaim</a></code> | <code>string</code> | The claim that determines the principal in OIDC access tokens. |
+
+---
+
+##### `clientIds`<sup>Optional</sup> <a name="clientIds" id="@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration.property.clientIds"></a>
+
+```typescript
+public readonly clientIds: string[];
+```
+
+- *Type:* string[]
+- *Default:* no client IDs
+
+The ID token audience, or client ID, claim values that you want to accept in your policy store from an OIDC identity provider.
+
+---
+
+##### `principalIdClaim`<sup>Optional</sup> <a name="principalIdClaim" id="@cdklabs/cdk-verified-permissions.OpenIdConnectIdentityTokenConfiguration.property.principalIdClaim"></a>
+
+```typescript
+public readonly principalIdClaim: string;
+```
+
+- *Type:* string
+- *Default:* no principal claim
+
+The claim that determines the principal in OIDC access tokens.
 
 ---
 
