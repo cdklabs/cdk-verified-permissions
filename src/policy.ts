@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { CfnPolicy } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { IResource, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
@@ -6,6 +7,7 @@ import { checkParsePolicy } from './cedar-helpers';
 import { IPolicyStore } from './policy-store';
 import { IPolicyTemplate } from './policy-template';
 
+export const POLICY_DESC_SUFFIX_FROM_FILE = ' - Created by CDK';
 export interface EntityIdentifierProperty {
   /**
    * The identifier of an entity.
@@ -194,11 +196,12 @@ export class Policy extends PolicyBase {
   ): Policy {
     const policyFileContents = fs.readFileSync(props.path).toString();
     checkParsePolicy(policyFileContents);
+    let relativePath = path.basename(props.path);
     return new Policy(scope, id, {
       definition: {
         static: {
           statement: policyFileContents,
-          description: props.description || `${props.path} - Created by CDK`,
+          description: props.description || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`,
         },
       },
       policyStore: props.policyStore,
