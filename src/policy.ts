@@ -7,6 +7,7 @@ import { checkParsePolicy, getPolicyDescription } from './cedar-helpers';
 import { IPolicyStore } from './policy-store';
 import { IPolicyTemplate } from './policy-template';
 
+export const POLICY_DESC_SUFFIX_FROM_FILE = ' - Created by CDK';
 export interface EntityIdentifierProperty {
   /**
    * The identifier of an entity.
@@ -195,7 +196,8 @@ export class Policy extends PolicyBase {
   ): Policy {
     const policyFileContents = fs.readFileSync(props.path).toString();
     checkParsePolicy(policyFileContents);
-    let policyDescription = props.description || getPolicyDescription(policyFileContents) || path.basename(props.path) + '- Created by CDK';
+    let relativePath = path.basename(props.path);
+    let policyDescription = props.description || getPolicyDescription(policyFileContents) || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`;
     return new Policy(scope, id, {
       definition: {
         static: {
