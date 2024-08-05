@@ -336,7 +336,7 @@ when { true };`;
   });
 
   describe('Import policy from file', () => {
-    test('Importing a syntactically valid policy from a file should succeed', () => {
+    test('Importing a syntactically valid policy from a file should succeed and policy description should contains base path of file', () => {
       // GIVEN
       const stack = new Stack();
       const policyStore = new PolicyStore(stack, 'PolicyStore', {
@@ -344,13 +344,15 @@ when { true };`;
           mode: ValidationSettingsMode.OFF,
         },
       });
+      let basePath = 'policy1.cedar';
+      let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
 
       // WHEN
       const policy = Policy.fromFile(
         stack,
         'ImportedPolicy',
         {
-          path: path.join(__dirname, 'test-policies', 'all-valid', 'policy1.cedar'),
+          path: policyPath,
           policyStore,
         },
       );
@@ -358,8 +360,69 @@ when { true };`;
       // THEN
       expect(policy.policyId).toBeDefined();
       expect(policy.policyType).toEqual(PolicyType.STATIC);
+      expect(policy.definition.static?.description).toContain(basePath);
       const policyStatement = policy.definition.static?.statement;
       expect(policyStatement).toEqual('permit(principal, action, resource);');
+    });
+
+    test('Importing a syntactically valid policy from a file should succeed and policy description should be the one in the Cedar annotation', () => {
+      // GIVEN
+      const stack = new Stack();
+      const policyStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+      });
+      let basePath = 'policy1_with_desc_annotation.cedar';
+      let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+
+      // WHEN
+      const policy = Policy.fromFile(
+        stack,
+        'ImportedPolicy',
+        {
+          path: policyPath,
+          policyStore,
+        },
+      );
+
+      // THEN
+      expect(policy.policyId).toBeDefined();
+      expect(policy.policyType).toEqual(PolicyType.STATIC);
+      expect(policy.definition.static?.description).toBe('I am a description');
+      const policyStatement = policy.definition.static?.statement;
+      expect(policyStatement).toEqual('@AvpPolicyDescription("I am a description")\npermit(principal, action, resource);');
+    });
+
+    test('Importing a syntactically valid policy from a file should succeed. If policy description is explicited it should take precedence over the one in the Cedar annotation', () => {
+      // GIVEN
+      const stack = new Stack();
+      const policyStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+      });
+      let basePath = 'policy1_with_desc_annotation.cedar';
+      let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+      let testDesc = 'testDescription';
+
+      // WHEN
+      const policy = Policy.fromFile(
+        stack,
+        'ImportedPolicy',
+        {
+          path: policyPath,
+          policyStore,
+          description: testDesc,
+        },
+      );
+
+      // THEN
+      expect(policy.policyId).toBeDefined();
+      expect(policy.policyType).toEqual(PolicyType.STATIC);
+      expect(policy.definition.static?.description).toBe(testDesc);
+      const policyStatement = policy.definition.static?.statement;
+      expect(policyStatement).toEqual('@AvpPolicyDescription("I am a description")\npermit(principal, action, resource);');
     });
 
     test('Importing a syntactically invalid policy from a file should fail', () => {

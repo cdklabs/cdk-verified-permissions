@@ -1,8 +1,9 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { CfnPolicy } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { IResource, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
-import { checkParsePolicy } from './cedar-helpers';
+import { checkParsePolicy, getPolicyDescription } from './cedar-helpers';
 import { IPolicyStore } from './policy-store';
 import { IPolicyTemplate } from './policy-template';
 
@@ -194,11 +195,12 @@ export class Policy extends PolicyBase {
   ): Policy {
     const policyFileContents = fs.readFileSync(props.path).toString();
     checkParsePolicy(policyFileContents);
+    let policyDescription = props.description || getPolicyDescription(policyFileContents) || path.basename(props.path) + '- Created by CDK';
     return new Policy(scope, id, {
       definition: {
         static: {
           statement: policyFileContents,
-          description: props.description || `${props.path} - Created by CDK`,
+          description: policyDescription,
         },
       },
       policyStore: props.policyStore,
