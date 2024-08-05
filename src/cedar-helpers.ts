@@ -1,6 +1,8 @@
 
 import * as cedar from '@cedar-policy/cedar-wasm/nodejs';
 
+export const POLICY_DESCRIPTION_ANNOTATION = '@AvpPolicyDescription';
+
 export function checkParseSchema(schemaStr: string) {
   const schemaParseResult = cedar.checkParseSchema(schemaStr);
   if (schemaParseResult.type === 'error') {
@@ -13,6 +15,17 @@ export function checkParsePolicy(policyStatement: string) {
   if (parsePolicyResult.type == 'error') {
     throw new Error(`Invalid policy statement: ${policyStatement}. Errors: ${parsePolicyResult.errors.join(', ')}`);
   }
+}
+
+/**
+ * Extracts the Description of the Policy searching for the 'AVPPolicyDescription' annotation on top of policy contents (before effect)
+ * @param policyStatement The policy statement in string format
+ * @returns Returns the description if found or null
+ */
+export function getPolicyDescription(policyStatement: string): string | null {
+  const regex = new RegExp(String.raw`^${POLICY_DESCRIPTION_ANNOTATION}\(("|')(.*)("|')(\))([\r\n|\r|\n| ]*)(permit|forbid)`);
+  let matches = policyStatement.match(regex);
+  return (matches) ? matches[2] : null;
 }
 
 export function checkParseTemplate(templateStatement: string) {

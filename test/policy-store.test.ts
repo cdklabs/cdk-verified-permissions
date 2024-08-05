@@ -546,10 +546,11 @@ describe('Policy store with policies from a path', () => {
     );
 
     const policyDefns = Template.fromStack(stack).findResources('AWS::VerifiedPermissions::Policy');
-    expect(Object.keys(policyDefns)).toHaveLength(2);
+    expect(Object.keys(policyDefns)).toHaveLength(3);
     const statements = Object.values(policyDefns).map(cfnPolicy => cfnPolicy.Properties.Definition.Static.Statement);
     expect(statements).toStrictEqual([
       fs.readFileSync('test/test-policies/all-valid/policy1.cedar', 'utf-8'),
+      fs.readFileSync('test/test-policies/all-valid/policy1_with_desc_annotation.cedar', 'utf-8'),
       fs.readFileSync('test/test-policies/all-valid/policy2.cedar', 'utf-8'),
     ]);
   });
