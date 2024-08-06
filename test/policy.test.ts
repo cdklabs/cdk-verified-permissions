@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
@@ -6,7 +7,7 @@ import {
   CfnPolicyTemplate,
 } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
-import { Policy, PolicyDefinitionProperty, PolicyType } from '../src/policy';
+import { Policy, PolicyDefinitionProperty, PolicyType, POLICY_DESC_SUFFIX_FROM_FILE } from '../src/policy';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 import { PolicyTemplate } from '../src/policy-template';
 
@@ -344,13 +345,15 @@ when { true };`;
           mode: ValidationSettingsMode.OFF,
         },
       });
-
+      let basePath = 'policy1.cedar';
+      let fullPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+      let fileContents = fs.readFileSync(fullPath, 'utf8');
       // WHEN
       const policy = Policy.fromFile(
         stack,
         'ImportedPolicy',
         {
-          path: path.join(__dirname, 'test-policies', 'all-valid', 'policy1.cedar'),
+          path: fullPath,
           policyStore,
         },
       );
@@ -358,8 +361,26 @@ when { true };`;
       // THEN
       expect(policy.policyId).toBeDefined();
       expect(policy.policyType).toEqual(PolicyType.STATIC);
-      const policyStatement = policy.definition.static?.statement;
-      expect(policyStatement).toEqual('permit(principal, action, resource);');
+      expect(policy.definition.static?.description).toContain(basePath);
+      expect(policy.definition.static?.statement).toEqual(fileContents);
+      // Validate Cfn properties
+      Template.fromStack(stack).hasResourceProperties(
+        'AWS::VerifiedPermissions::Policy',
+        {
+          Definition: {
+            Static: {
+              Description: basePath + POLICY_DESC_SUFFIX_FROM_FILE,
+              Statement: fileContents,
+            },
+          },
+          PolicyStoreId: {
+            'Fn::GetAtt': [
+              getResourceLogicalId(policyStore, CfnPolicyStore),
+              'PolicyStoreId',
+            ],
+          },
+        },
+      );
     });
 
     test('Importing a syntactically invalid policy from a file should fail', () => {
