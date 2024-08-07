@@ -145,7 +145,6 @@ export interface IdentitySourceConfiguration {
   readonly openIdConnectConfiguration?: OpenIdConnectConfiguration;
 }
 
-
 export interface IdentitySourceProps {
   /**
    *  Identity Source configuration.

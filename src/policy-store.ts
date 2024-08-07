@@ -12,12 +12,12 @@ import {
   WRITE_ACTIONS,
 } from './private/permissions';
 
-export interface ISchema {
-  cedarJson: string;
+export interface Schema {
+  readonly cedarJson: string;
 }
 
-export interface IValidationSettings {
-  mode: ValidationSettingsMode;
+export interface ValidationSettings {
+  readonly mode: ValidationSettingsMode;
 }
 
 /**
@@ -86,14 +86,14 @@ export interface PolicyStoreProps {
    *
    * @default - No schema.
    */
-  readonly schema?: ISchema;
+  readonly schema?: Schema;
 
   /**
    * The policy store's validation settings.
    *
    * @default - If not provided, the Policy store will be created with ValidationSettingsMode = "OFF"
    */
-  readonly validationSettings: IValidationSettings;
+  readonly validationSettings: ValidationSettings;
 
   /**
    * The policy store's description
@@ -315,12 +315,12 @@ export class PolicyStore extends PolicyStoreBase {
   /**
    * Schema definition of the Policy Store.
    */
-  readonly schema?: ISchema;
+  readonly schema?: Schema;
 
   /**
    * Validation Settings of the Policy Store.
    */
-  readonly validationSettings: IValidationSettings;
+  readonly validationSettings: ValidationSettings;
 
   /**
    * Description of the Policy Store
@@ -346,7 +346,9 @@ export class PolicyStore extends PolicyStoreBase {
           cedarJson: props.schema.cedarJson,
         }
         : undefined,
-      validationSettings: props.validationSettings,
+      validationSettings: {
+        mode: props.validationSettings.mode,
+      },
       description: props.description,
     });
     this.policyStoreArn = this.getResourceArnAttribute(
