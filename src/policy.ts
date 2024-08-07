@@ -119,7 +119,7 @@ abstract class PolicyBase extends Resource implements IPolicy {
   abstract readonly policyType: PolicyType;
 }
 
-export interface IStaticPolicyFromFileProps {
+export interface StaticPolicyFromFileProps {
   /**
    * The path to the file to be read which contains a single cedar statement representing a policy
    */
@@ -192,7 +192,7 @@ export class Policy extends PolicyBase {
   public static fromFile(
     scope: Construct,
     id: string,
-    props: IStaticPolicyFromFileProps,
+    props: StaticPolicyFromFileProps,
   ): Policy {
     const policyFileContents = fs.readFileSync(props.path).toString();
     checkParsePolicy(policyFileContents);
