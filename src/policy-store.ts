@@ -293,6 +293,78 @@ export class PolicyStore extends PolicyStoreBase {
     return buildSchema(namespace, actionNames, groupEntityTypeName);
   }
 
+  /**
+   * This method generates a schema based on a JSON CloudFormation template containing exactly one
+   * RestApi. It makes the same assumptions and decisions made in the Amazon Verified Permissions console.
+   *
+   * @param cfTemplateFilePath absolute path to a CloudFormation template file in the local directory structure, in json format
+   * @param groupEntityTypeName optional parameter to specify the group entity type name. If passed, the schema's User type will have a parent of this type.
+   */
+  public static schemaFromCfTemplate(cfTemplateFilePath: string, groupEntityTypeName?: string) {
+    /**
+     * Builds the full path of an AWS::ApiGateway::Method by traversing up the resource hierarchy.
+     */
+    function buildResourcePath(cfTemplate: any, startResourceId: string): string {
+      let currResourceId: string | undefined = startResourceId;
+      const parts: string[] = [];
+      while (currResourceId) {
+        const resource: any = cfTemplate.Resources[currResourceId];
+        if (!resource || resource.Type !== 'AWS::ApiGateway::Resource') {
+          break;
+        }
+        parts.push(resource.Properties.PathPart);
+        currResourceId = resource.Properties.ParentId.Ref;
+      }
+      return '/' + parts.reverse().join('/');
+    }
+
+    const RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
+    const cfTemplateString = fs.readFileSync(cfTemplateFilePath, 'utf-8');
+    const cfTemplate = JSON.parse(cfTemplateString) as any;
+    if (!cfTemplate.Resources) {
+      throw new Error('Invalid CF template - missing Resources object');
+    }
+    const resources = cfTemplate.Resources;
+
+    let apiResource;
+    for (const key in resources) {
+      const resource = resources[key];
+      if (resource.Type === 'AWS::ApiGateway::RestApi') {
+        if (apiResource) {
+          throw new Error('Invalid CF template - multiple RestApis found');
+        }
+        apiResource = resource;
+      }
+    }
+    if (!apiResource) {
+      throw new Error('Invalid CF template - no RestApi found');
+    }
+    if (!apiResource.Properties.Name) {
+      throw new Error('Invalid CF template - RestApi missing Name property');
+    }
+    const namespace = cleanUpApiNameForNamespace(apiResource.Properties.Name);
+
+    const actionNames = [];
+    for (const key in resources) {
+      const resource = resources[key];
+      if (resource.Type !== 'AWS::ApiGateway::Method') {
+        continue;
+      }
+      const httpMethod = resource.Properties.HttpMethod.toLowerCase();
+      const pathUrl = buildResourcePath(cfTemplate, resource.Properties.ResourceId.Ref);
+
+      if (httpMethod === 'any') {
+        for (const method of RELEVANT_HTTP_METHODS) {
+          actionNames.push(`${method} ${pathUrl}`);
+        }
+      } else if (RELEVANT_HTTP_METHODS.includes(httpMethod)) {
+        actionNames.push(`${httpMethod} ${pathUrl}`);
+      }
+    }
+
+    return buildSchema(namespace, actionNames, groupEntityTypeName);
+  }
+
   private readonly policyStore: CfnPolicyStore;
   /**
    * ARN of the Policy Store.

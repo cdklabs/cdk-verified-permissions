@@ -966,6 +966,7 @@ Permits an IAM principal all write & read operations on the policy store: Create
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.fromPolicyStoreArn">fromPolicyStoreArn</a></code> | Create a PolicyStore construct that represents an external PolicyStore via policy store arn. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.fromPolicyStoreAttributes">fromPolicyStoreAttributes</a></code> | Creates a PolicyStore construct that represents an external Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.fromPolicyStoreId">fromPolicyStoreId</a></code> | Create a PolicyStore construct that represents an external policy store via policy store id. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromCfTemplate">schemaFromCfTemplate</a></code> | This method generates a schema based on a JSON CloudFormation template containing exactly one RestApi. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromOpenApiSpec">schemaFromOpenApiSpec</a></code> | This method generates a schema based on an swagger file. |
 
 ---
@@ -1119,6 +1120,36 @@ The construct's name.
 - *Type:* string
 
 The PolicyStore's id.
+
+---
+
+##### `schemaFromCfTemplate` <a name="schemaFromCfTemplate" id="@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromCfTemplate"></a>
+
+```typescript
+import { PolicyStore } from '@cdklabs/cdk-verified-permissions'
+
+PolicyStore.schemaFromCfTemplate(cfTemplateFilePath: string, groupEntityTypeName?: string)
+```
+
+This method generates a schema based on a JSON CloudFormation template containing exactly one RestApi.
+
+It makes the same assumptions and decisions made in the Amazon Verified Permissions console.
+
+###### `cfTemplateFilePath`<sup>Required</sup> <a name="cfTemplateFilePath" id="@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromCfTemplate.parameter.cfTemplateFilePath"></a>
+
+- *Type:* string
+
+absolute path to a CloudFormation template file in the local directory structure, in json format.
+
+---
+
+###### `groupEntityTypeName`<sup>Optional</sup> <a name="groupEntityTypeName" id="@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromCfTemplate.parameter.groupEntityTypeName"></a>
+
+- *Type:* string
+
+optional parameter to specify the group entity type name.
+
+If passed, the schema's User type will have a parent of this type.
 
 ---
 

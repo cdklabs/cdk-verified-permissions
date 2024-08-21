@@ -1,0 +1,118 @@
+{
+  "Resources": {
+    "PodcastAppApi262252D3": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "PodcastApp"
+      }
+    },
+    "PodcastAppApiartistsGET932A4BE6": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "ResourceId": {
+          "Ref": "PodcastAppApiartistsE74E9D28"
+        }
+      }
+    },
+    "PodcastAppApiartistsPOSTE5F58123": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "ResourceId": {
+          "Ref": "PodcastAppApiartistsE74E9D28"
+        }
+      }
+    },
+    "PodcastAppApiartistsDELETED8ECABA1": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "DELETE",
+        "ResourceId": {
+          "Ref": "PodcastAppApiartistsE74E9D28"
+        }
+      }
+    },
+    "PodcastAppApiartistsartistId67271C01": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "PodcastAppApiartistsE74E9D28"
+        },
+        "PathPart": "{artistId}"
+      }
+    },
+    "PodcastAppApiartistsartistIdDELETE33FE0AE3": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "DELETE",
+        "ResourceId": {
+          "Ref": "PodcastAppApiartistsartistId67271C01"
+        }
+      }
+    },
+    "PodcastAppApiartistsartistIdPATCH59F1CFD1": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "PATCH",
+        "ResourceId": {
+          "Ref": "PodcastAppApiartistsartistId67271C01"
+        }
+      }
+    },
+    "PodcastAppApipodcasts497B898A": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": ["PodcastAppApi262252D3", "RootResourceId"]
+        },
+        "PathPart": "podcasts"
+      }
+    },
+    "PodcastAppApipodcastsGET85451B06": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "ResourceId": {
+          "Ref": "PodcastAppApipodcasts497B898A"
+        }
+      }
+    },
+    "PodcastAppApipodcastsPOSTFC659675": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "ResourceId": {
+          "Ref": "PodcastAppApipodcasts497B898A"
+        }
+      }
+    },
+    "PodcastAppApipodcastsDELETE86D19CD6": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "DELETE",
+        "ResourceId": {
+          "Ref": "PodcastAppApipodcasts497B898A"
+        }
+      }
+    },
+    "PodcastAppApipodcastspodcastId41A31CCC": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "PodcastAppApipodcasts497B898A"
+        },
+        "PathPart": "{podcastId}"
+      }
+    },
+    "PodcastAppApipodcastspodcastIdANY3158475C": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "ANY",
+        "ResourceId": {
+          "Ref": "PodcastAppApipodcastspodcastId41A31CCC"
+        }
+      }
+    }
+  }
+}

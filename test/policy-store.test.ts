@@ -689,3 +689,155 @@ describe('generating schemas from OpenApi specs', () => {
     expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
   });
 });
+
+describe('generating schemas from CloudFormation templates', () => {
+  const BASE_TEMPLATE_NAME = 'podcastappcloudformation.json';
+
+  function getBaseTemplate(): any {
+    return JSON.parse(
+      fs.readFileSync(path.join(__dirname, BASE_TEMPLATE_NAME), 'utf-8'),
+    );
+  }
+
+  const invalidTemplateTests: {
+    name: string;
+    path: string;
+    wantErr: string;
+    transform: (template: any) => any;
+  }[] = [
+    {
+      name: 'no resources',
+      path: 'podcastappcloudformation-no-resources.json',
+      wantErr: 'Invalid CF template - missing Resources object',
+      transform: (template) => {
+        delete template.Resources;
+        return template;
+      },
+    },
+    {
+      name: 'multiple rest apis',
+      path: 'podcastappcloudformation-multiple-rest-apis.json',
+      wantErr: 'Invalid CF template - multiple RestApis found',
+      transform: (template) => {
+        const restApiKey = Object.keys(template.Resources).find(
+          (key) => template.Resources[key].Type === 'AWS::ApiGateway::RestApi',
+        );
+        template.Resources.RestApi2 = template.Resources[restApiKey!];
+        return template;
+      },
+    },
+    {
+      name: 'no rest api',
+      path: 'podcastappcloudformation-no-rest-api.json',
+      wantErr: 'Invalid CF template - no RestApi found',
+      transform: (template) => {
+        const restApiKey = Object.keys(template.Resources).find(
+          (key) => template.Resources[key].Type === 'AWS::ApiGateway::RestApi',
+        );
+        delete template.Resources[restApiKey!];
+        return template;
+      },
+    },
+    {
+      name: 'rest api missing name',
+      path: 'podcastappcloudformation-rest-api-missing-name.json',
+      wantErr: 'Invalid CF template - RestApi missing Name property',
+      transform: (template) => {
+        const restApiKey = Object.keys(template.Resources).find(
+          (key) => template.Resources[key].Type === 'AWS::ApiGateway::RestApi',
+        );
+        delete template.Resources[restApiKey!].Properties.Name;
+        return template;
+      },
+    },
+  ];
+
+  beforeAll(() => {
+    for (const test of invalidTemplateTests) {
+      fs.writeFileSync(
+        path.join(__dirname, test.path),
+        JSON.stringify(test.transform(getBaseTemplate()), null, 2),
+      );
+    }
+  });
+
+  afterAll(() => {
+    for (const test of invalidTemplateTests) {
+      if (fs.existsSync(path.join(__dirname, test.path))) {
+        fs.unlinkSync(path.join(__dirname, test.path));
+      }
+    }
+  });
+
+  test('generate schema from CF template fails if template does not exist', () => {
+    expect(() => {
+      PolicyStore.schemaFromCfTemplate(
+        path.join(__dirname, 'non-existent-template.json'),
+      );
+    }).toThrow();
+  });
+
+  test('generate schema from CF template fails if template is invalid', () => {
+    for (const test of invalidTemplateTests) {
+      expect(() => {
+        PolicyStore.schemaFromCfTemplate(path.join(__dirname, test.path));
+      }).toThrow(test.wantErr);
+    }
+  });
+
+  test('generate schema from CF template with userGroups', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const schema = PolicyStore.schemaFromCfTemplate(
+      path.join(__dirname, BASE_TEMPLATE_NAME),
+      'UserGroup',
+    );
+    const pStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.STRICT,
+      },
+      schema: {
+        cedarJson: JSON.stringify(schema),
+      },
+    });
+
+    // THEN
+    expect(pStore.schema?.cedarJson).toBeDefined();
+    expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
+      'UserGroup',
+      'User',
+      'Application',
+    ]);
+    // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
+    expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+  });
+
+  test('generate schema from CF template without userGroups', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const schema = PolicyStore.schemaFromCfTemplate(
+      path.join(__dirname, BASE_TEMPLATE_NAME),
+    );
+    const pStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.STRICT,
+      },
+      schema: {
+        cedarJson: JSON.stringify(schema),
+      },
+    });
+
+    // THEN
+    expect(pStore.schema?.cedarJson).toBeDefined();
+    expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
+      'User',
+      'Application',
+    ]);
+    // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
+    expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+  });
+});
