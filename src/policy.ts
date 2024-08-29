@@ -202,7 +202,7 @@ export class Policy extends PolicyBase {
       definition: {
         static: {
           statement: policyFileContents,
-          description: props.description || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`,
+          description: policyDescription,
         },
       },
       policyStore: props.policyStore,
