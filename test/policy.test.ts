@@ -7,10 +7,10 @@ import {
   CfnPolicyTemplate,
 } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
+import { POLICY_DESCRIPTION_ANNOTATION } from '../src/cedar-helpers';
 import { Policy, PolicyDefinitionProperty, PolicyType, POLICY_DESC_SUFFIX_FROM_FILE } from '../src/policy';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 import { PolicyTemplate } from '../src/policy-template';
-import { POLICY_DESCRIPTION_ANNOTATION } from '../src/cedar-helpers';
 
 describe('Policy creation', () => {
   // Example static statement to reuse
