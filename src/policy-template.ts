@@ -37,7 +37,7 @@ export interface PolicyTemplateProps {
   readonly policyStore: IPolicyStore;
 }
 
-export interface ITemplateFromFileProps {
+export interface TemplateFromFileProps {
   /**
    * The path to the file to be read which contains a single cedar statement representing a policy template
    */
@@ -112,7 +112,7 @@ export class PolicyTemplate extends PolicyTemplateBase {
   public static fromFile(
     scope: Construct,
     id: string,
-    props: ITemplateFromFileProps,
+    props: TemplateFromFileProps,
   ): PolicyTemplate {
     const templateFileContents = fs.readFileSync(props.path).toString();
     checkParseTemplate(templateFileContents);

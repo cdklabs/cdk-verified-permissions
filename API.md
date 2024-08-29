@@ -573,7 +573,7 @@ Check whether the given construct is a Resource.
 ```typescript
 import { Policy } from '@cdklabs/cdk-verified-permissions'
 
-Policy.fromFile(scope: Construct, id: string, props: IStaticPolicyFromFileProps)
+Policy.fromFile(scope: Construct, id: string, props: StaticPolicyFromFileProps)
 ```
 
 Create a policy based on a file containing a cedar policy.
@@ -601,7 +601,7 @@ The construct id.
 
 ###### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-verified-permissions.Policy.fromFile.parameter.props"></a>
 
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps">IStaticPolicyFromFileProps</a>
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps">StaticPolicyFromFileProps</a>
 
 A `StaticPolicyFromFileProps` object.
 
@@ -1165,9 +1165,9 @@ If passed, the schema's User type will have a parent of this type.
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreArn">policyStoreArn</a></code> | <code>string</code> | ARN of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreId">policyStoreId</a></code> | <code>string</code> | ID of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreName">policyStoreName</a></code> | <code>string</code> | Name of the Policy Store. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a></code> | Validation Settings of the Policy Store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | Validation Settings of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.description">description</a></code> | <code>string</code> | Description of the Policy Store. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a></code> | Schema definition of the Policy Store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | Schema definition of the Policy Store. |
 
 ---
 
@@ -1253,10 +1253,10 @@ Name of the Policy Store.
 ##### `validationSettings`<sup>Required</sup> <a name="validationSettings" id="@cdklabs/cdk-verified-permissions.PolicyStore.property.validationSettings"></a>
 
 ```typescript
-public readonly validationSettings: IValidationSettings;
+public readonly validationSettings: ValidationSettings;
 ```
 
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a>
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a>
 
 Validation Settings of the Policy Store.
 
@@ -1277,10 +1277,10 @@ Description of the Policy Store.
 ##### `schema`<sup>Optional</sup> <a name="schema" id="@cdklabs/cdk-verified-permissions.PolicyStore.property.schema"></a>
 
 ```typescript
-public readonly schema: ISchema;
+public readonly schema: Schema;
 ```
 
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a>
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a>
 
 Schema definition of the Policy Store.
 
@@ -1432,7 +1432,7 @@ Check whether the given construct is a Resource.
 ```typescript
 import { PolicyTemplate } from '@cdklabs/cdk-verified-permissions'
 
-PolicyTemplate.fromFile(scope: Construct, id: string, props: ITemplateFromFileProps)
+PolicyTemplate.fromFile(scope: Construct, id: string, props: TemplateFromFileProps)
 ```
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.fromFile.parameter.scope"></a>
@@ -1449,7 +1449,7 @@ PolicyTemplate.fromFile(scope: Construct, id: string, props: ITemplateFromFilePr
 
 ###### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.fromFile.parameter.props"></a>
 
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.ITemplateFromFileProps">ITemplateFromFileProps</a>
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.TemplateFromFileProps">TemplateFromFileProps</a>
 
 ---
 
@@ -2354,19 +2354,19 @@ const policyStoreProps: PolicyStoreProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a></code> | The policy store's validation settings. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | The policy store's validation settings. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.description">description</a></code> | <code>string</code> | The policy store's description. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a></code> | This attribute is not required from an API point of view. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | This attribute is not required from an API point of view. |
 
 ---
 
 ##### `validationSettings`<sup>Required</sup> <a name="validationSettings" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.validationSettings"></a>
 
 ```typescript
-public readonly validationSettings: IValidationSettings;
+public readonly validationSettings: ValidationSettings;
 ```
 
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a>
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a>
 - *Default:* If not provided, the Policy store will be created with ValidationSettingsMode = "OFF"
 
 The policy store's validation settings.
@@ -2389,10 +2389,10 @@ The policy store's description.
 ##### `schema`<sup>Optional</sup> <a name="schema" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema"></a>
 
 ```typescript
-public readonly schema: ISchema;
+public readonly schema: Schema;
 ```
 
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a>
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a>
 - *Default:* No schema.
 
 This attribute is not required from an API point of view.
@@ -2490,6 +2490,34 @@ The description to attach to the new or updated policy template.
 
 ---
 
+### Schema <a name="Schema" id="@cdklabs/cdk-verified-permissions.Schema"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.Schema.Initializer"></a>
+
+```typescript
+import { Schema } from '@cdklabs/cdk-verified-permissions'
+
+const schema: Schema = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Schema.property.cedarJson">cedarJson</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `cedarJson`<sup>Required</sup> <a name="cedarJson" id="@cdklabs/cdk-verified-permissions.Schema.property.cedarJson"></a>
+
+```typescript
+public readonly cedarJson: string;
+```
+
+- *Type:* string
+
+---
+
 ### StaticPolicyDefinitionProperty <a name="StaticPolicyDefinitionProperty" id="@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.Initializer"></a>
@@ -2531,6 +2559,118 @@ public readonly description: string;
 - *Default:* Empty description.
 
 The description of the static policy.
+
+---
+
+### StaticPolicyFromFileProps <a name="StaticPolicyFromFileProps" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.Initializer"></a>
+
+```typescript
+import { StaticPolicyFromFileProps } from '@cdklabs/cdk-verified-permissions'
+
+const staticPolicyFromFileProps: StaticPolicyFromFileProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy will be created under. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
+
+---
+
+##### `path`<sup>Required</sup> <a name="path" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.path"></a>
+
+```typescript
+public readonly path: string;
+```
+
+- *Type:* string
+
+The path to the file to be read which contains a single cedar statement representing a policy.
+
+---
+
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.policyStore"></a>
+
+```typescript
+public readonly policyStore: IPolicyStore;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+
+The policy store that the policy will be created under.
+
+---
+
+##### `description`<sup>Optional</sup> <a name="description" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description"></a>
+
+```typescript
+public readonly description: string;
+```
+
+- *Type:* string
+
+The description of the static policy.
+
+---
+
+### TemplateFromFileProps <a name="TemplateFromFileProps" id="@cdklabs/cdk-verified-permissions.TemplateFromFileProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.TemplateFromFileProps.Initializer"></a>
+
+```typescript
+import { TemplateFromFileProps } from '@cdklabs/cdk-verified-permissions'
+
+const templateFromFileProps: TemplateFromFileProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.TemplateFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy template. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.TemplateFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy template will be created under. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.TemplateFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the plicy template. |
+
+---
+
+##### `path`<sup>Required</sup> <a name="path" id="@cdklabs/cdk-verified-permissions.TemplateFromFileProps.property.path"></a>
+
+```typescript
+public readonly path: string;
+```
+
+- *Type:* string
+
+The path to the file to be read which contains a single cedar statement representing a policy template.
+
+---
+
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.TemplateFromFileProps.property.policyStore"></a>
+
+```typescript
+public readonly policyStore: IPolicyStore;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+
+The policy store that the policy template will be created under.
+
+---
+
+##### `description`<sup>Optional</sup> <a name="description" id="@cdklabs/cdk-verified-permissions.TemplateFromFileProps.property.description"></a>
+
+```typescript
+public readonly description: string;
+```
+
+- *Type:* string
+
+The description of the plicy template.
 
 ---
 
@@ -2589,6 +2729,34 @@ public readonly resource: EntityIdentifierProperty;
 - *Default:* No Resource. It is set to unspecified.
 
 The resource associated with this template-linked policy.
+
+---
+
+### ValidationSettings <a name="ValidationSettings" id="@cdklabs/cdk-verified-permissions.ValidationSettings"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.ValidationSettings.Initializer"></a>
+
+```typescript
+import { ValidationSettings } from '@cdklabs/cdk-verified-permissions'
+
+const validationSettings: ValidationSettings = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings.property.mode">mode</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettingsMode">ValidationSettingsMode</a></code> | *No description.* |
+
+---
+
+##### `mode`<sup>Required</sup> <a name="mode" id="@cdklabs/cdk-verified-permissions.ValidationSettings.property.mode"></a>
+
+```typescript
+public readonly mode: ValidationSettingsMode;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettingsMode">ValidationSettingsMode</a>
 
 ---
 
@@ -2988,154 +3156,6 @@ public readonly policyTemplateId: string;
 - *Type:* string
 
 The ID of the policy template.
-
----
-
-### ISchema <a name="ISchema" id="@cdklabs/cdk-verified-permissions.ISchema"></a>
-
-- *Implemented By:* <a href="#@cdklabs/cdk-verified-permissions.ISchema">ISchema</a>
-
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.ISchema.property.cedarJson">cedarJson</a></code> | <code>string</code> | *No description.* |
-
----
-
-##### `cedarJson`<sup>Required</sup> <a name="cedarJson" id="@cdklabs/cdk-verified-permissions.ISchema.property.cedarJson"></a>
-
-```typescript
-public readonly cedarJson: string;
-```
-
-- *Type:* string
-
----
-
-### IStaticPolicyFromFileProps <a name="IStaticPolicyFromFileProps" id="@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps"></a>
-
-- *Implemented By:* <a href="#@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps">IStaticPolicyFromFileProps</a>
-
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy will be created under. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
-
----
-
-##### `path`<sup>Required</sup> <a name="path" id="@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps.property.path"></a>
-
-```typescript
-public readonly path: string;
-```
-
-- *Type:* string
-
-The path to the file to be read which contains a single cedar statement representing a policy.
-
----
-
-##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps.property.policyStore"></a>
-
-```typescript
-public readonly policyStore: IPolicyStore;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
-
-The policy store that the policy will be created under.
-
----
-
-##### `description`<sup>Optional</sup> <a name="description" id="@cdklabs/cdk-verified-permissions.IStaticPolicyFromFileProps.property.description"></a>
-
-```typescript
-public readonly description: string;
-```
-
-- *Type:* string
-
-The description of the static policy.
-
----
-
-### ITemplateFromFileProps <a name="ITemplateFromFileProps" id="@cdklabs/cdk-verified-permissions.ITemplateFromFileProps"></a>
-
-- *Implemented By:* <a href="#@cdklabs/cdk-verified-permissions.ITemplateFromFileProps">ITemplateFromFileProps</a>
-
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.ITemplateFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy template. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.ITemplateFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy template will be created under. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.ITemplateFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the plicy template. |
-
----
-
-##### `path`<sup>Required</sup> <a name="path" id="@cdklabs/cdk-verified-permissions.ITemplateFromFileProps.property.path"></a>
-
-```typescript
-public readonly path: string;
-```
-
-- *Type:* string
-
-The path to the file to be read which contains a single cedar statement representing a policy template.
-
----
-
-##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.ITemplateFromFileProps.property.policyStore"></a>
-
-```typescript
-public readonly policyStore: IPolicyStore;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
-
-The policy store that the policy template will be created under.
-
----
-
-##### `description`<sup>Optional</sup> <a name="description" id="@cdklabs/cdk-verified-permissions.ITemplateFromFileProps.property.description"></a>
-
-```typescript
-public readonly description: string;
-```
-
-- *Type:* string
-
-The description of the plicy template.
-
----
-
-### IValidationSettings <a name="IValidationSettings" id="@cdklabs/cdk-verified-permissions.IValidationSettings"></a>
-
-- *Implemented By:* <a href="#@cdklabs/cdk-verified-permissions.IValidationSettings">IValidationSettings</a>
-
-
-#### Properties <a name="Properties" id="Properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IValidationSettings.property.mode">mode</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettingsMode">ValidationSettingsMode</a></code> | *No description.* |
-
----
-
-##### `mode`<sup>Required</sup> <a name="mode" id="@cdklabs/cdk-verified-permissions.IValidationSettings.property.mode"></a>
-
-```typescript
-public readonly mode: ValidationSettingsMode;
-```
-
-- *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettingsMode">ValidationSettingsMode</a>
 
 ---
 

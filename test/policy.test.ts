@@ -10,6 +10,7 @@ import { getResourceLogicalId } from './utils';
 import { Policy, PolicyDefinitionProperty, PolicyType, POLICY_DESC_SUFFIX_FROM_FILE } from '../src/policy';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 import { PolicyTemplate } from '../src/policy-template';
+import { POLICY_DESCRIPTION_ANNOTATION } from '../src/cedar-helpers';
 
 describe('Policy creation', () => {
   // Example static statement to reuse
@@ -409,7 +410,7 @@ when { true };`;
       expect(policy.policyType).toEqual(PolicyType.STATIC);
       expect(policy.definition.static?.description).toBe('I am a description');
       const policyStatement = policy.definition.static?.statement;
-      expect(policyStatement).toEqual('@AvpPolicyDescription("I am a description")\npermit(principal, action, resource);');
+      expect(policyStatement).toEqual(`${POLICY_DESCRIPTION_ANNOTATION}("I am a description")\npermit(principal, action, resource);`);
     });
 
     test('Importing a syntactically valid policy from a file should succeed. If policy description is explicited it should take precedence over the one in the Cedar annotation', () => {
@@ -440,7 +441,7 @@ when { true };`;
       expect(policy.policyType).toEqual(PolicyType.STATIC);
       expect(policy.definition.static?.description).toBe(testDesc);
       const policyStatement = policy.definition.static?.statement;
-      expect(policyStatement).toEqual('@AvpPolicyDescription("I am a description")\npermit(principal, action, resource);');
+      expect(policyStatement).toEqual(`${POLICY_DESCRIPTION_ANNOTATION}("I am a description")\npermit(principal, action, resource);`);
     });
 
     test('Importing a syntactically invalid policy from a file should fail', () => {
