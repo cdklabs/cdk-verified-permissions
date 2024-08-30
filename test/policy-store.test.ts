@@ -397,7 +397,7 @@ describe('Policy Store add Policies', () => {
     expect(addedPolicies.length).toBe(1);
     addedPolicies.map((policy) => {
       const policyDefinition = policy.definition as PolicyDefinitionProperty;
-      expect(policyDefinition.static).toBe(staticDefinition);
+      expect(JSON.stringify(policyDefinition.static)).toBe(JSON.stringify(staticDefinition));
     });
 
     template.hasResourceProperties('AWS::VerifiedPermissions::PolicyStore', {

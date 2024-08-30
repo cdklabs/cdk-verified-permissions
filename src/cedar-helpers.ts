@@ -1,7 +1,7 @@
 
 import * as cedar from '@cedar-policy/cedar-wasm/nodejs';
 
-export const POLICY_DESCRIPTION_ANNOTATION = '@AvpPolicyDescription';
+export const POLICY_DESCRIPTION_ANNOTATION = '@cdkDescription';
 
 export function checkParseSchema(schemaStr: string) {
   const schemaParseResult = cedar.checkParseSchema(schemaStr);
@@ -18,7 +18,7 @@ export function checkParsePolicy(policyStatement: string) {
 }
 
 /**
- * Extracts the Description of the Policy searching for the 'AVPPolicyDescription' annotation on top of policy contents (before effect)
+ * Extracts the Description of the Policy searching for the @see POLICY_DESCRIPTION_ANNOTATION annotation on top of policy contents (before effect)
  * @param policyStatement The policy statement in string format
  * @returns Returns the description if found or null
  */

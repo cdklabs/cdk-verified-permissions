@@ -360,7 +360,7 @@ const policy = new Policy(scope, "MyTestPolicy", {
 ```
 
 Define a Policy with a statement from file:
-**PLEASE NOTE:** You can specify the description of the policy directly inside the Policy file, using the annotation `@AvpPolicyDescription`
+**PLEASE NOTE:** You can specify the description of the policy directly inside the Policy file, using the annotation `@cdkDescription`
 
 ```ts
 const description = "Test policy assigned to the test store";

@@ -2547,6 +2547,9 @@ public readonly statement: string;
 
 The policy content of the static policy, written in the Cedar policy language.
 
+You can specify a description of the policy 
+directly inside the policy statement, using the Cedar annotation '@cdkDescription'
+
 ---
 
 ##### `description`<sup>Optional</sup> <a name="description" id="@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.description"></a>
@@ -2559,6 +2562,9 @@ public readonly description: string;
 - *Default:* Empty description.
 
 The description of the static policy.
+
+If this is set, it has always precedence over description defined in policy statement 
+through '@cdkDescription' annotation
 
 ---
 

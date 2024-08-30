@@ -667,14 +667,6 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jsii/check-node@1.101.0":
-  version "1.101.0"
-  resolved "https://registry.yarnpkg.com/@jsii/check-node/-/check-node-1.101.0.tgz#175e5a2b9b31f232fd5df2942dacc4b20820aa93"
-  integrity sha512-io8u1GAF9XGp2crx0C/WGiJeUnHGw5X0du4fisbrNJHmVVFwcJbBMjbfXKWq+JSzl8fo/JV3F1LqtjsnawKA2A==
-  dependencies:
-    chalk "^4.1.2"
-    semver "^7.6.0"
-
 "@jsii/check-node@1.102.0":
   version "1.102.0"
   resolved "https://registry.yarnpkg.com/@jsii/check-node/-/check-node-1.102.0.tgz#d5dce81b60411b35d4890e69eee2b86d606c8672"
@@ -691,7 +683,7 @@
     chalk "^4.1.2"
     semver "^7.6.3"
 
-"@jsii/spec@^1.101.0", "@jsii/spec@^1.102.0", "@jsii/spec@^1.103.0":
+"@jsii/spec@^1.102.0", "@jsii/spec@^1.103.0":
   version "1.103.0"
   resolved "https://registry.yarnpkg.com/@jsii/spec/-/spec-1.103.0.tgz#a0cfe50d03b773eaa3c57b23e501599ebaf6444e"
   integrity sha512-SLKkITTr6d2wSMCC/HITBNLwBcwz6PStV83oZpM98SDtyNHDbpLNlkwS5m8DpmP+ufMqgI6IvgF7iiyrwz8DRg==
@@ -3646,26 +3638,7 @@ jsii-rosetta@^5.5.3:
     workerpool "^6.5.1"
     yargs "^17.7.2"
 
-jsii@~5.2:
-  version "5.2.51"
-  resolved "https://registry.yarnpkg.com/jsii/-/jsii-5.2.51.tgz#280853b48e4470eb7aad694f4e4f4bd5d4984992"
-  integrity sha512-F0tt1K+TaRCtp8tUl5IjlNQkRzqILAOP/amSvh1mVCvdO0RHHPpoLn3mg4l/NL7FU9kl7GzIZuhdpitAUK+73w==
-  dependencies:
-    "@jsii/check-node" "1.101.0"
-    "@jsii/spec" "^1.101.0"
-    case "^1.6.3"
-    chalk "^4"
-    downlevel-dts "^0.11.0"
-    fast-deep-equal "^3.1.3"
-    log4js "^6.9.1"
-    semver "^7.6.2"
-    semver-intersect "^1.5.0"
-    sort-json "^2.0.1"
-    spdx-license-list "^6.9.0"
-    typescript "~5.2"
-    yargs "^17.7.2"
-
-jsii@~5.5.0:
+jsii@5.5, jsii@~5.5.0:
   version "5.5.1"
   resolved "https://registry.yarnpkg.com/jsii/-/jsii-5.5.1.tgz#7b177948435b10be2a98919233e485b1f92fa65f"
   integrity sha512-YEkXUyCLU97geGu0pv5l2gP1P1S0ZMvanYI4FKvmsSHCtNXV//jIBI0Q80yjdUi7k5XQL1ECs+m4+IZHAEb92w==
@@ -5182,11 +5155,6 @@ typescript@next:
   version "5.7.0-dev.20240828"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.7.0-dev.20240828.tgz#32a4f1fb7d8a01c195a4d5b346ca157565185560"
   integrity sha512-ErCxPl/V/LAmiULX17il/1qONClDF5dKH3A7ltOVj6Rsj+fSSXYiimnDAZShs7iFfMpo87oWv97hjkX7sG1edg==
-
-typescript@~5.2:
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
-  integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
 uglify-js@^3.1.4:
   version "3.19.2"
