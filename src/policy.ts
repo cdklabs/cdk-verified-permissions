@@ -43,13 +43,13 @@ export interface TemplateLinkedPolicyDefinitionProperty {
 
 export interface StaticPolicyDefinitionProperty {
   /**
-   * The policy content of the static policy, written in the Cedar policy language. You can specify a description of the policy 
+   * The policy content of the static policy, written in the Cedar policy language. You can specify a description of the policy
    * directly inside the policy statement, using the Cedar annotation '@cdkDescription'
    */
   readonly statement: string;
 
   /**
-   * The description of the static policy. If this is set, it has always precedence over description defined in policy statement 
+   * The description of the static policy. If this is set, it has always precedence over description defined in policy statement
    * through '@cdkDescription' annotation
    *
    * @default - Empty description.

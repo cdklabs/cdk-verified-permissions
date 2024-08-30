@@ -19,7 +19,7 @@ const project = new CdklabsConstructLibrary({
   enablePRAutoMerge: true,
   repositoryUrl: 'https://github.com/cdklabs/cdk-verified-permissions.git',
   gitignore: [
-    '/.vscode/**'
-  ]
+    '/.vscode/**',
+  ],
 });
 project.synth();
