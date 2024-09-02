@@ -13,9 +13,13 @@ const project = new CdklabsConstructLibrary({
   majorVersion: 0,
   stability: 'experimental',
   releaseToNpm: true,
+  jsiiVersion: '5.5',
   jsiiTargetLanguages: [JsiiLanguage.PYTHON, JsiiLanguage.JAVA, JsiiLanguage.DOTNET],
   private: false,
   enablePRAutoMerge: true,
   repositoryUrl: 'https://github.com/cdklabs/cdk-verified-permissions.git',
+  gitignore: [
+    '/.vscode/**',
+  ],
 });
 project.synth();

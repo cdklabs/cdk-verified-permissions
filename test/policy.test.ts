@@ -7,18 +7,30 @@ import {
   CfnPolicyTemplate,
 } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
+import { getPolicyDescription, POLICY_DESCRIPTION_ANNOTATION } from '../src/cedar-helpers';
 import { Policy, PolicyDefinitionProperty, PolicyType, POLICY_DESC_SUFFIX_FROM_FILE } from '../src/policy';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 import { PolicyTemplate } from '../src/policy-template';
 
 describe('Policy creation', () => {
   // Example static statement to reuse
-  const statementString = `permit (
+  const policyStatement = `permit (
     principal,
     action in [MyFirstApp::Action::"Read"],
     resource
-)
-when { true };`;
+  )
+  when { true };`;
+
+  // Example static statement to reuse with the addition of providing the description of the policy through Cedar annotation
+  const descriptionForAnnotation = 'I am a description';
+  const policyStatementWithAnnotationDescription = `${POLICY_DESCRIPTION_ANNOTATION}("${descriptionForAnnotation}")
+permit (
+      principal,
+      action in [MyFirstApp::Action::"Read"],
+      resource
+  )
+  when { true };`;
+
 
   const policyTemplateStatement = `permit (
       principal == ?principal,
@@ -44,7 +56,7 @@ when { true };`;
     const policy = new Policy(stack, 'MyTestPolicy', {
       definition: {
         static: {
-          statement: statementString,
+          statement: policyStatement,
           description,
         },
       },
@@ -59,7 +71,7 @@ when { true };`;
         Definition: {
           Static: {
             Description: description,
-            Statement: statementString,
+            Statement: policyStatement,
           },
         },
         PolicyStoreId: {
@@ -76,8 +88,166 @@ when { true };`;
     expect(policy.policyType).toEqual(PolicyType.STATIC);
     expect(policy.definition).toEqual({
       static: {
-        statement: statementString,
+        statement: policyStatement,
         description,
+      },
+    });
+  });
+
+  test('Creating a policy with static definition provided including description should have the defined properties and \
+    description should be the one passed as property, not the one present inside the policy statement via annotation', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    // Create a policy and add it to the policy store
+    const policy = new Policy(stack, 'MyTestPolicy', {
+      definition: {
+        static: {
+          statement: policyStatementWithAnnotationDescription,
+          description,
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    // THEN
+    // Validate Cfn properties
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::Policy',
+      {
+        Definition: {
+          Static: {
+            Description: description,
+            Statement: policyStatementWithAnnotationDescription,
+          },
+        },
+        PolicyStoreId: {
+          'Fn::GetAtt': [
+            getResourceLogicalId(policyStore, CfnPolicyStore),
+            'PolicyStoreId',
+          ],
+        },
+      },
+    );
+
+    // Validate construct properties
+    expect(policy.policyId).toBeDefined();
+    expect(policy.policyType).toEqual(PolicyType.STATIC);
+    expect(policy.definition).toEqual({
+      static: {
+        statement: policyStatementWithAnnotationDescription,
+        description,
+      },
+    });
+  });
+
+  test('Creating a policy with static definition provided excluding description should have the defined properties and\
+    description should be the one present inside the policy statement provided via annotation', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    // Create a policy and add it to the policy store
+    const policy = new Policy(stack, 'MyTestPolicy', {
+      definition: {
+        static: {
+          statement: policyStatementWithAnnotationDescription,
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    // THEN
+    // Validate Cfn properties
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::Policy',
+      {
+        Definition: {
+          Static: {
+            Description: descriptionForAnnotation,
+            Statement: policyStatementWithAnnotationDescription,
+          },
+        },
+        PolicyStoreId: {
+          'Fn::GetAtt': [
+            getResourceLogicalId(policyStore, CfnPolicyStore),
+            'PolicyStoreId',
+          ],
+        },
+      },
+    );
+
+    // Validate construct properties
+    expect(policy.policyId).toBeDefined();
+    expect(policy.policyType).toEqual(PolicyType.STATIC);
+    expect(policy.definition).toEqual({
+      static: {
+        statement: policyStatementWithAnnotationDescription,
+        description: descriptionForAnnotation,
+      },
+    });
+  });
+
+  test('Creating a policy with static definition provided excluding description both via property and via annotation\
+    should have the defined properties and description should be undefined', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    // Create a policy and add it to the policy store
+    const policy = new Policy(stack, 'MyTestPolicy', {
+      definition: {
+        static: {
+          statement: policyStatement,
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    // THEN
+    // Validate Cfn properties
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::Policy',
+      {
+        Definition: {
+          Static: {
+            Statement: policyStatement,
+          },
+        },
+        PolicyStoreId: {
+          'Fn::GetAtt': [
+            getResourceLogicalId(policyStore, CfnPolicyStore),
+            'PolicyStoreId',
+          ],
+        },
+      },
+    );
+
+    // Validate construct properties
+    expect(policy.policyId).toBeDefined();
+    expect(policy.policyType).toEqual(PolicyType.STATIC);
+    expect(policy.definition).toEqual({
+      static: {
+        statement: policyStatement,
       },
     });
   });
@@ -117,6 +287,8 @@ when { true };`;
       },
     });
 
+    let policyStatementInFile = fs.readFileSync('test/test-policies/statement.cedar').toString();
+
     // Create a policy and add it to the policy store
     const policy = Policy.fromFile(stack, 'MyTestPolicy', {
       policyStore,
@@ -132,7 +304,7 @@ when { true };`;
         Definition: {
           Static: {
             Description: description,
-            Statement: statementString,
+            Statement: policyStatementInFile,
           },
         },
         PolicyStoreId: {
@@ -251,7 +423,7 @@ when { true };`;
       new Policy(stack, 'MyTestPolicy', {
         definition: {
           static: {
-            statement: statementString,
+            statement: policyStatement,
           },
           templateLinked: {
             policyTemplate: template,
@@ -337,7 +509,7 @@ when { true };`;
   });
 
   describe('Import policy from file', () => {
-    test('Importing a syntactically valid policy from a file should succeed', () => {
+    test('Importing a syntactically valid policy from a file should succeed and policy description should contains base path of file', () => {
       // GIVEN
       const stack = new Stack();
       const policyStore = new PolicyStore(stack, 'PolicyStore', {
@@ -381,6 +553,67 @@ when { true };`;
           },
         },
       );
+    });
+
+    test('Importing a syntactically valid policy from a file should succeed and policy description should be the one in the Cedar annotation', () => {
+      // GIVEN
+      const stack = new Stack();
+      const policyStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+      });
+      let basePath = 'policy1_with_desc_annotation.cedar';
+      let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+      let statementInFile = fs.readFileSync(policyPath).toString();
+      let descriptionInFile = getPolicyDescription(statementInFile);
+
+      // WHEN
+      const policy = Policy.fromFile(
+        stack,
+        'ImportedPolicy',
+        {
+          path: policyPath,
+          policyStore,
+        },
+      );
+
+      // THEN
+      expect(policy.policyId).toBeDefined();
+      expect(policy.policyType).toEqual(PolicyType.STATIC);
+      expect(policy.definition.static?.description).toBe(descriptionInFile);
+      expect(policy.definition.static?.statement).toEqual(statementInFile);
+    });
+
+    test('Importing a syntactically valid policy from a file should succeed. If policy description is explicited it should take precedence over the one in the Cedar annotation', () => {
+      // GIVEN
+      const stack = new Stack();
+      const policyStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+      });
+      let basePath = 'policy1_with_desc_annotation.cedar';
+      let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+      let testDesc = 'testDescription';
+      let statementInFile = fs.readFileSync(policyPath).toString();
+
+      // WHEN
+      const policy = Policy.fromFile(
+        stack,
+        'ImportedPolicy',
+        {
+          path: policyPath,
+          policyStore,
+          description: testDesc,
+        },
+      );
+
+      // THEN
+      expect(policy.policyId).toBeDefined();
+      expect(policy.policyType).toEqual(PolicyType.STATIC);
+      expect(policy.definition.static?.description).toBe(testDesc);
+      expect(policy.definition.static?.statement).toEqual(statementInFile);
     });
 
     test('Importing a syntactically invalid policy from a file should fail', () => {

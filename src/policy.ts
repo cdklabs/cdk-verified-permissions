@@ -3,7 +3,7 @@ import * as path from 'path';
 import { CfnPolicy } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { IResource, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
-import { checkParsePolicy } from './cedar-helpers';
+import { checkParsePolicy, getPolicyDescription } from './cedar-helpers';
 import { IPolicyStore } from './policy-store';
 import { IPolicyTemplate } from './policy-template';
 
@@ -43,12 +43,14 @@ export interface TemplateLinkedPolicyDefinitionProperty {
 
 export interface StaticPolicyDefinitionProperty {
   /**
-   * The policy content of the static policy, written in the Cedar policy language.
+   * The policy content of the static policy, written in the Cedar policy language. You can specify a description of the policy
+   * directly inside the policy statement, using the Cedar annotation '@cdkDescription'
    */
   readonly statement: string;
 
   /**
-   * The description of the static policy.
+   * The description of the static policy. If this is set, it has always precedence over description defined in policy statement
+   * through '@cdkDescription' annotation
    *
    * @default - Empty description.
    */
@@ -197,11 +199,12 @@ export class Policy extends PolicyBase {
     const policyFileContents = fs.readFileSync(props.path).toString();
     checkParsePolicy(policyFileContents);
     let relativePath = path.basename(props.path);
+    let policyDescription = props.description || getPolicyDescription(policyFileContents) || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`;
     return new Policy(scope, id, {
       definition: {
         static: {
           statement: policyFileContents,
-          description: props.description || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`,
+          description: policyDescription,
         },
       },
       policyStore: props.policyStore,
@@ -222,17 +225,27 @@ export class Policy extends PolicyBase {
       throw new Error('Policy can either be static or templateLinked');
     }
 
-    let definition;
+    let cfnDefinitionAttr;
+    let definitionProperty = props.definition;
     if (props.definition.static) {
       checkParsePolicy(props.definition.static.statement);
-      definition = {
+      let description = props.definition.static.description || getPolicyDescription(props.definition.static.statement) || undefined;
+      definitionProperty = {
         static: {
           ...props.definition.static,
+          ...{
+            description,
+          },
+        },
+      };
+      cfnDefinitionAttr = {
+        static: {
+          description: description,
           statement: props.definition.static.statement,
         },
       };
     } else if (props.definition.templateLinked) {
-      definition = {
+      cfnDefinitionAttr = {
         templateLinked: {
           policyTemplateId:
             props.definition.templateLinked.policyTemplate.policyTemplateId,
@@ -246,16 +259,16 @@ export class Policy extends PolicyBase {
 
     // resource
     this.policy = new CfnPolicy(this, id, {
-      definition: definition,
+      definition: cfnDefinitionAttr,
       policyStoreId: props.policyStore.policyStoreId,
     });
 
     // assign construct props
     this.policyId = this.policy.attrPolicyId;
-    this.policyType = props.definition.static
+    this.policyType = definitionProperty.static
       ? PolicyType.STATIC
       : PolicyType.TEMPLATELINKED;
-    this.definition = props.definition;
+    this.definition = definitionProperty;
     this.policyStoreId = props.policyStore.policyStoreId;
   }
 }
