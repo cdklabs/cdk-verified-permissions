@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as cedar from '@cedar-policy/cedar-wasm/nodejs';
 import { ArnFormat, Aws, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
+import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { CfnPolicy, CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
@@ -624,69 +625,164 @@ describe('Policy store with policies from a path', () => {
   });
 });
 
-describe('generating schemas from OpenApi specs', () => {
-  test('generate schema from openApi spec fails if swagger file has no paths', () => {
-    expect(() => {
-      PolicyStore.schemaFromOpenApiSpec(
-        path.join(__dirname, 'schema.json'),
+describe('Policy Store schema generation', () => {
+  const expectedActions = [
+    'get /artists',
+    'post /artists',
+    'delete /artists',
+    'patch /artists/{artistId}',
+    'delete /artists/{artistId}',
+    'get /podcasts',
+    'post /podcasts',
+    'delete /podcasts',
+    'get /podcasts/{podcastId}',
+    'post /podcasts/{podcastId}',
+    'put /podcasts/{podcastId}',
+    'patch /podcasts/{podcastId}',
+    'delete /podcasts/{podcastId}',
+    'head /podcasts/{podcastId}',
+  ];
+
+  describe('generating schemas from OpenApi specs', () => {
+    test('generate schema from openApi spec fails if swagger file has no paths', () => {
+      expect(() => {
+        PolicyStore.schemaFromOpenApiSpec(
+          path.join(__dirname, 'schema.json'),
+          'UserGroup',
+        );
+      }).toThrow('Invalid OpenAPI spec - missing paths object');
+    });
+
+    test('generate schema from openApi spec with userGroups', () => {
+      // GIVEN
+      const stack = new Stack(undefined, 'Stack');
+
+      // WHEN
+      const schema = PolicyStore.schemaFromOpenApiSpec(
+        path.join(__dirname, 'podcastappswagger.json'),
         'UserGroup',
       );
-    }).toThrow();
-  });
+      const pStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+        schema: {
+          cedarJson: JSON.stringify(schema),
+        },
+      });
 
-  test('generate schema from openApi spec with userGroups', () => {
-    // GIVEN
-    const stack = new Stack(undefined, 'Stack');
-
-    // WHEN
-    const schema = PolicyStore.schemaFromOpenApiSpec(
-      path.join(__dirname, 'podcastappswagger.json'),
-      'UserGroup',
-    );
-    const pStore = new PolicyStore(stack, 'PolicyStore', {
-      validationSettings: {
-        mode: ValidationSettingsMode.STRICT,
-      },
-      schema: {
-        cedarJson: JSON.stringify(schema),
-      },
+      // THEN
+      expect(pStore.schema?.cedarJson).toBeDefined();
+      expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
+        'UserGroup',
+        'User',
+        'Application',
+      ]);
+      // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
+      expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+      expect(Object.keys(schema.PodcastApp.actions).sort()).toEqual(expectedActions.sort());
     });
 
-    // THEN
-    expect(pStore.schema?.cedarJson).toBeDefined();
-    expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
-      'UserGroup',
-      'User',
-      'Application',
-    ]);
-    // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
-    expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+    test('generate schema from openApi spec without userGroups', () => {
+      // GIVEN
+      const stack = new Stack(undefined, 'Stack');
+
+      // WHEN
+      const schema = PolicyStore.schemaFromOpenApiSpec(
+        path.join(__dirname, 'podcastappswagger.json'),
+
+      );
+      const pStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+        schema: {
+          cedarJson: JSON.stringify(schema),
+        },
+      });
+
+      // THEN
+      expect(pStore.schema?.cedarJson).toBeDefined();
+      expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
+        'User',
+        'Application',
+      ]);
+      // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
+      expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+      expect(Object.keys(schema.PodcastApp.actions).sort()).toEqual(expectedActions.sort());
+    });
   });
-  test('generate schema from openApi spec without userGroups', () => {
-    // GIVEN
-    const stack = new Stack(undefined, 'Stack');
 
-    // WHEN
-    const schema = PolicyStore.schemaFromOpenApiSpec(
-      path.join(__dirname, 'podcastappswagger.json'),
+  describe('generating schemas from RestApi constructs', () => {
+    function buildRestApi() {
+      const stack = new Stack(undefined, 'Stack');
+      const api = new RestApi(stack, 'PodcastApp');
 
-    );
-    const pStore = new PolicyStore(stack, 'PolicyStore', {
-      validationSettings: {
-        mode: ValidationSettingsMode.STRICT,
-      },
-      schema: {
-        cedarJson: JSON.stringify(schema),
-      },
+      const artists = api.root.addResource('artists');
+      artists.addMethod('GET');
+      artists.addMethod('POST');
+      artists.addMethod('DELETE');
+      const artist = artists.addResource('{artistId}');
+      artist.addMethod('PATCH');
+      artist.addMethod('DELETE');
+      const podcasts = api.root.addResource('podcasts');
+      podcasts.addMethod('GET');
+      podcasts.addMethod('POST');
+      podcasts.addMethod('DELETE');
+      const podcast = podcasts.addResource('{podcastId}');
+      podcast.addMethod('ANY');
+
+	  return { stack, api };
+    }
+
+    test('generate schema from RestApi with userGroups', () => {
+      // GIVEN
+      const { stack, api } = buildRestApi();
+
+      // WHEN
+      const schema = PolicyStore.schemaFromRestApi(api, 'UserGroup');
+      const pStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+        schema: {
+          cedarJson: JSON.stringify(schema),
+        },
+      });
+
+      // THEN
+      expect(pStore.schema?.cedarJson).toBeDefined();
+      expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
+        'UserGroup',
+        'User',
+        'Application',
+      ]);
+      // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
+      expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+      expect(Object.keys(schema.PodcastApp.actions).sort()).toEqual(expectedActions.sort());
     });
 
-    // THEN
-    expect(pStore.schema?.cedarJson).toBeDefined();
-    expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual([
-      'User',
-      'Application',
-    ]);
-    // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
-    expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+    test('generate schema from RestApi without userGroups', () => {
+      // GIVEN
+      const { stack, api } = buildRestApi();
+
+      // WHEN
+      const schema = PolicyStore.schemaFromRestApi(api);
+      const pStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+        schema: {
+          cedarJson: JSON.stringify(schema),
+        },
+      });
+
+      // THEN
+      expect(pStore.schema?.cedarJson).toBeDefined();
+      expect(Object.keys(schema.PodcastApp.entityTypes)).toStrictEqual(['User', 'Application']);
+      // it should have the eight explicitly defined actions plus the 6 derived from the 'any' definition
+      expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
+      expect(Object.keys(schema.PodcastApp.actions).sort()).toEqual(expectedActions.sort());
+    });
   });
 });

@@ -967,6 +967,7 @@ Permits an IAM principal all write & read operations on the policy store: Create
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.fromPolicyStoreAttributes">fromPolicyStoreAttributes</a></code> | Creates a PolicyStore construct that represents an external Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.fromPolicyStoreId">fromPolicyStoreId</a></code> | Create a PolicyStore construct that represents an external policy store via policy store id. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromOpenApiSpec">schemaFromOpenApiSpec</a></code> | This method generates a schema based on an swagger file. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromRestApi">schemaFromRestApi</a></code> | This method generates a schema based on an AWS CDK RestApi construct. |
 
 ---
 
@@ -1150,6 +1151,37 @@ absolute path to a swagger file in the local directory structure, in json format
 - *Type:* string
 
 optional parameter to specify the group entity type name.
+
+If passed, the schema's User type will have a parent of this type.
+
+---
+
+##### `schemaFromRestApi` <a name="schemaFromRestApi" id="@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromRestApi"></a>
+
+```typescript
+import { PolicyStore } from '@cdklabs/cdk-verified-permissions'
+
+PolicyStore.schemaFromRestApi(restApi: RestApi, groupEntityTypeName?: string)
+```
+
+This method generates a schema based on an AWS CDK RestApi construct.
+
+It makes the same assumptions
+and decisions made in the Amazon Verified Permissions console.
+
+###### `restApi`<sup>Required</sup> <a name="restApi" id="@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromRestApi.parameter.restApi"></a>
+
+- *Type:* aws-cdk-lib.aws_apigateway.RestApi
+
+The RestApi construct instance from which to generate the schema.
+
+---
+
+###### `groupEntityTypeName`<sup>Optional</sup> <a name="groupEntityTypeName" id="@cdklabs/cdk-verified-permissions.PolicyStore.schemaFromRestApi.parameter.groupEntityTypeName"></a>
+
+- *Type:* string
+
+Specifies a group entity type name.
 
 If passed, the schema's User type will have a parent of this type.
 

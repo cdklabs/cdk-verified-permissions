@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { ArnFormat, IResource, Resource, Stack } from 'aws-cdk-lib/core';
@@ -263,7 +264,6 @@ export class PolicyStore extends PolicyStoreBase {
    * @param groupEntityTypeName optional parameter to specify the group entity type name. If passed, the schema's User type will have a parent of this type.
    */
   public static schemaFromOpenApiSpec(swaggerFilePath: string, groupEntityTypeName?: string) {
-    const RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
     const openApiSpecString = fs.readFileSync(swaggerFilePath, 'utf-8');
     const openApiSpec = JSON.parse(openApiSpecString) as any;
     if (!openApiSpec.paths) {
@@ -280,10 +280,10 @@ export class PolicyStore extends PolicyStoreBase {
       }
       let pathVerbs = Object.keys(pathDef);
       if (pathVerbs.includes('x-amazon-apigateway-any-method')) {
-        pathVerbs = RELEVANT_HTTP_METHODS;
+        pathVerbs = this.RELEVANT_HTTP_METHODS;
       }
       for (const httpVerb of pathVerbs) {
-        if (!RELEVANT_HTTP_METHODS.includes(httpVerb)) {
+        if (!this.RELEVANT_HTTP_METHODS.includes(httpVerb)) {
           continue;
         }
         const actionName = `${httpVerb} ${pathUrl}`;
@@ -293,6 +293,32 @@ export class PolicyStore extends PolicyStoreBase {
     return buildSchema(namespace, actionNames, groupEntityTypeName);
   }
 
+  /**
+   * This method generates a schema based on an AWS CDK RestApi construct. It makes the same assumptions
+   * and decisions made in the Amazon Verified Permissions console.
+   *
+   * @param restApi The RestApi construct instance from which to generate the schema.
+   * @param groupEntityTypeName Specifies a group entity type name. If passed, the schema's User type will have a parent of this type.
+   */
+  public static schemaFromRestApi(restApi: RestApi, groupEntityTypeName?: string) {
+    const namespace = cleanUpApiNameForNamespace(restApi.restApiName);
+    const actionNames: string[] = [];
+    for (const method of restApi.methods) {
+      const pathVerb = method.httpMethod.toLowerCase();
+      const pathUrl = method.resource.path;
+      if (pathVerb === 'any') {
+        for (const verb of this.RELEVANT_HTTP_METHODS) {
+          actionNames.push(`${verb} ${pathUrl}`);
+        }
+      }
+	  if (this.RELEVANT_HTTP_METHODS.includes(pathVerb)) {
+      	actionNames.push(`${pathVerb} ${pathUrl}`);
+	  }
+    }
+    return buildSchema(namespace, actionNames, groupEntityTypeName);
+  }
+
+  private static RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
   private readonly policyStore: CfnPolicyStore;
   /**
    * ARN of the Policy Store.
