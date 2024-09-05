@@ -13,6 +13,8 @@ import {
   WRITE_ACTIONS,
 } from './private/permissions';
 
+const RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
+
 export interface Schema {
   readonly cedarJson: string;
 }
@@ -280,10 +282,10 @@ export class PolicyStore extends PolicyStoreBase {
       }
       let pathVerbs = Object.keys(pathDef);
       if (pathVerbs.includes('x-amazon-apigateway-any-method')) {
-        pathVerbs = this.RELEVANT_HTTP_METHODS;
+        pathVerbs = RELEVANT_HTTP_METHODS;
       }
       for (const httpVerb of pathVerbs) {
-        if (!this.RELEVANT_HTTP_METHODS.includes(httpVerb)) {
+        if (!RELEVANT_HTTP_METHODS.includes(httpVerb)) {
           continue;
         }
         const actionName = `${httpVerb} ${pathUrl}`;
@@ -307,18 +309,17 @@ export class PolicyStore extends PolicyStoreBase {
       const pathVerb = method.httpMethod.toLowerCase();
       const pathUrl = method.resource.path;
       if (pathVerb === 'any') {
-        for (const verb of this.RELEVANT_HTTP_METHODS) {
+        for (const verb of RELEVANT_HTTP_METHODS) {
           actionNames.push(`${verb} ${pathUrl}`);
         }
       }
-	  if (this.RELEVANT_HTTP_METHODS.includes(pathVerb)) {
+	  if (RELEVANT_HTTP_METHODS.includes(pathVerb)) {
       	actionNames.push(`${pathVerb} ${pathUrl}`);
 	  }
     }
     return buildSchema(namespace, actionNames, groupEntityTypeName);
   }
 
-  private static RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
   private readonly policyStore: CfnPolicyStore;
   /**
    * ARN of the Policy Store.
