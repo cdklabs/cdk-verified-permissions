@@ -897,7 +897,7 @@ a string representing an absolute path to the directory containing your policies
 ##### `grant` <a name="grant" id="@cdklabs/cdk-verified-permissions.PolicyStore.grant"></a>
 
 ```typescript
-public grant(grantee: IGrantable, actions: string): Grant
+public grant(grantee: IGrantable, actions: ...string[]): Grant
 ```
 
 Adds an IAM policy statement associated with this policy store to an IAM principal's policy.
@@ -910,7 +910,7 @@ Adds an IAM policy statement associated with this policy store to an IAM princip
 
 ###### `actions`<sup>Required</sup> <a name="actions" id="@cdklabs/cdk-verified-permissions.PolicyStore.grant.parameter.actions"></a>
 
-- *Type:* string
+- *Type:* ...string[]
 
 ---
 
@@ -2982,7 +2982,7 @@ This is one of the following values: Static or TemplateLinked.
 ##### `grant` <a name="grant" id="@cdklabs/cdk-verified-permissions.IPolicyStore.grant"></a>
 
 ```typescript
-public grant(grantee: IGrantable, actions: string): Grant
+public grant(grantee: IGrantable, actions: ...string[]): Grant
 ```
 
 Adds an IAM policy statement associated with this policy store to an IAM principal's policy.
@@ -2997,7 +2997,7 @@ The principal (no-op if undefined).
 
 ###### `actions`<sup>Required</sup> <a name="actions" id="@cdklabs/cdk-verified-permissions.IPolicyStore.grant.parameter.actions"></a>
 
-- *Type:* string
+- *Type:* ...string[]
 
 The set of actions to allow (i.e. "verifiedpermissions:IsAuthorized", "verifiedpermissions:ListPolicies", ...).
 
