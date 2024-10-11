@@ -44,7 +44,7 @@ export function validatePolicy(policyStatement: string, schemaStr: string) {
     policySet: policyStatement,
   });
   if (validationResult.type === 'failure') {
-    throw new Error(`Policy (contents: ${policyStatement}) could not be parsed: ${validationResult.errors.join('; ')}`);
+    throw new Error(`Policy (contents: ${policyStatement}) could not be parsed: ${validationResult.errors.map((error) => error.message).join('; ')}`);
   }
   if (validationResult.type === 'success' && validationResult.validationErrors.length > 0) {
     throw new Error(
