@@ -67,7 +67,7 @@
     "projen": "^0.87.4",
     "ts-jest": "^29.3.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.170.0",
