@@ -573,7 +573,7 @@ Check whether the given construct is a Resource.
 ```typescript
 import { Policy } from '@cdklabs/cdk-verified-permissions'
 
-Policy.fromFile(scope: Construct, id: string, props: StaticPolicyFromFileProps)
+Policy.fromFile(scope: Construct, defaultPolicyId: string, props: StaticPolicyFromFileProps)
 ```
 
 Create a policy based on a file containing a cedar policy.
@@ -591,11 +591,16 @@ The parent creating construct (usually `this`).
 
 ---
 
-###### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-verified-permissions.Policy.fromFile.parameter.id"></a>
+###### `defaultPolicyId`<sup>Required</sup> <a name="defaultPolicyId" id="@cdklabs/cdk-verified-permissions.Policy.fromFile.parameter.defaultPolicyId"></a>
 
 - *Type:* string
 
-The construct id.
+The Policy construct default id.
+
+This may be directly passed to the method or defined inside the file.
+When you have multiple policies per file it's strongly suggested to define the id directly
+inside the file in order to avoid multiple policy constructs with the same id. In case of id passed
+directly to the method and also defined in file, the latter will take priority.
 
 ---
 
@@ -2616,7 +2621,7 @@ const staticPolicyFromFileProps: StaticPolicyFromFileProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy will be created under. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The default description of static policies, this will be applied to every policy if the description is not retrieved via the. |
 
 ---
 
@@ -2652,7 +2657,9 @@ public readonly description: string;
 
 - *Type:* string
 
-The description of the static policy.
+The default description of static policies, this will be applied to every policy if the description is not retrieved via the.
+
+> [getPolicyDescription method in cedar-helpers](getPolicyDescription method in cedar-helpers)
 
 ---
 

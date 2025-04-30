@@ -2,6 +2,7 @@
 import * as cedar from '@cedar-policy/cedar-wasm/nodejs';
 
 export const POLICY_DESCRIPTION_ANNOTATION = '@cdkDescription';
+export const POLICY_ID_ANNOTATION = '@cdkId';
 
 export function checkParseSchema(schemaStr: string) {
   const schemaParseResult = cedar.checkParseSchema(schemaStr);
@@ -23,16 +24,63 @@ export function checkParsePolicy(policyStatement: string) {
  * @returns Returns the description if found or null
  */
 export function getPolicyDescription(policyStatement: string): string | null {
-  const regex = new RegExp(String.raw`^${POLICY_DESCRIPTION_ANNOTATION}\(("|')(.*)("|')(\))([\r\n|\r|\n| ]*)(permit|forbid)`);
+  const regex = new RegExp(String.raw`${POLICY_DESCRIPTION_ANNOTATION}\(["']([^"']*)["']\)`);
   let matches = policyStatement.match(regex);
-  return (matches) ? matches[2] : null;
+  return (matches) ? matches[1] : null;
 }
+
+/**
+ * Extracts the Description of the Policy searching for the @see POLICY_ID_ANNOTATION annotation on top of policy contents (before effect)
+ * @param policyStatement The policy statement in string format
+ * @returns Returns the id if found or null
+ */
+export function getPolicyId(policyStatement: string): string | null {
+  const regex = new RegExp(String.raw`${POLICY_ID_ANNOTATION}\(["']([^"']*)["']\)`);
+  let matches = policyStatement.match(regex);
+  return (matches) ? matches[1] : null;
+}
+
+/**
+ * Split the Policies in case of multiple Cedar Policies in a string.
+ * Please Note: this method doesn't provide a validation of every policy, it just splits
+ * them and returns an array. Policies not providing the final (and required) semicolon will
+ * be skipped
+ * @param policyStatements The policy statements in string format
+ * @returns an array where each element represents a Cedar Policy statement
+ */
+export function splitPolicies(policyStatements: string): string[] {
+  // This regex matches policy statements that start with permit or forbid
+  // and may have annotations before them, and end with a semicolon
+  // It handles multi-line policies and policies with conditions
+  const policyRegex = /((?:@[^(]+\([^)]+\)\s*)*(?:permit|forbid)[^;]*;)/gs;
+  const policies: string[] = [];
+  let match;
+
+  while ((match = policyRegex.exec(policyStatements)) !== null) {
+    policies.push(match[0].trim());
+  }
+
+  return policies;
+}
+
 
 export function checkParseTemplate(templateStatement: string) {
   const templateParseResult = cedar.checkParseTemplate(templateStatement);
   if (templateParseResult.type === 'error') {
     throw new Error(`Error parsing template: ${templateStatement}. Errors: ${templateParseResult.errors.join(', ')}`);
   }
+}
+/**
+ * Method which validates multple Cedar policies in a single string against a Cedar Schema
+ *
+ * @param policiesStatements a string containing multiple Cedar policies
+ * @param schemaStr a Cedar Schema
+ */
+export function validateMultiplePolicies(policiesStatements: string, schemaStr: string) {
+  const policyStatements = splitPolicies(policiesStatements);
+  policyStatements.map((policyStatement) => {
+    validatePolicy(policyStatement, schemaStr);
+  });
 }
 
 export function validatePolicy(policyStatement: string, schemaStr: string) {
