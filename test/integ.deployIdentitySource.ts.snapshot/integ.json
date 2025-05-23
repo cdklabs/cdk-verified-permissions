@@ -1,12 +1,12 @@
 {
-  "version": "36.0.0",
+  "version": "41.0.0",
   "testCases": {
     "IdentitySourceTest/DefaultTest": {
       "stacks": [
         "IdentitySourceStack"
       ],
       "regions": [
-        "${Token[AWS.Region.11]}"
+        "${Token[AWS.Region.4]}"
       ],
       "cdkCommandOptions": {
         "destroy": {
@@ -16,5 +16,6 @@
       "assertionStack": "IdentitySourceTest/DefaultTest/DeployAssert",
       "assertionStackName": "IdentitySourceTestDefaultTestDeployAssertC6DCD63D"
     }
-  }
+  },
+  "minimumCliVersion": "2.1005.0"
 }

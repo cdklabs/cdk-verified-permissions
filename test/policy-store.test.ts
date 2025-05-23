@@ -12,6 +12,7 @@ import {
   AddPolicyOptions,
   PolicyStore,
   ValidationSettingsMode,
+  DeletionProtectionMode,
 } from '../src/policy-store';
 import {
   AUTH_ACTIONS,
@@ -90,7 +91,7 @@ const exampleSchema: cedar.Schema = {
 };
 
 describe('Policy Store creation', () => {
-  test('Creating Policy Store only with validation settings (mode = OFF)', () => {
+  test('Creating Policy Store only with validation settings (mode = OFF), active deletion protection and tags', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
 
@@ -99,6 +100,13 @@ describe('Policy Store creation', () => {
       validationSettings: {
         mode: ValidationSettingsMode.OFF,
       },
+      deletionProtection: DeletionProtectionMode.ENABLED,
+      tags: [
+        {
+          key: 'tag1',
+          value: 'value1',
+        },
+      ],
     });
 
     // THEN
@@ -108,6 +116,15 @@ describe('Policy Store creation', () => {
         ValidationSettings: {
           Mode: ValidationSettingsMode.OFF,
         },
+        DeletionProtection: {
+          Mode: DeletionProtectionMode.ENABLED,
+        },
+        Tags: [
+          {
+            Key: 'tag1',
+            Value: 'value1',
+          },
+        ],
       },
     );
   });
@@ -125,6 +142,9 @@ describe('Policy Store creation', () => {
       {
         ValidationSettings: {
           Mode: ValidationSettingsMode.OFF,
+        },
+        DeletionProtection: {
+          Mode: DeletionProtectionMode.DISABLED,
         },
       },
     );
@@ -157,6 +177,9 @@ describe('Policy Store creation', () => {
           CedarJson: JSON.stringify(exampleSchema.json),
         },
         Description: description,
+        DeletionProtection: {
+          Mode: DeletionProtectionMode.DISABLED,
+        },
       },
     );
   });
@@ -207,6 +230,9 @@ describe('Policy Store grant to IGrantable', () => {
       ValidationSettings: {
         Mode: ValidationSettingsMode.OFF,
       },
+      DeletionProtection: {
+        Mode: DeletionProtectionMode.DISABLED,
+      },
     });
     template.hasResourceProperties('AWS::IAM::Policy', {
       PolicyDocument: {
@@ -251,6 +277,9 @@ describe('Policy Store grant to IGrantable', () => {
       ValidationSettings: {
         Mode: ValidationSettingsMode.OFF,
       },
+      DeletionProtection: {
+        Mode: DeletionProtectionMode.DISABLED,
+      },
     });
     template.hasResourceProperties('AWS::IAM::Policy', {
       PolicyDocument: {
@@ -294,6 +323,9 @@ describe('Policy Store grant to IGrantable', () => {
     template.hasResourceProperties('AWS::VerifiedPermissions::PolicyStore', {
       ValidationSettings: {
         Mode: ValidationSettingsMode.OFF,
+      },
+      DeletionProtection: {
+        Mode: DeletionProtectionMode.DISABLED,
       },
     });
     template.hasResourceProperties('AWS::IAM::Policy', {
@@ -341,6 +373,9 @@ describe('Policy Store grant to IGrantable', () => {
     template.hasResourceProperties('AWS::VerifiedPermissions::PolicyStore', {
       ValidationSettings: {
         Mode: ValidationSettingsMode.OFF,
+      },
+      DeletionProtection: {
+        Mode: DeletionProtectionMode.DISABLED,
       },
     });
     template.hasResourceProperties('AWS::IAM::Policy', {
@@ -404,6 +439,9 @@ describe('Policy Store add Policies', () => {
     template.hasResourceProperties('AWS::VerifiedPermissions::PolicyStore', {
       ValidationSettings: {
         Mode: ValidationSettingsMode.OFF,
+      },
+      DeletionProtection: {
+        Mode: DeletionProtectionMode.DISABLED,
       },
     });
     const policyStoreLogicalId = getResourceLogicalId(
@@ -539,6 +577,9 @@ describe('Policy store with policies from a path', () => {
       {
         ValidationSettings: {
           Mode: ValidationSettingsMode.STRICT,
+        },
+        DeletionProtection: {
+          Mode: DeletionProtectionMode.DISABLED,
         },
         Schema: {
           CedarJson: JSON.stringify(exampleSchema.json),
@@ -732,7 +773,7 @@ describe('Policy Store schema generation', () => {
       const podcast = podcasts.addResource('{podcastId}');
       podcast.addMethod('ANY');
 
-	  return { stack, api };
+      return { stack, api };
     }
 
     test('generate schema from RestApi with userGroups', () => {
