@@ -59,6 +59,17 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
 });
 ```
 
+Define a Policy Store with Validation Settings to OFF and Deletion Protection enabled:
+
+```ts
+const validationSettingsOff = {
+  mode: ValidationSettingsMode.OFF,
+};
+const test = new PolicyStore(scope, "PolicyStore", {
+  validationSettings: validationSettingsOff,
+  deletionProtection: DeletionProtectionMode.ENABLED
+});
+```
 ## Schemas
 
 If you want to have type safety when defining a schema, you can accomplish this **<ins>only</ins>** in typescript. Simply use the `Schema` type exported by the `@cedar-policy/cedar-wasm`.

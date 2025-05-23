@@ -1,7 +1,8 @@
 {
-  "version": "36.0.0",
+  "version": "41.0.0",
   "files": {
-    "9815940ce7407a6aa1d6cf6befda87747277f28b1b9cb8567c5f9acbecc19756": {
+    "cb2eed252df2363089b509838be954a76ea12cfd75ddd9932308bd008bf3b916": {
+      "displayName": "PolicyTemplateStack Template",
       "source": {
         "path": "PolicyTemplateStack.template.json",
         "packaging": "file"
@@ -9,7 +10,7 @@
       "destinations": {
         "current_account-current_region": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "9815940ce7407a6aa1d6cf6befda87747277f28b1b9cb8567c5f9acbecc19756.json",
+          "objectKey": "cb2eed252df2363089b509838be954a76ea12cfd75ddd9932308bd008bf3b916.json",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
         }
       }

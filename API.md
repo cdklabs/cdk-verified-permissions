@@ -1198,6 +1198,7 @@ If passed, the schema's User type will have a parent of this type.
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreId">policyStoreId</a></code> | <code>string</code> | ID of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreName">policyStoreName</a></code> | <code>string</code> | Name of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | Validation Settings of the Policy Store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.deletionProtection">deletionProtection</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a></code> | Deletion protection of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.description">description</a></code> | <code>string</code> | Description of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | Schema definition of the Policy Store. |
 
@@ -1291,6 +1292,18 @@ public readonly validationSettings: ValidationSettings;
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a>
 
 Validation Settings of the Policy Store.
+
+---
+
+##### `deletionProtection`<sup>Optional</sup> <a name="deletionProtection" id="@cdklabs/cdk-verified-permissions.PolicyStore.property.deletionProtection"></a>
+
+```typescript
+public readonly deletionProtection: DeletionProtectionMode;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a>
+
+Deletion protection of the Policy Store.
 
 ---
 
@@ -2387,8 +2400,10 @@ const policyStoreProps: PolicyStoreProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | The policy store's validation settings. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.deletionProtection">deletionProtection</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a></code> | The policy store's deletion protection. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.description">description</a></code> | <code>string</code> | The policy store's description. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | This attribute is not required from an API point of view. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.tags">tags</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Tag">Tag</a>[]</code> | The tags assigned to the policy store. |
 
 ---
 
@@ -2399,9 +2414,21 @@ public readonly validationSettings: ValidationSettings;
 ```
 
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a>
-- *Default:* If not provided, the Policy store will be created with ValidationSettingsMode = "OFF"
 
 The policy store's validation settings.
+
+---
+
+##### `deletionProtection`<sup>Optional</sup> <a name="deletionProtection" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.deletionProtection"></a>
+
+```typescript
+public readonly deletionProtection: DeletionProtectionMode;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a>
+- *Default:* If not provided, the Policy store will be created with deletionProtection = "DISABLED"
+
+The policy store's deletion protection.
 
 ---
 
@@ -2430,6 +2457,19 @@ public readonly schema: Schema;
 This attribute is not required from an API point of view.
 
 It represents the schema (in Cedar) to be applied to the PolicyStore.
+
+---
+
+##### `tags`<sup>Optional</sup> <a name="tags" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.tags"></a>
+
+```typescript
+public readonly tags: Tag[];
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.Tag">Tag</a>[]
+- *Default:* none
+
+The tags assigned to the policy store.
 
 ---
 
@@ -2653,6 +2693,45 @@ public readonly description: string;
 - *Type:* string
 
 The description of the static policy.
+
+---
+
+### Tag <a name="Tag" id="@cdklabs/cdk-verified-permissions.Tag"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.Tag.Initializer"></a>
+
+```typescript
+import { Tag } from '@cdklabs/cdk-verified-permissions'
+
+const tag: Tag = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Tag.property.key">key</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Tag.property.value">value</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `key`<sup>Required</sup> <a name="key" id="@cdklabs/cdk-verified-permissions.Tag.property.key"></a>
+
+```typescript
+public readonly key: string;
+```
+
+- *Type:* string
+
+---
+
+##### `value`<sup>Required</sup> <a name="value" id="@cdklabs/cdk-verified-permissions.Tag.property.value"></a>
+
+```typescript
+public readonly value: string;
+```
+
+- *Type:* string
 
 ---
 
@@ -3198,6 +3277,27 @@ The ID of the policy template.
 ---
 
 ## Enums <a name="Enums" id="Enums"></a>
+
+### DeletionProtectionMode <a name="DeletionProtectionMode" id="@cdklabs/cdk-verified-permissions.DeletionProtectionMode"></a>
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode.ENABLED">ENABLED</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode.DISABLED">DISABLED</a></code> | *No description.* |
+
+---
+
+##### `ENABLED` <a name="ENABLED" id="@cdklabs/cdk-verified-permissions.DeletionProtectionMode.ENABLED"></a>
+
+---
+
+
+##### `DISABLED` <a name="DISABLED" id="@cdklabs/cdk-verified-permissions.DeletionProtectionMode.DISABLED"></a>
+
+---
+
 
 ### PolicyType <a name="PolicyType" id="@cdklabs/cdk-verified-permissions.PolicyType"></a>
 

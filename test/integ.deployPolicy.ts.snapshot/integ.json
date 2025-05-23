@@ -1,12 +1,12 @@
 {
-  "version": "36.0.0",
+  "version": "41.0.0",
   "testCases": {
     "PolicyTest/DefaultTest": {
       "stacks": [
         "PolicyTestStack"
       ],
       "regions": [
-        "${Token[AWS.Region.6]}"
+        "${Token[AWS.Region.13]}"
       ],
       "cdkCommandOptions": {
         "destroy": {
@@ -16,5 +16,6 @@
       "assertionStack": "PolicyTest/DefaultTest/DeployAssert",
       "assertionStackName": "PolicyTestDefaultTestDeployAssertDFA08710"
     }
-  }
+  },
+  "minimumCliVersion": "2.1005.0"
 }

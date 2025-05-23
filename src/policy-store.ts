@@ -15,6 +15,10 @@ import {
 
 const RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
 
+export interface Tag {
+  readonly key: string;
+  readonly value: string;
+}
 export interface Schema {
   readonly cedarJson: string;
 }
@@ -29,6 +33,11 @@ export interface ValidationSettings {
 export enum ValidationSettingsMode {
   OFF = 'OFF',
   STRICT = 'STRICT',
+}
+
+export enum DeletionProtectionMode {
+  ENABLED = 'ENABLED',
+  DISABLED = 'DISABLED'
 }
 
 export interface IPolicyStore extends IResource {
@@ -93,9 +102,7 @@ export interface PolicyStoreProps {
 
   /**
    * The policy store's validation settings.
-   *
-   * @default - If not provided, the Policy store will be created with ValidationSettingsMode = "OFF"
-   */
+  */
   readonly validationSettings: ValidationSettings;
 
   /**
@@ -104,6 +111,19 @@ export interface PolicyStoreProps {
    * @default - No description.
    */
   readonly description?: string;
+
+  /**
+   * The policy store's deletion protection
+   * @default - If not provided, the Policy store will be created with deletionProtection = "DISABLED"
+   */
+  readonly deletionProtection?: DeletionProtectionMode;
+
+  /**
+   * The tags assigned to the policy store
+   *
+   * @default - none
+   */
+  readonly tags?: Tag[];
 }
 
 export interface AddPolicyOptions {
@@ -313,9 +333,9 @@ export class PolicyStore extends PolicyStoreBase {
           actionNames.push(`${verb} ${pathUrl}`);
         }
       }
-	  if (RELEVANT_HTTP_METHODS.includes(pathVerb)) {
-      	actionNames.push(`${pathVerb} ${pathUrl}`);
-	  }
+      if (RELEVANT_HTTP_METHODS.includes(pathVerb)) {
+        actionNames.push(`${pathVerb} ${pathUrl}`);
+      }
     }
     return buildSchema(namespace, actionNames, groupEntityTypeName);
   }
@@ -354,6 +374,11 @@ export class PolicyStore extends PolicyStoreBase {
    */
   readonly description?: string;
 
+  /**
+   * Deletion protection of the Policy Store
+   */
+  readonly deletionProtection?: DeletionProtectionMode;
+
   constructor(
     scope: Construct,
     id: string,
@@ -361,12 +386,14 @@ export class PolicyStore extends PolicyStoreBase {
       validationSettings: {
         mode: ValidationSettingsMode.OFF,
       },
+      deletionProtection: DeletionProtectionMode.DISABLED,
     },
   ) {
     super(scope, id);
     if (props.schema) {
       checkParseSchema(props.schema.cedarJson);
     }
+
     this.policyStore = new CfnPolicyStore(this, id, {
       schema: props.schema
         ? {
@@ -377,6 +404,10 @@ export class PolicyStore extends PolicyStoreBase {
         mode: props.validationSettings.mode,
       },
       description: props.description,
+      deletionProtection: {
+        mode: (props.deletionProtection) ? props.deletionProtection : DeletionProtectionMode.DISABLED,
+      },
+      tags: props.tags,
     });
     this.policyStoreArn = this.getResourceArnAttribute(
       this.policyStore.attrArn,
@@ -391,6 +422,7 @@ export class PolicyStore extends PolicyStoreBase {
     this.schema = props.schema;
     this.validationSettings = props.validationSettings;
     this.description = props.description;
+    this.deletionProtection = (props.deletionProtection) ? props.deletionProtection : DeletionProtectionMode.DISABLED;
   }
 
   /**

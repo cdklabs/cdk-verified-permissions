@@ -3,6 +3,9 @@
   "PolicyStore888EE7DF": {
    "Type": "AWS::VerifiedPermissions::PolicyStore",
    "Properties": {
+    "DeletionProtection": {
+     "Mode": "DISABLED"
+    },
     "Schema": {
      "CedarJson": "{\"PhotoApp\":{\"entityTypes\":{\"User\":{},\"Photo\":{}},\"actions\":{\"viewPhoto\":{\"appliesTo\":{\"principalTypes\":[\"User\"],\"resourceTypes\":[\"Photo\"]}}}}}"
     },
