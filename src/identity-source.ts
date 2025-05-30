@@ -7,7 +7,7 @@ import { IPolicyStore } from './policy-store';
 enum ConfigurationMode {
   COGNITO = 'COGNITO',
   OIDC_ACCESS_TOKEN = 'OIDC_ACCESS_TOKEN',
-  OIDC_ID_TOKEN = 'OIDC_ID_TOKEN'
+  OIDC_ID_TOKEN = 'OIDC_ID_TOKEN',
 }
 export interface CognitoGroupConfiguration {
 

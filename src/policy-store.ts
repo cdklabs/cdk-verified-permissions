@@ -37,7 +37,7 @@ export enum ValidationSettingsMode {
 
 export enum DeletionProtectionMode {
   ENABLED = 'ENABLED',
-  DISABLED = 'DISABLED'
+  DISABLED = 'DISABLED',
 }
 
 export interface IPolicyStore extends IResource {
