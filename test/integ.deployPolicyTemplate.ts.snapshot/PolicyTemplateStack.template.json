@@ -3,6 +3,9 @@
   "PolicyStore888EE7DF": {
    "Type": "AWS::VerifiedPermissions::PolicyStore",
    "Properties": {
+    "DeletionProtection": {
+     "Mode": "DISABLED"
+    },
     "ValidationSettings": {
      "Mode": "OFF"
     }
