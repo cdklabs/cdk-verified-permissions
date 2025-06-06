@@ -5,7 +5,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { ArnFormat, IResource, Resource, Stack } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
-import { buildSchema, checkParseSchema, cleanUpApiNameForNamespace, validatePolicy } from './cedar-helpers';
+import { buildSchema, checkParseSchema, cleanUpApiNameForNamespace, validateMultiplePolicies } from './cedar-helpers';
 import { Policy, PolicyDefinitionProperty } from './policy';
 import {
   AUTH_ACTIONS,
@@ -465,14 +465,15 @@ export class PolicyStore extends PolicyStoreBase {
           'A schema must exist when adding policies to a policy store with strict validation mode.',
         );
       }
-      for (const policyFile of policyFileNames) {
-        const policyStatement = fs.readFileSync(policyFile, 'utf-8');
-        validatePolicy(policyStatement, this.schema.cedarJson);
-      }
+      policyFileNames.map(fileName => {
+        const fileContents = fs.readFileSync(fileName, 'utf-8');
+        validateMultiplePolicies(fileContents, this.schema!!.cedarJson);
+      });
     }
 
-    const policies = policyFileNames.map((cedarFile) =>
-      Policy.fromFile(this, cedarFile, {
+    const policies = policyFileNames.flatMap((cedarFile) =>
+      // Using base path of the file as default id for policy
+      Policy.fromFile(this, path.basename(cedarFile), {
         path: cedarFile,
         policyStore: this,
       }),

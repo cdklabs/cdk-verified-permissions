@@ -1,13 +1,15 @@
+import { assert } from 'console';
 import fs from 'fs';
 import path from 'path';
 import { Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import {
+  CfnPolicy,
   CfnPolicyStore,
   CfnPolicyTemplate,
 } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
-import { getPolicyDescription, POLICY_DESCRIPTION_ANNOTATION } from '../src/cedar-helpers';
+import { getPolicyDescription, getPolicyId, POLICY_DESCRIPTION_ANNOTATION } from '../src/cedar-helpers';
 import { Policy, PolicyDefinitionProperty, PolicyType, POLICY_DESC_SUFFIX_FROM_FILE } from '../src/policy';
 import { PolicyStore, ValidationSettingsMode } from '../src/policy-store';
 import { PolicyTemplate } from '../src/policy-template';
@@ -290,7 +292,7 @@ permit (
     let policyStatementInFile = fs.readFileSync('test/test-policies/statement.cedar').toString();
 
     // Create a policy and add it to the policy store
-    const policy = Policy.fromFile(stack, 'MyTestPolicy', {
+    const policies = Policy.fromFile(stack, 'MyTestPolicy', {
       policyStore,
       description,
       path: 'test/test-policies/statement.cedar',
@@ -317,8 +319,9 @@ permit (
     );
 
     // Validate construct properties
-    expect(policy.policyId).toBeDefined();
-    expect(policy.policyType).toEqual(PolicyType.STATIC);
+    expect(policies.length).toBe(1);
+    expect(policies[0].policyId).toBeDefined();
+    expect(policies[0].policyType).toEqual(PolicyType.STATIC);
   });
 
   test('Creating a policy with a template linked definition should have the defined properties', () => {
@@ -521,7 +524,7 @@ permit (
       let fullPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
       let fileContents = fs.readFileSync(fullPath, 'utf8');
       // WHEN
-      const policy = Policy.fromFile(
+      const policies = Policy.fromFile(
         stack,
         'ImportedPolicy',
         {
@@ -531,10 +534,11 @@ permit (
       );
 
       // THEN
-      expect(policy.policyId).toBeDefined();
-      expect(policy.policyType).toEqual(PolicyType.STATIC);
-      expect(policy.definition.static?.description).toContain(basePath);
-      expect(policy.definition.static?.statement).toEqual(fileContents);
+      expect(policies.length).toBe(1);
+      expect(policies[0].policyId).toBeDefined();
+      expect(policies[0].policyType).toEqual(PolicyType.STATIC);
+      expect(policies[0].definition.static?.description).toContain(basePath);
+      expect(policies[0].definition.static?.statement).toEqual(fileContents);
       // Validate Cfn properties
       Template.fromStack(stack).hasResourceProperties(
         'AWS::VerifiedPermissions::Policy',
@@ -569,7 +573,7 @@ permit (
       let descriptionInFile = getPolicyDescription(statementInFile);
 
       // WHEN
-      const policy = Policy.fromFile(
+      const policies = Policy.fromFile(
         stack,
         'ImportedPolicy',
         {
@@ -579,13 +583,14 @@ permit (
       );
 
       // THEN
-      expect(policy.policyId).toBeDefined();
-      expect(policy.policyType).toEqual(PolicyType.STATIC);
-      expect(policy.definition.static?.description).toBe(descriptionInFile);
-      expect(policy.definition.static?.statement).toEqual(statementInFile);
+      expect(policies.length).toBe(1);
+      expect(policies[0].policyId).toBeDefined();
+      expect(policies[0].policyType).toEqual(PolicyType.STATIC);
+      expect(policies[0].definition.static?.description).toBe(descriptionInFile);
+      expect(policies[0].definition.static?.statement).toEqual(statementInFile);
     });
 
-    test('Importing a syntactically valid policy from a file should succeed. If policy description is explicited it should take precedence over the one in the Cedar annotation', () => {
+    test('Importing a syntactically valid policy from a file should succeed. If policy description is explicited it should not take precedence over the one in the Cedar annotation', () => {
       // GIVEN
       const stack = new Stack();
       const policyStore = new PolicyStore(stack, 'PolicyStore', {
@@ -597,9 +602,10 @@ permit (
       let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
       let testDesc = 'testDescription';
       let statementInFile = fs.readFileSync(policyPath).toString();
+      let descInFile = getPolicyDescription(statementInFile);
 
       // WHEN
-      const policy = Policy.fromFile(
+      const policies = Policy.fromFile(
         stack,
         'ImportedPolicy',
         {
@@ -610,10 +616,11 @@ permit (
       );
 
       // THEN
-      expect(policy.policyId).toBeDefined();
-      expect(policy.policyType).toEqual(PolicyType.STATIC);
-      expect(policy.definition.static?.description).toBe(testDesc);
-      expect(policy.definition.static?.statement).toEqual(statementInFile);
+      expect(policies.length).toBe(1);
+      expect(policies[0].policyId).toBeDefined();
+      expect(policies[0].policyType).toEqual(PolicyType.STATIC);
+      expect(policies[0].definition.static?.description).toBe(descInFile);
+      expect(policies[0].definition.static?.statement).toEqual(statementInFile);
     });
 
     test('Importing a syntactically invalid policy from a file should fail', () => {
@@ -637,5 +644,120 @@ permit (
         );
       }).toThrow('Invalid policy statement');
     });
+  });
+  test('Importing a syntactically valid policy from a file should succeed. If policy id is explicited it should not take precedence over the one in the Cedar annotation', () => {
+    // GIVEN
+    const stack = new Stack();
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    let basePath = 'policy1_with_desc_id_annotation.cedar';
+    let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+    let testDesc = 'testDescription';
+    let statementInFile = fs.readFileSync(policyPath).toString();
+    let idInFile = getPolicyId(statementInFile);
+    let defaultId = 'ImportedPolicy';
+
+    // WHEN
+    const policies = Policy.fromFile(
+      stack,
+      defaultId,
+      {
+        path: policyPath,
+        policyStore,
+        description: testDesc,
+      },
+    );
+
+    // THEN
+    expect(policies.length).toBe(1);
+    expect(policies[0].policyId).toBeDefined();
+    expect(policies[0].policyType).toEqual(PolicyType.STATIC);
+    assert((policies[0].node.children[0] as CfnPolicy).logicalId.includes(idInFile!!));
+    assert(!(policies[0].node.children[0] as CfnPolicy).logicalId.includes(defaultId));
+    expect(policies[0].definition.static?.statement).toEqual(statementInFile);
+  });
+
+  test('Importing a syntactically valid policy from a file should succeed. If policy id is not specified in the file the explicited one should be the id', () => {
+    // GIVEN
+    const stack = new Stack();
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    let basePath = 'policy1.cedar';
+    let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+    let testDesc = 'testDescription';
+    let statementInFile = fs.readFileSync(policyPath).toString();
+    let defaultId = 'ImportedPolicy';
+
+    // WHEN
+    const policies = Policy.fromFile(
+      stack,
+      defaultId,
+      {
+        path: policyPath,
+        policyStore,
+        description: testDesc,
+      },
+    );
+
+    // THEN
+    expect(policies.length).toBe(1);
+    expect(policies[0].policyId).toBeDefined();
+    expect(policies[0].policyType).toEqual(PolicyType.STATIC);
+    assert((policies[0].node.children[0] as CfnPolicy).logicalId.includes(defaultId));
+    expect(policies[0].definition.static?.statement).toEqual(statementInFile);
+  });
+
+  test('Importing multiple policies from a file with same id should not succeed. Two policies with annotations in file', () => {
+    const stack = new Stack();
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    let basePath = 'invalid_policies_same_ids.cedar';
+    let policyPath = path.join(__dirname, 'test-policies', basePath);
+
+    // WHEN
+    expect(() => {
+      Policy.fromFile(
+        stack,
+        'ImportedPolicy',
+        {
+          path: policyPath,
+          policyStore,
+          description: 'test',
+        },
+      );
+    }).toThrow();
+  });
+  test('Importing multiple policies from a file with same id should not succeed. Several policies in file, one of them without id annotation - using same default id as one alreaady present in file', () => {
+    const stack = new Stack();
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+    let basePath = 'multiple_policies_with_annotations.cedar';
+    let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
+    let policyDefaultId = 'IamAnotherBeautifulID';
+
+    // WHEN
+    expect(() => {
+      Policy.fromFile(
+        stack,
+        policyDefaultId,
+        {
+          path: policyPath,
+          policyStore,
+          description: 'test',
+        },
+      );
+    }).toThrow(`There is already a Construct with name '${policyDefaultId}' in Stack`);
   });
 });
