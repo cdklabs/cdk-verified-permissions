@@ -55,6 +55,13 @@ export interface StaticPolicyDefinitionProperty {
    * @default - Empty description.
    */
   readonly description?: string;
+
+  /**
+   * Boolean flag to activate policy validation against Cedar Language Syntax & Rules
+   *
+   * @default - true
+   */
+  readonly enablePolicyValidation?: boolean;
 }
 
 export interface PolicyDefinitionProperty {
@@ -135,6 +142,14 @@ export interface StaticPolicyFromFileProps {
    * The description of the static policy
    */
   readonly description?: string;
+
+  /**
+   * Boolean flag to activate policy validation against Cedar Language Syntax & Rules
+   *
+   * @default - true
+   */
+  readonly enablePolicyValidation?: boolean;
+
 }
 
 export class Policy extends PolicyBase {
@@ -197,14 +212,15 @@ export class Policy extends PolicyBase {
     props: StaticPolicyFromFileProps,
   ): Policy {
     const policyFileContents = fs.readFileSync(props.path).toString();
-    checkParsePolicy(policyFileContents);
     let relativePath = path.basename(props.path);
+    let enablePolicyValidation = (props.enablePolicyValidation == undefined) ? true : props.enablePolicyValidation;
     let policyDescription = props.description || getPolicyDescription(policyFileContents) || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`;
     return new Policy(scope, id, {
       definition: {
         static: {
           statement: policyFileContents,
           description: policyDescription,
+          enablePolicyValidation: enablePolicyValidation,
         },
       },
       policyStore: props.policyStore,
@@ -227,8 +243,11 @@ export class Policy extends PolicyBase {
 
     let cfnDefinitionAttr;
     let definitionProperty = props.definition;
+
     if (props.definition.static) {
-      checkParsePolicy(props.definition.static.statement);
+      if (props.definition.static.enablePolicyValidation ?? true) {
+        checkParsePolicy(props.definition.static.statement);
+      }
       let description = props.definition.static.description || getPolicyDescription(props.definition.static.statement) || undefined;
       definitionProperty = {
         static: {
