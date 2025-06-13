@@ -2606,6 +2606,7 @@ const staticPolicyDefinitionProperty: StaticPolicyDefinitionProperty = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.statement">statement</a></code> | <code>string</code> | The policy content of the static policy, written in the Cedar policy language. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.enablePolicyValidation">enablePolicyValidation</a></code> | <code>boolean</code> | Boolean flag to activate policy validation against Cedar Language Syntax & Rules. |
 
 ---
 
@@ -2640,6 +2641,19 @@ through '@cdkDescription' annotation
 
 ---
 
+##### `enablePolicyValidation`<sup>Optional</sup> <a name="enablePolicyValidation" id="@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.enablePolicyValidation"></a>
+
+```typescript
+public readonly enablePolicyValidation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Boolean flag to activate policy validation against Cedar Language Syntax & Rules.
+
+---
+
 ### StaticPolicyFromFileProps <a name="StaticPolicyFromFileProps" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.Initializer"></a>
@@ -2657,6 +2671,7 @@ const staticPolicyFromFileProps: StaticPolicyFromFileProps = { ... }
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy will be created under. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.enablePolicyValidation">enablePolicyValidation</a></code> | <code>boolean</code> | Boolean flag to activate policy validation against Cedar Language Syntax & Rules. |
 
 ---
 
@@ -2693,6 +2708,19 @@ public readonly description: string;
 - *Type:* string
 
 The description of the static policy.
+
+---
+
+##### `enablePolicyValidation`<sup>Optional</sup> <a name="enablePolicyValidation" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.enablePolicyValidation"></a>
+
+```typescript
+public readonly enablePolicyValidation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Boolean flag to activate policy validation against Cedar Language Syntax & Rules.
 
 ---
 
