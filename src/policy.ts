@@ -55,6 +55,13 @@ export interface StaticPolicyDefinitionProperty {
    * @default - Empty description.
    */
   readonly description?: string;
+
+  /**
+   * Boolean flag to activate policy validation against Cedar Language Syntax & Rules
+   *
+   * @default - true
+   */
+  readonly enablePolicyValidation?: boolean;
 }
 
 export interface PolicyDefinitionProperty {
@@ -136,6 +143,14 @@ export interface StaticPolicyFromFileProps {
    * is not retrieved via the @see getPolicyDescription method in cedar-helpers
    */
   readonly description?: string;
+
+  /**
+   * Boolean flag to activate policy validation against Cedar Language Syntax & Rules
+   *
+   * @default - true
+   */
+  readonly enablePolicyValidation?: boolean;
+
 }
 
 export class Policy extends PolicyBase {
@@ -200,13 +215,11 @@ export class Policy extends PolicyBase {
     defaultPolicyId: string,
     props: StaticPolicyFromFileProps,
   ): Policy[] {
-    let relativePath = path.basename(props.path);
     const policyFileContents = fs.readFileSync(props.path).toString();
+    let relativePath = path.basename(props.path);
+    let enablePolicyValidation = (props.enablePolicyValidation == undefined) ? true : props.enablePolicyValidation;
     const policies = splitPolicies(policyFileContents);
     const policyDefinitions = policies.map(policyContents => {
-      checkParsePolicy(policyContents);
-      return policyContents;
-    }).map(policyContents => {
       let policyId = getPolicyId(policyContents) || defaultPolicyId;
       let policyDescription = getPolicyDescription(policyContents) || props.description || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`;
       return new Policy(scope, policyId, {
@@ -214,6 +227,7 @@ export class Policy extends PolicyBase {
           static: {
             statement: policyContents,
             description: policyDescription,
+            enablePolicyValidation: enablePolicyValidation,
           },
         },
         policyStore: props.policyStore,
@@ -238,8 +252,11 @@ export class Policy extends PolicyBase {
 
     let cfnDefinitionAttr;
     let definitionProperty = props.definition;
+
     if (props.definition.static) {
-      checkParsePolicy(props.definition.static.statement);
+      if (props.definition.static.enablePolicyValidation ?? true) {
+        checkParsePolicy(props.definition.static.statement);
+      }
       let description = props.definition.static.description || getPolicyDescription(props.definition.static.statement) || undefined;
       definitionProperty = {
         static: {

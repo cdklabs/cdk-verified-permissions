@@ -278,6 +278,60 @@ permit (
     }).toThrow();
   });
 
+  test('Creating a policy with an invalid static definition should succeed if policy validation is disabled', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    const invalidPolicyStatement = 'invalid policy';
+
+    const policy = new Policy(stack, 'MyTestPolicy', {
+      definition: {
+        static: {
+          statement: invalidPolicyStatement,
+          enablePolicyValidation: false,
+        },
+      },
+      policyStore: policyStore,
+    });
+
+    // Validate Cfn properties
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::Policy',
+      {
+        Definition: {
+          Static: {
+            Statement: invalidPolicyStatement,
+          },
+        },
+        PolicyStoreId: {
+          'Fn::GetAtt': [
+            getResourceLogicalId(policyStore, CfnPolicyStore),
+            'PolicyStoreId',
+          ],
+        },
+      },
+    );
+
+    // Validate construct properties
+    expect(policy.policyId).toBeDefined();
+    expect(policy.policyType).toEqual(PolicyType.STATIC);
+    expect(policy.definition).toEqual({
+      static: {
+        statement: invalidPolicyStatement,
+        enablePolicyValidation: false,
+      },
+    });
+
+
+  });
+
   test('Creating a policy with a static definition from path', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
@@ -643,6 +697,36 @@ permit (
           },
         );
       }).toThrow('Invalid policy statement');
+    });
+
+    test('Importing a syntactically invalid policy from a file should succeed if policy validation is not enabled', () => {
+      // GIVEN
+      const stack = new Stack();
+      const policyStore = new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+      });
+      let basePath = 'invalidPolicy1.cedar';
+      let policyPath = path.join(__dirname, 'test-policies', basePath);
+      let testDesc = 'testDescription';
+
+      let statementInFile = fs.readFileSync(policyPath).toString();
+      // THEN
+      const policy = Policy.fromFile(
+        stack,
+        'ImportedPolicy',
+        {
+          path: policyPath,
+          policyStore,
+          description: testDesc,
+          enablePolicyValidation: false,
+        },
+      );
+      expect(policy[0].policyId).toBeDefined();
+      expect(policy[0].policyType).toEqual(PolicyType.STATIC);
+      expect(policy[0].definition.static?.description).toBe(testDesc);
+      expect(policy[0].definition.static?.statement).toEqual(statementInFile);
     });
   });
   test('Importing a syntactically valid policy from a file should succeed. If policy id is explicited it should not take precedence over the one in the Cedar annotation', () => {
