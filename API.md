@@ -2675,7 +2675,7 @@ const staticPolicyFromFileProps: StaticPolicyFromFileProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy will be created under. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The default description of static policies, this will be applied to every policy if the description is not retrieved via the. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.enablePolicyValidation">enablePolicyValidation</a></code> | <code>boolean</code> | Boolean flag to activate policy validation against Cedar Language Syntax & Rules. |
 
 ---
