@@ -75,7 +75,7 @@
     "constructs": "^10.0.5"
   },
   "dependencies": {
-    "@cedar-policy/cedar-wasm": "3.2.3"
+    "@cedar-policy/cedar-wasm": "4.5.0"
   },
   "bundledDependencies": [
     "@cedar-policy/cedar-wasm"
