@@ -6,7 +6,7 @@
         "PolicyStoreStack"
       ],
       "regions": [
-        "${Token[AWS.Region.6]}"
+        "${Token[AWS.Region.9]}"
       ],
       "cdkCommandOptions": {
         "destroy": {

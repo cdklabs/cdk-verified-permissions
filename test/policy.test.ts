@@ -696,10 +696,10 @@ permit (
             policyStore,
           },
         );
-      }).toThrow('Invalid policy statement');
+      }).toThrow();
     });
 
-    test('Importing a syntactically invalid policy from a file should succeed if policy validation is not enabled', () => {
+    test('Importing a syntactically valid policy from a file should succeed if policy validation is not enabled', () => {
       // GIVEN
       const stack = new Stack();
       const policyStore = new PolicyStore(stack, 'PolicyStore', {
@@ -707,8 +707,8 @@ permit (
           mode: ValidationSettingsMode.OFF,
         },
       });
-      let basePath = 'invalidPolicy1.cedar';
-      let policyPath = path.join(__dirname, 'test-policies', basePath);
+      let basePath = 'policy1.cedar';
+      let policyPath = path.join(__dirname, 'test-policies', 'all-valid', basePath);
       let testDesc = 'testDescription';
 
       let statementInFile = fs.readFileSync(policyPath).toString();

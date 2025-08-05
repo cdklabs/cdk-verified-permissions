@@ -95,7 +95,7 @@
     },
     {
       "name": "@cedar-policy/cedar-wasm",
-      "version": "3.2.3",
+      "version": "4.5.0",
       "type": "bundled"
     },
     {

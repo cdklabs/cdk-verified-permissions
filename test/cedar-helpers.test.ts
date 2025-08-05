@@ -202,27 +202,6 @@ describe('testing splitting multiple policies contained in a single string', () 
     expect(policies[0]).toBe(firstPolicy.trim());
     expect(policies[1]).toBe(secondPolicy.trim());
   });
-  test('two compliant policies without annotations', () => {
-    let firstPolicy = `
-    forbid (
-      principal,
-      action in [MyFirstApp::Action::"Read"],
-      resource
-    )
-    when { true };`;
-    let secondPolicy = `
-    permit (
-      principal,
-      action in [MyFirstApp::Action::"Read"],
-      resource
-    )
-    when { true }
-    `; // Missing last semicolon
-    let multiplePolicies = firstPolicy + secondPolicy;
-    let policies = splitPolicies(multiplePolicies);
-    expect(policies.length).toBe(1);
-    expect(policies[0]).toBe(firstPolicy.trim());
-  });
   test('combined with one compliant policy with id and description and another malformed-missing last semicolon', () => {
     let firstPolicy = `
     forbid (
@@ -244,9 +223,7 @@ describe('testing splitting multiple policies contained in a single string', () 
     when { true }
     `; // Missing last semicolon
     let multiplePolicies = firstPolicy + secondPolicy;
-    let policies = splitPolicies(multiplePolicies);
-    expect(policies.length).toBe(1);
-    expect(policies[0]).toBe(firstPolicy.trim());
+    expect(() => splitPolicies(multiplePolicies)).toThrow('Error splitting policies: unexpected end of input');
   });
   test('combined with one compliant policy with id and description and another malformed in permit clause', () => {
     let firstPolicy = `
@@ -267,9 +244,6 @@ describe('testing splitting multiple policies contained in a single string', () 
     when { true };
     `; // Missing last semicolon
     let multiplePolicies = firstPolicy + secondPolicy;
-    let policies = splitPolicies(multiplePolicies);
-    expect(policies.length).toBe(2);
-    expect(policies[0]).toBe(firstPolicy.trim());
-    expect(policies[1]).toBe(secondPolicy.trim());
+    expect(() => splitPolicies(multiplePolicies)).toThrow('Error splitting policies: found an invalid variable in the policy scope: testmalformed');
   });
 });
