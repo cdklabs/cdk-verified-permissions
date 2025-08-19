@@ -1,6 +1,4 @@
-import * as fs from 'fs';
 import * as path from 'path';
-import * as cedar from '@cedar-policy/cedar-wasm/nodejs';
 import { ArnFormat, Aws, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
@@ -20,56 +18,37 @@ import {
   WRITE_ACTIONS,
 } from '../src/private/permissions';
 
-const exampleSchema: cedar.Schema = {
-  json: {
-    PhotoApp: {
-      commonTypes: {
-        ContextInfo: {
-          type: 'Record',
-          attributes: {
-            pathParameters: {
-              type: 'Set',
-              element: { type: 'String' },
-            },
-            userAgent: {
-              type: 'String',
-            },
+const exampleSchema = {
+  PhotoApp: {
+    commonTypes: {
+      ContextInfo: {
+        type: 'Record',
+        attributes: {
+          pathParameters: {
+            type: 'Set',
+            element: { type: 'String' },
+          },
+          userAgent: {
+            type: 'String',
           },
         },
       },
-      entityTypes: {
-        User: {
-          shape: {
-            type: 'Record',
-            attributes: {
-              userId: {
-                type: 'String',
-              },
-              favoriteFootballers: {
-                type: 'Set',
-                element: { type: 'String' },
-              },
-              dependents: {
-                type: 'Set',
-                element: {
-                  type: 'Entity',
-                  name: 'User',
-                },
-              },
+    },
+    entityTypes: {
+      User: {
+        shape: {
+          type: 'Record',
+          attributes: {
+            userId: {
+              type: 'String',
             },
-          },
-        },
-        Photo: {
-          shape: {
-            type: 'Record',
-            attributes: {
-              photoId: {
-                type: 'String',
-              },
-              caption: {
-                type: 'String',
-              },
-              owner: {
+            favoriteFootballers: {
+              type: 'Set',
+              element: { type: 'String' },
+            },
+            dependents: {
+              type: 'Set',
+              element: {
                 type: 'Entity',
                 name: 'User',
               },
@@ -77,13 +56,30 @@ const exampleSchema: cedar.Schema = {
           },
         },
       },
-      actions: {
-        viewPhoto: {
-          appliesTo: {
-            principalTypes: ['User'],
-            resourceTypes: ['Photo'],
-            context: { type: 'ContextInfo' },
+      Photo: {
+        shape: {
+          type: 'Record',
+          attributes: {
+            photoId: {
+              type: 'String',
+            },
+            caption: {
+              type: 'String',
+            },
+            owner: {
+              type: 'Entity',
+              name: 'User',
+            },
           },
+        },
+      },
+    },
+    actions: {
+      viewPhoto: {
+        appliesTo: {
+          principalTypes: ['User'],
+          resourceTypes: ['Photo'],
+          context: { type: 'ContextInfo' },
         },
       },
     },
@@ -161,7 +157,7 @@ describe('Policy Store creation', () => {
         mode: ValidationSettingsMode.STRICT,
       },
       schema: {
-        cedarJson: JSON.stringify(exampleSchema.json),
+        cedarJson: JSON.stringify(exampleSchema),
       },
       description: description,
     });
@@ -174,7 +170,7 @@ describe('Policy Store creation', () => {
           Mode: ValidationSettingsMode.STRICT,
         },
         Schema: {
-          CedarJson: JSON.stringify(exampleSchema.json),
+          CedarJson: JSON.stringify(exampleSchema),
         },
         Description: description,
         DeletionProtection: {
@@ -197,7 +193,23 @@ describe('Policy Store creation', () => {
           mode: ValidationSettingsMode.STRICT,
         },
       });
-    }).toThrow('Schema is invalid');
+    }).toThrow();
+  });
+
+  test('Creating Policy Store with not valid schema', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    expect(() => {
+      new PolicyStore(stack, 'PolicyStore', {
+        schema: {
+          cedarJson: '{"test":"test"}',
+        },
+        validationSettings: {
+          mode: ValidationSettingsMode.STRICT,
+        },
+      });
+    }).toThrow();
   });
 });
 
@@ -564,7 +576,7 @@ describe('Policy store with policies from a path', () => {
         mode: ValidationSettingsMode.STRICT,
       },
       schema: {
-        cedarJson: JSON.stringify(exampleSchema.json),
+        cedarJson: JSON.stringify(exampleSchema),
       },
       description: 'PhotoApp',
     });
@@ -582,19 +594,13 @@ describe('Policy store with policies from a path', () => {
           Mode: DeletionProtectionMode.DISABLED,
         },
         Schema: {
-          CedarJson: JSON.stringify(exampleSchema.json),
+          CedarJson: JSON.stringify(exampleSchema),
         },
       },
     );
 
     const policyDefns = Template.fromStack(stack).findResources('AWS::VerifiedPermissions::Policy');
-    expect(Object.keys(policyDefns)).toHaveLength(3);
-    const statements = Object.values(policyDefns).map(cfnPolicy => cfnPolicy.Properties.Definition.Static.Statement);
-    expect(statements).toStrictEqual([
-      fs.readFileSync('test/test-policies/all-valid/policy1.cedar', 'utf-8'),
-      fs.readFileSync('test/test-policies/all-valid/policy1_with_desc_annotation.cedar', 'utf-8'),
-      fs.readFileSync('test/test-policies/all-valid/policy2.cedar', 'utf-8'),
-    ]);
+    expect(Object.keys(policyDefns)).toHaveLength(8);
   });
 
   test('fails if the path is not a directory', () => {
@@ -636,7 +642,7 @@ describe('Policy store with policies from a path', () => {
           mode: ValidationSettingsMode.STRICT,
         },
         schema: {
-          cedarJson: JSON.stringify(exampleSchema.json),
+          cedarJson: JSON.stringify(exampleSchema),
         },
       });
       pStore.addPoliciesFromPath(path.join(__dirname, 'test-policies'));

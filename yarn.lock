@@ -347,10 +347,10 @@
   resolved "https://registry.yarnpkg.com/@cdklabs/tskb/-/tskb-0.0.3.tgz#4b79846d9381eb1252ba85d5d20b7cd7d99b6ecb"
   integrity sha512-JR+MuD4awAXvutu7HArephXfZm09GPTaSAQUqNcJB5+ZENRm4kV+L6vJL6Tn1xHjCcHksO+HAqj3gYtm5K94vA==
 
-"@cedar-policy/cedar-wasm@3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@cedar-policy/cedar-wasm/-/cedar-wasm-3.2.3.tgz#7ef27c627b899193c55520295a8144b452a4598c"
-  integrity sha512-DPtI9SRSFYdrpkL8yKtcseQkZFfd0G0nihSQXMKT63AbENKnMIT/GZE0kiFudl9UT2DsfAyru9ZPfP8y4FK36g==
+"@cedar-policy/cedar-wasm@4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@cedar-policy/cedar-wasm/-/cedar-wasm-4.5.0.tgz#b4f971ded9ad1114b023f1cce48e9901202b65a4"
+  integrity sha512-gwPPgm1pqXOMRRpDdwcDkmNImt3OLuoKT54mtt3GB9rrh1s4jBGPkrfDPtzpWyHROk0MGPEfUHvDhILl9XNfaQ==
 
 "@cspotcode/source-map-support@^0.8.0":
   version "0.8.1"
