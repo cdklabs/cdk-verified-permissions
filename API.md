@@ -144,7 +144,7 @@ The User Pool Client Construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.IdentitySource.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.IdentitySource.isConstruct"></a>
 
 ```typescript
 import { IdentitySource } from '@cdklabs/cdk-verified-permissions'
@@ -153,6 +153,20 @@ IdentitySource.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.IdentitySource.isConstruct.parameter.x"></a>
 
@@ -518,7 +532,7 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.Policy.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.Policy.isConstruct"></a>
 
 ```typescript
 import { Policy } from '@cdklabs/cdk-verified-permissions'
@@ -527,6 +541,20 @@ Policy.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.Policy.isConstruct.parameter.x"></a>
 
@@ -976,7 +1004,7 @@ Permits an IAM principal all write & read operations on the policy store: Create
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyStore.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyStore.isConstruct"></a>
 
 ```typescript
 import { PolicyStore } from '@cdklabs/cdk-verified-permissions'
@@ -985,6 +1013,20 @@ PolicyStore.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.PolicyStore.isConstruct.parameter.x"></a>
 
@@ -1427,7 +1469,7 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.isConstruct"></a>
 
 ```typescript
 import { PolicyTemplate } from '@cdklabs/cdk-verified-permissions'
@@ -1436,6 +1478,20 @@ PolicyTemplate.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.isConstruct.parameter.x"></a>
 
