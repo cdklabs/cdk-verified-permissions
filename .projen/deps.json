@@ -74,7 +74,7 @@
     },
     {
       "name": "jsii",
-      "version": "5.7",
+      "version": "5.9",
       "type": "build"
     },
     {
@@ -110,7 +110,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.198.0",
+      "version": "^2.234.1",
       "type": "peer"
     },
     {

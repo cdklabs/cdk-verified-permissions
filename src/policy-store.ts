@@ -443,21 +443,33 @@ export class PolicyStore extends PolicyStoreBase {
 
   /**
    * Takes in an absolute path to a directory containing .cedar files and adds the contents of each
-   * .cedar file as policies to this policy store. Parses the policies with cedar-wasm and, if the policy store has a schema,
+   * .cedar file as policies to this policy store (searching recursively if needed).
+   * Parses the policies with cedar-wasm and, if the policy store has a schema,
    * performs semantic validation of the policies as well.
    * @param absolutePath a string representing an absolute path to the directory containing your policies
+   * @param recursive a boolean representing whether or not to search the directory recursively for .cedar files
    * @returns An array of created Policy constructs.
    */
-  public addPoliciesFromPath(absolutePath: string): Policy[] {
+  public addPoliciesFromPath(absolutePath: string, recursive: boolean = false): Policy[] {
     if (!fs.statSync(absolutePath).isDirectory()) {
       throw new Error(
         `The path ${absolutePath} does not appear to be a directory`,
       );
     }
-    const policyFileNames = fs
-      .readdirSync(absolutePath)
-      .map((f) => path.join(absolutePath, f))
-      .filter((f) => !fs.statSync(f).isDirectory() && f.endsWith('.cedar'));
+
+    const policyFileNames: string[] = [];
+    const processDir = (dirPath: string) => {
+      const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name);
+        if (entry.isFile() && entry.name.endsWith('.cedar')) {
+          policyFileNames.push(fullPath);
+        } else if (entry.isDirectory() && recursive) {
+          processDir(fullPath);
+        }
+      }
+    };
+    processDir(absolutePath);
 
     if (this.validationSettings.mode === ValidationSettingsMode.STRICT) {
       if (!this.schema) {

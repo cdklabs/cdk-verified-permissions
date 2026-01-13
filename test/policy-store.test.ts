@@ -603,6 +603,43 @@ describe('Policy store with policies from a path', () => {
     expect(Object.keys(policyDefns)).toHaveLength(8);
   });
 
+  test('Creating Policy Store and adding policies to it from a path with recursion', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    const policyStore = new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.STRICT,
+      },
+      schema: {
+        cedarJson: JSON.stringify(exampleSchema),
+      },
+      description: 'PhotoApp',
+    });
+
+    policyStore.addPoliciesFromPath(path.join(__dirname, 'test-policies', 'all-valid'), true);
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyStore',
+      {
+        ValidationSettings: {
+          Mode: ValidationSettingsMode.STRICT,
+        },
+        DeletionProtection: {
+          Mode: DeletionProtectionMode.DISABLED,
+        },
+        Schema: {
+          CedarJson: JSON.stringify(exampleSchema),
+        },
+      },
+    );
+
+    const policyDefns = Template.fromStack(stack).findResources('AWS::VerifiedPermissions::Policy');
+    expect(Object.keys(policyDefns)).toHaveLength(9);
+  });
+
   test('fails if the path is not a directory', () => {
     // GIVEN
     const stack = new Stack(undefined, 'Stack');
