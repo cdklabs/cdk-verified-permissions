@@ -1,5 +1,8 @@
 
+import * as fs from 'fs';
+import * as path from 'path';
 import * as cedar from '@cedar-policy/cedar-wasm/nodejs';
+import { PolicyProps } from './policy';
 export const POLICY_DESCRIPTION_ANNOTATION = '@cdkDescription';
 export const POLICY_ID_ANNOTATION = '@cdkId';
 
@@ -141,4 +144,74 @@ export function buildSchema(
       actions,
     },
   };
+}
+
+export interface PolicyPropsFromFile {
+  principal: string;
+  action: string;
+  resource: string;
+  cdkId: string;
+  policyProps: PolicyProps;
+}
+
+/**
+ * Extracts policy properties from a Cedar policy file
+ * @param filePath Path to the Cedar policy file
+ * @param policyStore The policy store to associate policies with
+ * @param defaultPolicyId Default ID to use if not specified in annotations
+ * @param defaultDescription Optional default description
+ * @param enablePolicyValidation Whether to enable policy validation
+ * @returns Array of policy properties with parsed principal, action, resource
+ */
+export function getPolicyPropsFromFile(
+  filePath: string,
+  policyStore: any,
+  defaultPolicyId: string,
+  defaultDescription?: string,
+  enablePolicyValidation: boolean = true,
+): PolicyPropsFromFile[] {
+  const policyFileContents = fs.readFileSync(filePath).toString();
+  const relativePath = path.basename(filePath);
+  const policies = splitPolicies(policyFileContents);
+
+  return policies.map(policyContents => {
+    const parseResult = cedar.policyToJson(policyContents);
+    if (parseResult.type === 'failure') {
+      throw new Error(`Failed to parse policy: ${parseResult.errors.map((e: any) => e.message).join('; ')}`);
+    }
+
+    const policyJson = parseResult.json;
+    const annotations = policyJson.annotations || {};
+    const cdkId = annotations[POLICY_ID_ANNOTATION.substring(1)] || defaultPolicyId;
+    const description = annotations[POLICY_DESCRIPTION_ANNOTATION.substring(1)] || defaultDescription || `${relativePath} - Created by CDK`;
+
+    const stringifyEntity = (constraint: cedar.PrincipalConstraint | cedar.ActionConstraint | cedar.ResourceConstraint): string => {
+      if (constraint.op === 'All') {
+        return 'Unspecified';
+      }
+      if (!('entity' in constraint)) {
+        throw new Error(`Invalid constraint in policy ${policyContents} in file ${filePath}`);
+      }
+      const entityUid: cedar.EntityUidJson = constraint.entity;
+      const typeAndId = '__entity' in entityUid ? entityUid.__entity : entityUid;
+      return `${typeAndId.type}::"${typeAndId.id}"`;
+    };
+
+    return {
+      principal: stringifyEntity(policyJson.principal),
+      action: stringifyEntity(policyJson.action),
+      resource: stringifyEntity(policyJson.resource),
+      cdkId,
+      policyProps: {
+        definition: {
+          static: {
+            statement: policyContents,
+            description,
+            enablePolicyValidation,
+          },
+        },
+        policyStore,
+      },
+    };
+  });
 }
