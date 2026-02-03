@@ -18,6 +18,7 @@ class PolicyStoreStack extends Stack {
           deletePhoto: {
             appliesTo: {
               resourceTypes: ['Photo'],
+              principalTypes: ['User'],
             },
           },
           viewPhoto: {

@@ -3,9 +3,12 @@
   "PolicyStore888EE7DF": {
    "Type": "AWS::VerifiedPermissions::PolicyStore",
    "Properties": {
+    "DeletionProtection": {
+     "Mode": "DISABLED"
+    },
     "Description": "Policy Store Description",
     "Schema": {
-     "CedarJson": "{\"PhotoApp\":{\"entityTypes\":{\"Photo\":{},\"User\":{}},\"actions\":{\"deletePhoto\":{\"appliesTo\":{\"resourceTypes\":[\"Photo\"]}},\"viewPhoto\":{\"appliesTo\":{\"resourceTypes\":[\"Photo\"],\"principalTypes\":[\"User\"]}}}}}"
+     "CedarJson": "{\"PhotoApp\":{\"entityTypes\":{\"Photo\":{},\"User\":{}},\"actions\":{\"deletePhoto\":{\"appliesTo\":{\"resourceTypes\":[\"Photo\"],\"principalTypes\":[\"User\"]}},\"viewPhoto\":{\"appliesTo\":{\"resourceTypes\":[\"Photo\"],\"principalTypes\":[\"User\"]}}}}}"
     },
     "ValidationSettings": {
      "Mode": "STRICT"

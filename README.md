@@ -59,6 +59,17 @@ const policyStore = new PolicyStore(scope, "PolicyStore", {
 });
 ```
 
+Define a Policy Store with Validation Settings to OFF and Deletion Protection enabled:
+
+```ts
+const validationSettingsOff = {
+  mode: ValidationSettingsMode.OFF,
+};
+const test = new PolicyStore(scope, "PolicyStore", {
+  validationSettings: validationSettingsOff,
+  deletionProtection: DeletionProtectionMode.ENABLED
+});
+```
 ## Schemas
 
 If you want to have type safety when defining a schema, you can accomplish this **<ins>only</ins>** in typescript. Simply use the `Schema` type exported by the `@cedar-policy/cedar-wasm`.
@@ -301,6 +312,7 @@ new IdentitySource(scope, 'IdentitySource', {
 ## Policy
 
 Load all the `.cedar` files in a given folder and define Policy objects for each of them. All policies will be associated with the same policy store.
+**PLEASE NOTE:** this method internally uses the `Policy.fromFile` so the same rules applies.
 
 ```ts
 const validationSettingsStrict = {
@@ -382,7 +394,10 @@ const policy = new Policy(scope, "MyTestPolicy", {
 ```
 
 Define a Policy with a statement from file:
-**PLEASE NOTE:** You can specify the description of the policy directly inside the Policy file, using the annotation `@cdkDescription`
+**PLEASE NOTE:** 
+- The `Policy.fromFile` static method supports multiple Cedar policies per file. Every Policy must follow the standard Cedar rules. This means that every Policy must be terminated with a `;` char.
+- You can specify the id of the Policy directly inside the Policy file through Cedar Annotations, using the annotation `@cdkId`. The id defined in the annotation will have priority with respect to the one passed in the `Policy.fromFile` method. In case no annotation is defined, the id passed in the `Policy.fromFile` method will be used. Since the `Policy.fromFile` method supports multiple Cedar policies per file, it is strongly suggested to define policy ids through the annotation, in order to avoid having many Policy Constructs with the same id (which will result in a CDK runtime error).
+- You can specify the description of the policy directly inside the Policy file, using the annotation `@cdkDescription`. The description defined in the annotation will have priority with respect to the one passed in the properties object of the `Policy.fromFile` method.
 
 ```ts
 const description = "Test policy assigned to the test store";

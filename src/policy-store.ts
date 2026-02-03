@@ -5,7 +5,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { ArnFormat, IResource, Resource, Stack } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
-import { buildSchema, checkParseSchema, cleanUpApiNameForNamespace, validatePolicy } from './cedar-helpers';
+import { buildSchema, checkParseSchema, cleanUpApiNameForNamespace, validateMultiplePolicies } from './cedar-helpers';
 import { Policy, PolicyDefinitionProperty } from './policy';
 import {
   AUTH_ACTIONS,
@@ -15,6 +15,10 @@ import {
 
 const RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
 
+export interface Tag {
+  readonly key: string;
+  readonly value: string;
+}
 export interface Schema {
   readonly cedarJson: string;
 }
@@ -29,6 +33,11 @@ export interface ValidationSettings {
 export enum ValidationSettingsMode {
   OFF = 'OFF',
   STRICT = 'STRICT',
+}
+
+export enum DeletionProtectionMode {
+  ENABLED = 'ENABLED',
+  DISABLED = 'DISABLED',
 }
 
 export interface IPolicyStore extends IResource {
@@ -93,9 +102,7 @@ export interface PolicyStoreProps {
 
   /**
    * The policy store's validation settings.
-   *
-   * @default - If not provided, the Policy store will be created with ValidationSettingsMode = "OFF"
-   */
+  */
   readonly validationSettings: ValidationSettings;
 
   /**
@@ -104,6 +111,19 @@ export interface PolicyStoreProps {
    * @default - No description.
    */
   readonly description?: string;
+
+  /**
+   * The policy store's deletion protection
+   * @default - If not provided, the Policy store will be created with deletionProtection = "DISABLED"
+   */
+  readonly deletionProtection?: DeletionProtectionMode;
+
+  /**
+   * The tags assigned to the policy store
+   *
+   * @default - none
+   */
+  readonly tags?: Tag[];
 }
 
 export interface AddPolicyOptions {
@@ -313,9 +333,9 @@ export class PolicyStore extends PolicyStoreBase {
           actionNames.push(`${verb} ${pathUrl}`);
         }
       }
-	  if (RELEVANT_HTTP_METHODS.includes(pathVerb)) {
-      	actionNames.push(`${pathVerb} ${pathUrl}`);
-	  }
+      if (RELEVANT_HTTP_METHODS.includes(pathVerb)) {
+        actionNames.push(`${pathVerb} ${pathUrl}`);
+      }
     }
     return buildSchema(namespace, actionNames, groupEntityTypeName);
   }
@@ -354,6 +374,11 @@ export class PolicyStore extends PolicyStoreBase {
    */
   readonly description?: string;
 
+  /**
+   * Deletion protection of the Policy Store
+   */
+  readonly deletionProtection?: DeletionProtectionMode;
+
   constructor(
     scope: Construct,
     id: string,
@@ -361,12 +386,14 @@ export class PolicyStore extends PolicyStoreBase {
       validationSettings: {
         mode: ValidationSettingsMode.OFF,
       },
+      deletionProtection: DeletionProtectionMode.DISABLED,
     },
   ) {
     super(scope, id);
     if (props.schema) {
       checkParseSchema(props.schema.cedarJson);
     }
+
     this.policyStore = new CfnPolicyStore(this, id, {
       schema: props.schema
         ? {
@@ -377,6 +404,10 @@ export class PolicyStore extends PolicyStoreBase {
         mode: props.validationSettings.mode,
       },
       description: props.description,
+      deletionProtection: {
+        mode: (props.deletionProtection) ? props.deletionProtection : DeletionProtectionMode.DISABLED,
+      },
+      tags: props.tags,
     });
     this.policyStoreArn = this.getResourceArnAttribute(
       this.policyStore.attrArn,
@@ -391,6 +422,7 @@ export class PolicyStore extends PolicyStoreBase {
     this.schema = props.schema;
     this.validationSettings = props.validationSettings;
     this.description = props.description;
+    this.deletionProtection = (props.deletionProtection) ? props.deletionProtection : DeletionProtectionMode.DISABLED;
   }
 
   /**
@@ -411,21 +443,33 @@ export class PolicyStore extends PolicyStoreBase {
 
   /**
    * Takes in an absolute path to a directory containing .cedar files and adds the contents of each
-   * .cedar file as policies to this policy store. Parses the policies with cedar-wasm and, if the policy store has a schema,
+   * .cedar file as policies to this policy store (searching recursively if needed).
+   * Parses the policies with cedar-wasm and, if the policy store has a schema,
    * performs semantic validation of the policies as well.
    * @param absolutePath a string representing an absolute path to the directory containing your policies
+   * @param recursive a boolean representing whether or not to search the directory recursively for .cedar files
    * @returns An array of created Policy constructs.
    */
-  public addPoliciesFromPath(absolutePath: string): Policy[] {
+  public addPoliciesFromPath(absolutePath: string, recursive: boolean = false): Policy[] {
     if (!fs.statSync(absolutePath).isDirectory()) {
       throw new Error(
         `The path ${absolutePath} does not appear to be a directory`,
       );
     }
-    const policyFileNames = fs
-      .readdirSync(absolutePath)
-      .map((f) => path.join(absolutePath, f))
-      .filter((f) => !fs.statSync(f).isDirectory() && f.endsWith('.cedar'));
+
+    const policyFileNames: string[] = [];
+    const processDir = (dirPath: string) => {
+      const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name);
+        if (entry.isFile() && entry.name.endsWith('.cedar')) {
+          policyFileNames.push(fullPath);
+        } else if (entry.isDirectory() && recursive) {
+          processDir(fullPath);
+        }
+      }
+    };
+    processDir(absolutePath);
 
     if (this.validationSettings.mode === ValidationSettingsMode.STRICT) {
       if (!this.schema) {
@@ -433,14 +477,15 @@ export class PolicyStore extends PolicyStoreBase {
           'A schema must exist when adding policies to a policy store with strict validation mode.',
         );
       }
-      for (const policyFile of policyFileNames) {
-        const policyStatement = fs.readFileSync(policyFile, 'utf-8');
-        validatePolicy(policyStatement, this.schema.cedarJson);
-      }
+      policyFileNames.map(fileName => {
+        const fileContents = fs.readFileSync(fileName, 'utf-8');
+        validateMultiplePolicies(fileContents, this.schema!!.cedarJson);
+      });
     }
 
-    const policies = policyFileNames.map((cedarFile) =>
-      Policy.fromFile(this, cedarFile, {
+    const policies = policyFileNames.flatMap((cedarFile) =>
+      // Using base path of the file as default id for policy
+      Policy.fromFile(this, path.basename(cedarFile), {
         path: cedarFile,
         policyStore: this,
       }),

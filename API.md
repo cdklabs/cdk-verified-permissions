@@ -144,7 +144,7 @@ The User Pool Client Construct.
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.IdentitySource.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.IdentitySource.isConstruct"></a>
 
 ```typescript
 import { IdentitySource } from '@cdklabs/cdk-verified-permissions'
@@ -153,6 +153,20 @@ IdentitySource.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.IdentitySource.isConstruct.parameter.x"></a>
 
@@ -267,7 +281,7 @@ The Identity Source identifier.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.audiencesOIDC">audiencesOIDC</a></code> | <code>string[]</code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.property.clientIds">clientIds</a></code> | <code>string[]</code> | *No description.* |
@@ -300,16 +314,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -518,7 +533,7 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.Policy.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.Policy.isConstruct"></a>
 
 ```typescript
 import { Policy } from '@cdklabs/cdk-verified-permissions'
@@ -527,6 +542,20 @@ Policy.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.Policy.isConstruct.parameter.x"></a>
 
@@ -573,7 +602,7 @@ Check whether the given construct is a Resource.
 ```typescript
 import { Policy } from '@cdklabs/cdk-verified-permissions'
 
-Policy.fromFile(scope: Construct, id: string, props: StaticPolicyFromFileProps)
+Policy.fromFile(scope: Construct, defaultPolicyId: string, props: StaticPolicyFromFileProps)
 ```
 
 Create a policy based on a file containing a cedar policy.
@@ -591,11 +620,16 @@ The parent creating construct (usually `this`).
 
 ---
 
-###### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-verified-permissions.Policy.fromFile.parameter.id"></a>
+###### `defaultPolicyId`<sup>Required</sup> <a name="defaultPolicyId" id="@cdklabs/cdk-verified-permissions.Policy.fromFile.parameter.defaultPolicyId"></a>
 
 - *Type:* string
 
-The construct id.
+The Policy construct default id.
+
+This may be directly passed to the method or defined inside the file.
+When you have multiple policies per file it's strongly suggested to define the id directly
+inside the file in order to avoid multiple policy constructs with the same id. In case of id passed
+directly to the method and also defined in file, the latter will take priority.
 
 ---
 
@@ -680,7 +714,7 @@ The policy id.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.Policy.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.Policy.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Policy.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.Policy.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.Policy.property.definition">definition</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyDefinitionProperty">PolicyDefinitionProperty</a></code> | *No description.* |
 | <code><a href="#@cdklabs/cdk-verified-permissions.Policy.property.policyId">policyId</a></code> | <code>string</code> | The unique ID of the new or updated policy. |
@@ -707,16 +741,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -824,7 +859,7 @@ new PolicyStore(scope: Construct, id: string, props?: PolicyStoreProps)
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPolicies">addPolicies</a></code> | Add multiple policies to the policy store. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath">addPoliciesFromPath</a></code> | Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store. Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath">addPoliciesFromPath</a></code> | Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store (searching recursively if needed). Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.grant">grant</a></code> | Adds an IAM policy statement associated with this policy store to an IAM principal's policy. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.grantAuth">grantAuth</a></code> | Permits an IAM principal all auth operations on the policy store: IsAuthorized, IsAuthorizedWithToken. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.grantRead">grantRead</a></code> | Permits an IAM principal all read operations on the policy store: GetIdentitySource, GetPolicy, GetPolicyStore, GetPolicyTemplate, GetSchema, ListIdentitySources, ListPolicies, ListPolicyTemplates. |
@@ -881,16 +916,24 @@ An array of policy options for the policy stores policies.
 ##### `addPoliciesFromPath` <a name="addPoliciesFromPath" id="@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath"></a>
 
 ```typescript
-public addPoliciesFromPath(absolutePath: string): Policy[]
+public addPoliciesFromPath(absolutePath: string, recursive?: boolean): Policy[]
 ```
 
-Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store. Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well.
+Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store (searching recursively if needed). Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well.
 
 ###### `absolutePath`<sup>Required</sup> <a name="absolutePath" id="@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath.parameter.absolutePath"></a>
 
 - *Type:* string
 
 a string representing an absolute path to the directory containing your policies.
+
+---
+
+###### `recursive`<sup>Optional</sup> <a name="recursive" id="@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath.parameter.recursive"></a>
+
+- *Type:* boolean
+
+a boolean representing whether or not to search the directory recursively for .cedar files.
 
 ---
 
@@ -971,7 +1014,7 @@ Permits an IAM principal all write & read operations on the policy store: Create
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyStore.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyStore.isConstruct"></a>
 
 ```typescript
 import { PolicyStore } from '@cdklabs/cdk-verified-permissions'
@@ -980,6 +1023,20 @@ PolicyStore.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.PolicyStore.isConstruct.parameter.x"></a>
 
@@ -1192,12 +1249,13 @@ If passed, the schema's User type will have a parent of this type.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreArn">policyStoreArn</a></code> | <code>string</code> | ARN of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreId">policyStoreId</a></code> | <code>string</code> | ID of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.policyStoreName">policyStoreName</a></code> | <code>string</code> | Name of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | Validation Settings of the Policy Store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.deletionProtection">deletionProtection</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a></code> | Deletion protection of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.description">description</a></code> | <code>string</code> | Description of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | Schema definition of the Policy Store. |
 
@@ -1221,16 +1279,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -1291,6 +1350,18 @@ public readonly validationSettings: ValidationSettings;
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a>
 
 Validation Settings of the Policy Store.
+
+---
+
+##### `deletionProtection`<sup>Optional</sup> <a name="deletionProtection" id="@cdklabs/cdk-verified-permissions.PolicyStore.property.deletionProtection"></a>
+
+```typescript
+public readonly deletionProtection: DeletionProtectionMode;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a>
+
+Deletion protection of the Policy Store.
 
 ---
 
@@ -1409,7 +1480,7 @@ account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.isConstruct"></a>
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.isConstruct"></a>
 
 ```typescript
 import { PolicyTemplate } from '@cdklabs/cdk-verified-permissions'
@@ -1418,6 +1489,20 @@ PolicyTemplate.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.isConstruct.parameter.x"></a>
 
@@ -1558,7 +1643,7 @@ The PolicyTemplate's id.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The Policy store that contains the template. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.property.policyTemplateId">policyTemplateId</a></code> | <code>string</code> | The ID of the policy template. |
@@ -1585,16 +1670,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -2387,8 +2473,10 @@ const policyStoreProps: PolicyStoreProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | The policy store's validation settings. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.deletionProtection">deletionProtection</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a></code> | The policy store's deletion protection. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.description">description</a></code> | <code>string</code> | The policy store's description. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | This attribute is not required from an API point of view. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.tags">tags</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Tag">Tag</a>[]</code> | The tags assigned to the policy store. |
 
 ---
 
@@ -2399,9 +2487,21 @@ public readonly validationSettings: ValidationSettings;
 ```
 
 - *Type:* <a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a>
-- *Default:* If not provided, the Policy store will be created with ValidationSettingsMode = "OFF"
 
 The policy store's validation settings.
+
+---
+
+##### `deletionProtection`<sup>Optional</sup> <a name="deletionProtection" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.deletionProtection"></a>
+
+```typescript
+public readonly deletionProtection: DeletionProtectionMode;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a>
+- *Default:* If not provided, the Policy store will be created with deletionProtection = "DISABLED"
+
+The policy store's deletion protection.
 
 ---
 
@@ -2430,6 +2530,19 @@ public readonly schema: Schema;
 This attribute is not required from an API point of view.
 
 It represents the schema (in Cedar) to be applied to the PolicyStore.
+
+---
+
+##### `tags`<sup>Optional</sup> <a name="tags" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.tags"></a>
+
+```typescript
+public readonly tags: Tag[];
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.Tag">Tag</a>[]
+- *Default:* none
+
+The tags assigned to the policy store.
 
 ---
 
@@ -2566,6 +2679,7 @@ const staticPolicyDefinitionProperty: StaticPolicyDefinitionProperty = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.statement">statement</a></code> | <code>string</code> | The policy content of the static policy, written in the Cedar policy language. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.enablePolicyValidation">enablePolicyValidation</a></code> | <code>boolean</code> | Boolean flag to activate policy validation against Cedar Language Syntax & Rules. |
 
 ---
 
@@ -2600,6 +2714,19 @@ through '@cdkDescription' annotation
 
 ---
 
+##### `enablePolicyValidation`<sup>Optional</sup> <a name="enablePolicyValidation" id="@cdklabs/cdk-verified-permissions.StaticPolicyDefinitionProperty.property.enablePolicyValidation"></a>
+
+```typescript
+public readonly enablePolicyValidation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Boolean flag to activate policy validation against Cedar Language Syntax & Rules.
+
+---
+
 ### StaticPolicyFromFileProps <a name="StaticPolicyFromFileProps" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.Initializer"></a>
@@ -2616,7 +2743,8 @@ const staticPolicyFromFileProps: StaticPolicyFromFileProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.path">path</a></code> | <code>string</code> | The path to the file to be read which contains a single cedar statement representing a policy. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store that the policy will be created under. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The description of the static policy. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.description">description</a></code> | <code>string</code> | The default description of static policies, this will be applied to every policy if the description is not retrieved via the. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.enablePolicyValidation">enablePolicyValidation</a></code> | <code>boolean</code> | Boolean flag to activate policy validation against Cedar Language Syntax & Rules. |
 
 ---
 
@@ -2652,7 +2780,61 @@ public readonly description: string;
 
 - *Type:* string
 
-The description of the static policy.
+The default description of static policies, this will be applied to every policy if the description is not retrieved via the.
+
+> [getPolicyDescription method in cedar-helpers](getPolicyDescription method in cedar-helpers)
+
+---
+
+##### `enablePolicyValidation`<sup>Optional</sup> <a name="enablePolicyValidation" id="@cdklabs/cdk-verified-permissions.StaticPolicyFromFileProps.property.enablePolicyValidation"></a>
+
+```typescript
+public readonly enablePolicyValidation: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Boolean flag to activate policy validation against Cedar Language Syntax & Rules.
+
+---
+
+### Tag <a name="Tag" id="@cdklabs/cdk-verified-permissions.Tag"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.Tag.Initializer"></a>
+
+```typescript
+import { Tag } from '@cdklabs/cdk-verified-permissions'
+
+const tag: Tag = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Tag.property.key">key</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Tag.property.value">value</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `key`<sup>Required</sup> <a name="key" id="@cdklabs/cdk-verified-permissions.Tag.property.key"></a>
+
+```typescript
+public readonly key: string;
+```
+
+- *Type:* string
+
+---
+
+##### `value`<sup>Required</sup> <a name="value" id="@cdklabs/cdk-verified-permissions.Tag.property.value"></a>
+
+```typescript
+public readonly value: string;
+```
+
+- *Type:* string
 
 ---
 
@@ -2813,7 +2995,7 @@ public readonly mode: ValidationSettingsMode;
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IIdentitySource.property.identitySourceId">identitySourceId</a></code> | <code>string</code> | Identity Source identifier. |
 
@@ -2837,16 +3019,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -2886,7 +3069,7 @@ Identity Source identifier.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicy.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicy.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicy.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicy.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicy.property.policyId">policyId</a></code> | <code>string</code> | The unique ID of the new or updated policy. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicy.property.policyType">policyType</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyType">PolicyType</a></code> | The type of the policy. |
@@ -2911,16 +3094,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -3050,7 +3234,7 @@ Permits an IAM principal all write & read operations on the policy store: Create
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore.property.policyStoreArn">policyStoreArn</a></code> | <code>string</code> | ARN of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore.property.policyStoreId">policyStoreId</a></code> | <code>string</code> | ID of the Policy Store. |
@@ -3075,16 +3259,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -3136,7 +3321,7 @@ ID of the Policy Store.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate.property.policyTemplateId">policyTemplateId</a></code> | <code>string</code> | The ID of the policy template. |
 
@@ -3160,16 +3345,17 @@ The tree node.
 public readonly env: ResourceEnvironment;
 ```
 
-- *Type:* aws-cdk-lib.ResourceEnvironment
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
 
 The environment this resource belongs to.
 
-For resources that are created and managed by the CDK
-(generally, those created by creating new class instances like Role, Bucket, etc.),
-this is always the same as the environment of the stack they belong to;
-however, for imported resources
-(those obtained from static methods like fromRoleArn, fromBucketName, etc.),
-that might be different than the stack they were imported into.
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
 
 ---
 
@@ -3198,6 +3384,27 @@ The ID of the policy template.
 ---
 
 ## Enums <a name="Enums" id="Enums"></a>
+
+### DeletionProtectionMode <a name="DeletionProtectionMode" id="@cdklabs/cdk-verified-permissions.DeletionProtectionMode"></a>
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode.ENABLED">ENABLED</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode.DISABLED">DISABLED</a></code> | *No description.* |
+
+---
+
+##### `ENABLED` <a name="ENABLED" id="@cdklabs/cdk-verified-permissions.DeletionProtectionMode.ENABLED"></a>
+
+---
+
+
+##### `DISABLED` <a name="DISABLED" id="@cdklabs/cdk-verified-permissions.DeletionProtectionMode.DISABLED"></a>
+
+---
+
 
 ### PolicyType <a name="PolicyType" id="@cdklabs/cdk-verified-permissions.PolicyType"></a>
 

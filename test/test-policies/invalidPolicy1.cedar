@@ -1,1 +1,1 @@
-permit(principal, action,)
+permit(principal, action,);

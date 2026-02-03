@@ -3,7 +3,7 @@ import * as path from 'path';
 import { CfnPolicy } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { IResource, Resource } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
-import { checkParsePolicy, getPolicyDescription } from './cedar-helpers';
+import { checkParsePolicy, getPolicyDescription, getPolicyId, splitPolicies } from './cedar-helpers';
 import { IPolicyStore } from './policy-store';
 import { IPolicyTemplate } from './policy-template';
 
@@ -55,6 +55,13 @@ export interface StaticPolicyDefinitionProperty {
    * @default - Empty description.
    */
   readonly description?: string;
+
+  /**
+   * Boolean flag to activate policy validation against Cedar Language Syntax & Rules
+   *
+   * @default - true
+   */
+  readonly enablePolicyValidation?: boolean;
 }
 
 export interface PolicyDefinitionProperty {
@@ -132,9 +139,18 @@ export interface StaticPolicyFromFileProps {
   readonly policyStore: IPolicyStore;
 
   /**
-   * The description of the static policy
+   * The default description of static policies, this will be applied to every policy if the description
+   * is not retrieved via the @see getPolicyDescription method in cedar-helpers
    */
   readonly description?: string;
+
+  /**
+   * Boolean flag to activate policy validation against Cedar Language Syntax & Rules
+   *
+   * @default - true
+   */
+  readonly enablePolicyValidation?: boolean;
+
 }
 
 export class Policy extends PolicyBase {
@@ -188,27 +204,36 @@ export class Policy extends PolicyBase {
    * `PolicyStore.addPoliciesFromPath()`
    *
    * @param scope The parent creating construct (usually `this`).
-   * @param id The construct id.
    * @param props A `StaticPolicyFromFileProps` object.
+   * @param defaultPolicyId The Policy construct default id. This may be directly passed to the method or defined inside the file.
+   *           When you have multiple policies per file it's strongly suggested to define the id directly
+   *           inside the file in order to avoid multiple policy constructs with the same id. In case of id passed
+   *           directly to the method and also defined in file, the latter will take priority.
    */
   public static fromFile(
     scope: Construct,
-    id: string,
+    defaultPolicyId: string,
     props: StaticPolicyFromFileProps,
-  ): Policy {
+  ): Policy[] {
     const policyFileContents = fs.readFileSync(props.path).toString();
-    checkParsePolicy(policyFileContents);
     let relativePath = path.basename(props.path);
-    let policyDescription = props.description || getPolicyDescription(policyFileContents) || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`;
-    return new Policy(scope, id, {
-      definition: {
-        static: {
-          statement: policyFileContents,
-          description: policyDescription,
+    let enablePolicyValidation = (props.enablePolicyValidation == undefined) ? true : props.enablePolicyValidation;
+    const policies = splitPolicies(policyFileContents);
+    const policyDefinitions = policies.map(policyContents => {
+      let policyId = getPolicyId(policyContents) || defaultPolicyId;
+      let policyDescription = getPolicyDescription(policyContents) || props.description || `${relativePath}${POLICY_DESC_SUFFIX_FROM_FILE}`;
+      return new Policy(scope, policyId, {
+        definition: {
+          static: {
+            statement: policyContents,
+            description: policyDescription,
+            enablePolicyValidation: enablePolicyValidation,
+          },
         },
-      },
-      policyStore: props.policyStore,
+        policyStore: props.policyStore,
+      });
     });
+    return policyDefinitions;
   }
 
   readonly policyId: string;
@@ -227,8 +252,11 @@ export class Policy extends PolicyBase {
 
     let cfnDefinitionAttr;
     let definitionProperty = props.definition;
+
     if (props.definition.static) {
-      checkParsePolicy(props.definition.static.statement);
+      if (props.definition.static.enablePolicyValidation ?? true) {
+        checkParsePolicy(props.definition.static.statement);
+      }
       let description = props.definition.static.description || getPolicyDescription(props.definition.static.statement) || undefined;
       definitionProperty = {
         static: {
