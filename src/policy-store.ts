@@ -5,7 +5,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { ArnFormat, IResource, Resource, Stack } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
-import { buildSchema, checkParseSchema, cleanUpApiNameForNamespace, validateMultiplePolicies } from './cedar-helpers';
+import { buildSchema, checkParseSchema, cleanUpApiNameForNamespace, getPolicyPropsFromFile, validateMultiplePolicies } from './cedar-helpers';
 import { Policy, PolicyDefinitionProperty } from './policy';
 import {
   AUTH_ACTIONS,
@@ -14,6 +14,7 @@ import {
 } from './private/permissions';
 
 const RELEVANT_HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head'];
+const SIMULTANEOUS_POLICY_CREATION_STREAMS = 5;
 
 export interface Tag {
   readonly key: string;
@@ -446,6 +447,7 @@ export class PolicyStore extends PolicyStoreBase {
    * .cedar file as policies to this policy store (searching recursively if needed).
    * Parses the policies with cedar-wasm and, if the policy store has a schema,
    * performs semantic validation of the policies as well.
+   * Organizes policies with dependencies to avoid CloudFormation throttling and resource conflicts.
    * @param absolutePath a string representing an absolute path to the directory containing your policies
    * @param recursive a boolean representing whether or not to search the directory recursively for .cedar files
    * @returns An array of created Policy constructs.
@@ -483,13 +485,45 @@ export class PolicyStore extends PolicyStoreBase {
       });
     }
 
-    const policies = policyFileNames.flatMap((cedarFile) =>
-      // Using base path of the file as default id for policy
-      Policy.fromFile(this, path.basename(cedarFile), {
-        path: cedarFile,
-        policyStore: this,
-      }),
+    const allPolicyProps = policyFileNames.flatMap(cedarFile =>
+      getPolicyPropsFromFile(cedarFile, this, path.basename(cedarFile), undefined, true),
     );
+
+    // Group policies by resource
+    const resourceGroups = new Map<string, typeof allPolicyProps>();
+    for (const props of allPolicyProps) {
+      const resourceKey = JSON.stringify(props.resource);
+      if (!resourceGroups.has(resourceKey)) {
+        resourceGroups.set(resourceKey, []);
+      }
+      resourceGroups.get(resourceKey)!.push(props);
+    }
+
+    // Create policies with dependencies
+    const policies: Policy[] = [];
+    const firstPolicyPerResourceGroup: Policy[] = [];
+
+    // First, handle policies within same resource groups (sequential dependencies)
+    for (const group of resourceGroups.values()) {
+      let previousPolicyInGroup: Policy | undefined;
+      for (const props of group) {
+        const policy = new Policy(this, props.cdkId, props.policyProps);
+        if (previousPolicyInGroup) {
+          policy.node.addDependency(previousPolicyInGroup);
+        } else {
+          firstPolicyPerResourceGroup.push(policy);
+        }
+        policies.push(policy);
+        previousPolicyInGroup = policy;
+      }
+    }
+
+    // Then, organize resource groups in batches to prevent throttling
+    // First SIMULTANEOUS_POLICY_CREATION_STREAMS resource groups can be created simultaneously
+    // Each subsequent resource group depends on the resource group SIMULTANEOUS_POLICY_CREATION_STREAMS positions earlier
+    for (let i = SIMULTANEOUS_POLICY_CREATION_STREAMS; i < firstPolicyPerResourceGroup.length; i++) {
+      firstPolicyPerResourceGroup[i].node.addDependency(firstPolicyPerResourceGroup[i - SIMULTANEOUS_POLICY_CREATION_STREAMS]);
+    }
 
     return policies;
   }

@@ -859,7 +859,7 @@ new PolicyStore(scope: Construct, id: string, props?: PolicyStoreProps)
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPolicies">addPolicies</a></code> | Add multiple policies to the policy store. |
-| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath">addPoliciesFromPath</a></code> | Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store (searching recursively if needed). Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath">addPoliciesFromPath</a></code> | Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store (searching recursively if needed). Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well. Organizes policies with dependencies to avoid CloudFormation throttling and resource conflicts. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.grant">grant</a></code> | Adds an IAM policy statement associated with this policy store to an IAM principal's policy. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.grantAuth">grantAuth</a></code> | Permits an IAM principal all auth operations on the policy store: IsAuthorized, IsAuthorizedWithToken. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.grantRead">grantRead</a></code> | Permits an IAM principal all read operations on the policy store: GetIdentitySource, GetPolicy, GetPolicyStore, GetPolicyTemplate, GetSchema, ListIdentitySources, ListPolicies, ListPolicyTemplates. |
@@ -919,7 +919,7 @@ An array of policy options for the policy stores policies.
 public addPoliciesFromPath(absolutePath: string, recursive?: boolean): Policy[]
 ```
 
-Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store (searching recursively if needed). Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well.
+Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store (searching recursively if needed). Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well. Organizes policies with dependencies to avoid CloudFormation throttling and resource conflicts.
 
 ###### `absolutePath`<sup>Required</sup> <a name="absolutePath" id="@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath.parameter.absolutePath"></a>
 
