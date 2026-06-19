@@ -1532,6 +1532,351 @@ Schema definition of the Policy Store.
 ---
 
 
+### PolicyStoreAlias <a name="PolicyStoreAlias" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias"></a>
+
+- *Implements:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias">IPolicyStoreAlias</a>
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer"></a>
+
+```typescript
+import { PolicyStoreAlias } from '@cdklabs/cdk-verified-permissions'
+
+new PolicyStoreAlias(scope: Construct, id: string, props: PolicyStoreAliasProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps">PolicyStoreAliasProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps">PolicyStoreAliasProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.with">with</a></code> | Applies one or more mixins to this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.applyCrossStackReferenceStrength">applyCrossStackReferenceStrength</a></code> | Override the cross-stack reference strength for this resource. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
+
+---
+
+##### `toString` <a name="toString" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+---
+
+##### `applyCrossStackReferenceStrength` <a name="applyCrossStackReferenceStrength" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.applyCrossStackReferenceStrength"></a>
+
+```typescript
+public applyCrossStackReferenceStrength(strength: ReferenceStrength): void
+```
+
+Override the cross-stack reference strength for this resource.
+
+When set, any cross-stack reference to this resource will use the specified
+mechanism instead of the global default determined by the
+`@aws-cdk/core:defaultCrossStackReferences` context key. This is useful for
+selectively weakening specific references to avoid the "deadly embrace" problem
+without changing the app-wide default.
+
+###### `strength`<sup>Required</sup> <a name="strength" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.applyCrossStackReferenceStrength.parameter.strength"></a>
+
+- *Type:* aws-cdk-lib.ReferenceStrength
+
+The reference strength to use for this resource.
+
+---
+
+##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.applyRemovalPolicy"></a>
+
+```typescript
+public applyRemovalPolicy(policy: RemovalPolicy): void
+```
+
+Apply the given removal policy to this resource.
+
+The Removal Policy controls what happens to this resource when it stops
+being managed by CloudFormation, either because you've removed it from the
+CDK application or because you've made a change that requires the resource
+to be replaced.
+
+The resource can be deleted (`RemovalPolicy.DESTROY`), or left in your AWS
+account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
+
+###### `policy`<sup>Required</sup> <a name="policy" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.applyRemovalPolicy.parameter.policy"></a>
+
+- *Type:* aws-cdk-lib.RemovalPolicy
+
+---
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isOwnedResource">isOwnedResource</a></code> | Returns true if the construct was created by CDK, and false otherwise. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromAliasName">fromAliasName</a></code> | Creates a PolicyStoreAlias construct that represents an external policy store alias. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromPolicyStoreAliasAttributes">fromPolicyStoreAliasAttributes</a></code> | Creates a PolicyStoreAlias construct that represents an external policy store alias. |
+
+---
+
+##### `isConstruct` <a name="isConstruct" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isConstruct"></a>
+
+```typescript
+import { PolicyStoreAlias } from '@cdklabs/cdk-verified-permissions'
+
+PolicyStoreAlias.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
+
+###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+##### `isOwnedResource` <a name="isOwnedResource" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isOwnedResource"></a>
+
+```typescript
+import { PolicyStoreAlias } from '@cdklabs/cdk-verified-permissions'
+
+PolicyStoreAlias.isOwnedResource(construct: IConstruct)
+```
+
+Returns true if the construct was created by CDK, and false otherwise.
+
+###### `construct`<sup>Required</sup> <a name="construct" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isOwnedResource.parameter.construct"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+##### `isResource` <a name="isResource" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isResource"></a>
+
+```typescript
+import { PolicyStoreAlias } from '@cdklabs/cdk-verified-permissions'
+
+PolicyStoreAlias.isResource(construct: IConstruct)
+```
+
+Check whether the given construct is a Resource.
+
+###### `construct`<sup>Required</sup> <a name="construct" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.isResource.parameter.construct"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+##### `fromAliasName` <a name="fromAliasName" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromAliasName"></a>
+
+```typescript
+import { PolicyStoreAlias } from '@cdklabs/cdk-verified-permissions'
+
+PolicyStoreAlias.fromAliasName(scope: Construct, id: string, aliasName: string)
+```
+
+Creates a PolicyStoreAlias construct that represents an external policy store alias.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromAliasName.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+The parent creating construct (usually `this`).
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromAliasName.parameter.id"></a>
+
+- *Type:* string
+
+The construct's name.
+
+---
+
+###### `aliasName`<sup>Required</sup> <a name="aliasName" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromAliasName.parameter.aliasName"></a>
+
+- *Type:* string
+
+The alias name.
+
+---
+
+##### `fromPolicyStoreAliasAttributes` <a name="fromPolicyStoreAliasAttributes" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromPolicyStoreAliasAttributes"></a>
+
+```typescript
+import { PolicyStoreAlias } from '@cdklabs/cdk-verified-permissions'
+
+PolicyStoreAlias.fromPolicyStoreAliasAttributes(scope: Construct, id: string, attrs: PolicyStoreAliasAttributes)
+```
+
+Creates a PolicyStoreAlias construct that represents an external policy store alias.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromPolicyStoreAliasAttributes.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+The parent creating construct (usually `this`).
+
+---
+
+###### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromPolicyStoreAliasAttributes.parameter.id"></a>
+
+- *Type:* string
+
+The construct's name.
+
+---
+
+###### `attrs`<sup>Required</sup> <a name="attrs" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.fromPolicyStoreAliasAttributes.parameter.attrs"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAliasAttributes">PolicyStoreAliasAttributes</a>
+
+A `PolicyStoreAliasAttributes` object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.aliasName">aliasName</a></code> | <code>string</code> | The name of the policy store alias. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store associated with this alias. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `env`<sup>Required</sup> <a name="env" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.env"></a>
+
+```typescript
+public readonly env: ResourceEnvironment;
+```
+
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
+
+The environment this resource belongs to.
+
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
+
+---
+
+##### `stack`<sup>Required</sup> <a name="stack" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.stack"></a>
+
+```typescript
+public readonly stack: Stack;
+```
+
+- *Type:* aws-cdk-lib.Stack
+
+The stack in which this resource is defined.
+
+---
+
+##### `aliasName`<sup>Required</sup> <a name="aliasName" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.aliasName"></a>
+
+```typescript
+public readonly aliasName: string;
+```
+
+- *Type:* string
+
+The name of the policy store alias.
+
+---
+
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.property.policyStore"></a>
+
+```typescript
+public readonly policyStore: IPolicyStore;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+
+The policy store associated with this alias.
+
+---
+
+
 ### PolicyTemplate <a name="PolicyTemplate" id="@cdklabs/cdk-verified-permissions.PolicyTemplate"></a>
 
 - *Implements:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate">IPolicyTemplate</a>
@@ -2697,6 +3042,79 @@ The policy store that contains the policy.
 
 ---
 
+### PolicyStoreAliasAttributes <a name="PolicyStoreAliasAttributes" id="@cdklabs/cdk-verified-permissions.PolicyStoreAliasAttributes"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.PolicyStoreAliasAttributes.Initializer"></a>
+
+```typescript
+import { PolicyStoreAliasAttributes } from '@cdklabs/cdk-verified-permissions'
+
+const policyStoreAliasAttributes: PolicyStoreAliasAttributes = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAliasAttributes.property.aliasName">aliasName</a></code> | <code>string</code> | The name of the policy store alias. |
+
+---
+
+##### `aliasName`<sup>Required</sup> <a name="aliasName" id="@cdklabs/cdk-verified-permissions.PolicyStoreAliasAttributes.property.aliasName"></a>
+
+```typescript
+public readonly aliasName: string;
+```
+
+- *Type:* string
+
+The name of the policy store alias.
+
+---
+
+### PolicyStoreAliasProps <a name="PolicyStoreAliasProps" id="@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps.Initializer"></a>
+
+```typescript
+import { PolicyStoreAliasProps } from '@cdklabs/cdk-verified-permissions'
+
+const policyStoreAliasProps: PolicyStoreAliasProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps.property.aliasName">aliasName</a></code> | <code>string</code> | The name of the policy store alias. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps.property.policyStore">policyStore</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a></code> | The policy store to associate with this alias. |
+
+---
+
+##### `aliasName`<sup>Required</sup> <a name="aliasName" id="@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps.property.aliasName"></a>
+
+```typescript
+public readonly aliasName: string;
+```
+
+- *Type:* string
+
+The name of the policy store alias.
+
+---
+
+##### `policyStore`<sup>Required</sup> <a name="policyStore" id="@cdklabs/cdk-verified-permissions.PolicyStoreAliasProps.property.policyStore"></a>
+
+```typescript
+public readonly policyStore: IPolicyStore;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+
+The policy store to associate with this alias.
+
+---
+
 ### PolicyStoreAttributes <a name="PolicyStoreAttributes" id="@cdklabs/cdk-verified-permissions.PolicyStoreAttributes"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.PolicyStoreAttributes.Initializer"></a>
@@ -3610,6 +4028,80 @@ public readonly policyStoreId: string;
 - *Type:* string
 
 ID of the Policy Store.
+
+---
+
+### IPolicyStoreAlias <a name="IPolicyStoreAlias" id="@cdklabs/cdk-verified-permissions.IPolicyStoreAlias"></a>
+
+- *Extends:* aws-cdk-lib.IResource
+
+- *Implemented By:* <a href="#@cdklabs/cdk-verified-permissions.PolicyStoreAlias">PolicyStoreAlias</a>, <a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias">IPolicyStoreAlias</a>
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.env">env</a></code> | <code>aws-cdk-lib.interfaces.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.aliasName">aliasName</a></code> | <code>string</code> | The name of the policy store alias. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `env`<sup>Required</sup> <a name="env" id="@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.env"></a>
+
+```typescript
+public readonly env: ResourceEnvironment;
+```
+
+- *Type:* aws-cdk-lib.interfaces.ResourceEnvironment
+
+The environment this resource belongs to.
+
+For resources that are created and managed in a Stack (those created by
+creating new class instances like `new Role()`, `new Bucket()`, etc.), this
+is always the same as the environment of the stack they belong to.
+
+For referenced resources (those obtained from referencing methods like
+`Role.fromRoleArn()`, `Bucket.fromBucketName()`, etc.), they might be
+different than the stack they were imported into.
+
+---
+
+##### `stack`<sup>Required</sup> <a name="stack" id="@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.stack"></a>
+
+```typescript
+public readonly stack: Stack;
+```
+
+- *Type:* aws-cdk-lib.Stack
+
+The stack in which this resource is defined.
+
+---
+
+##### `aliasName`<sup>Required</sup> <a name="aliasName" id="@cdklabs/cdk-verified-permissions.IPolicyStoreAlias.property.aliasName"></a>
+
+```typescript
+public readonly aliasName: string;
+```
+
+- *Type:* string
+
+The name of the policy store alias.
 
 ---
 
