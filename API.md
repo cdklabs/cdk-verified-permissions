@@ -45,6 +45,8 @@ new IdentitySource(scope: Construct, id: string, props: IdentitySourceProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.with">with</a></code> | Applies one or more mixins to this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.applyCrossStackReferenceStrength">applyCrossStackReferenceStrength</a></code> | Override the cross-stack reference strength for this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addAudience">addAudience</a></code> | Add an audience to the list. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.IdentitySource.addClientId">addClientId</a></code> | Add a clientId to the list The method can be called only when the Identity Source is configured with one of these configs:  - Cognito auth provider  - OIDC auth provider and ID Token Selection mode. |
@@ -59,6 +61,47 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@cdklabs/cdk-verified-permissions.IdentitySource.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@cdklabs/cdk-verified-permissions.IdentitySource.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+---
+
+##### `applyCrossStackReferenceStrength` <a name="applyCrossStackReferenceStrength" id="@cdklabs/cdk-verified-permissions.IdentitySource.applyCrossStackReferenceStrength"></a>
+
+```typescript
+public applyCrossStackReferenceStrength(strength: ReferenceStrength): void
+```
+
+Override the cross-stack reference strength for this resource.
+
+When set, any cross-stack reference to this resource will use the specified
+mechanism instead of the global default determined by the
+`@aws-cdk/core:defaultCrossStackReferences` context key. This is useful for
+selectively weakening specific references to avoid the "deadly embrace" problem
+without changing the app-wide default.
+
+###### `strength`<sup>Required</sup> <a name="strength" id="@cdklabs/cdk-verified-permissions.IdentitySource.applyCrossStackReferenceStrength.parameter.strength"></a>
+
+- *Type:* aws-cdk-lib.ReferenceStrength
+
+The reference strength to use for this resource.
+
+---
 
 ##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@cdklabs/cdk-verified-permissions.IdentitySource.applyRemovalPolicy"></a>
 
@@ -486,6 +529,8 @@ new Policy(scope: Construct, id: string, props: PolicyProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.Policy.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Policy.with">with</a></code> | Applies one or more mixins to this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.Policy.applyCrossStackReferenceStrength">applyCrossStackReferenceStrength</a></code> | Override the cross-stack reference strength for this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.Policy.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 
 ---
@@ -497,6 +542,47 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@cdklabs/cdk-verified-permissions.Policy.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@cdklabs/cdk-verified-permissions.Policy.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+---
+
+##### `applyCrossStackReferenceStrength` <a name="applyCrossStackReferenceStrength" id="@cdklabs/cdk-verified-permissions.Policy.applyCrossStackReferenceStrength"></a>
+
+```typescript
+public applyCrossStackReferenceStrength(strength: ReferenceStrength): void
+```
+
+Override the cross-stack reference strength for this resource.
+
+When set, any cross-stack reference to this resource will use the specified
+mechanism instead of the global default determined by the
+`@aws-cdk/core:defaultCrossStackReferences` context key. This is useful for
+selectively weakening specific references to avoid the "deadly embrace" problem
+without changing the app-wide default.
+
+###### `strength`<sup>Required</sup> <a name="strength" id="@cdklabs/cdk-verified-permissions.Policy.applyCrossStackReferenceStrength.parameter.strength"></a>
+
+- *Type:* aws-cdk-lib.ReferenceStrength
+
+The reference strength to use for this resource.
+
+---
 
 ##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@cdklabs/cdk-verified-permissions.Policy.applyRemovalPolicy"></a>
 
@@ -857,6 +943,8 @@ new PolicyStore(scope: Construct, id: string, props?: PolicyStoreProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.with">with</a></code> | Applies one or more mixins to this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.applyCrossStackReferenceStrength">applyCrossStackReferenceStrength</a></code> | Override the cross-stack reference strength for this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPolicies">addPolicies</a></code> | Add multiple policies to the policy store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.addPoliciesFromPath">addPoliciesFromPath</a></code> | Takes in an absolute path to a directory containing .cedar files and adds the contents of each .cedar file as policies to this policy store (searching recursively if needed). Parses the policies with cedar-wasm and, if the policy store has a schema, performs semantic validation of the policies as well. Organizes policies with dependencies to avoid CloudFormation throttling and resource conflicts. |
@@ -874,6 +962,47 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@cdklabs/cdk-verified-permissions.PolicyStore.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@cdklabs/cdk-verified-permissions.PolicyStore.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+---
+
+##### `applyCrossStackReferenceStrength` <a name="applyCrossStackReferenceStrength" id="@cdklabs/cdk-verified-permissions.PolicyStore.applyCrossStackReferenceStrength"></a>
+
+```typescript
+public applyCrossStackReferenceStrength(strength: ReferenceStrength): void
+```
+
+Override the cross-stack reference strength for this resource.
+
+When set, any cross-stack reference to this resource will use the specified
+mechanism instead of the global default determined by the
+`@aws-cdk/core:defaultCrossStackReferences` context key. This is useful for
+selectively weakening specific references to avoid the "deadly embrace" problem
+without changing the app-wide default.
+
+###### `strength`<sup>Required</sup> <a name="strength" id="@cdklabs/cdk-verified-permissions.PolicyStore.applyCrossStackReferenceStrength.parameter.strength"></a>
+
+- *Type:* aws-cdk-lib.ReferenceStrength
+
+The reference strength to use for this resource.
+
+---
 
 ##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@cdklabs/cdk-verified-permissions.PolicyStore.applyRemovalPolicy"></a>
 
@@ -1257,6 +1386,7 @@ If passed, the schema's User type will have a parent of this type.
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | Validation Settings of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.deletionProtection">deletionProtection</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a></code> | Deletion protection of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.description">description</a></code> | <code>string</code> | Description of the Policy Store. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.encryptionSettings">encryptionSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.EncryptionSettings">EncryptionSettings</a></code> | Encryption settings of the Policy Store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStore.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | Schema definition of the Policy Store. |
 
 ---
@@ -1377,6 +1507,18 @@ Description of the Policy Store.
 
 ---
 
+##### `encryptionSettings`<sup>Optional</sup> <a name="encryptionSettings" id="@cdklabs/cdk-verified-permissions.PolicyStore.property.encryptionSettings"></a>
+
+```typescript
+public readonly encryptionSettings: EncryptionSettings;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.EncryptionSettings">EncryptionSettings</a>
+
+Encryption settings of the Policy Store.
+
+---
+
 ##### `schema`<sup>Optional</sup> <a name="schema" id="@cdklabs/cdk-verified-permissions.PolicyStore.property.schema"></a>
 
 ```typescript
@@ -1433,6 +1575,8 @@ new PolicyTemplate(scope: Construct, id: string, props: PolicyTemplateProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.with">with</a></code> | Applies one or more mixins to this construct. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.applyCrossStackReferenceStrength">applyCrossStackReferenceStrength</a></code> | Override the cross-stack reference strength for this resource. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyTemplate.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
 
 ---
@@ -1444,6 +1588,47 @@ public toString(): string
 ```
 
 Returns a string representation of this construct.
+
+##### `with` <a name="with" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.with"></a>
+
+```typescript
+public with(mixins: ...IMixin[]): IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+###### `mixins`<sup>Required</sup> <a name="mixins" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.with.parameter.mixins"></a>
+
+- *Type:* ...constructs.IMixin[]
+
+---
+
+##### `applyCrossStackReferenceStrength` <a name="applyCrossStackReferenceStrength" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.applyCrossStackReferenceStrength"></a>
+
+```typescript
+public applyCrossStackReferenceStrength(strength: ReferenceStrength): void
+```
+
+Override the cross-stack reference strength for this resource.
+
+When set, any cross-stack reference to this resource will use the specified
+mechanism instead of the global default determined by the
+`@aws-cdk/core:defaultCrossStackReferences` context key. This is useful for
+selectively weakening specific references to avoid the "deadly embrace" problem
+without changing the app-wide default.
+
+###### `strength`<sup>Required</sup> <a name="strength" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.applyCrossStackReferenceStrength.parameter.strength"></a>
+
+- *Type:* aws-cdk-lib.ReferenceStrength
+
+The reference strength to use for this resource.
+
+---
 
 ##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.applyRemovalPolicy"></a>
 
@@ -1879,6 +2064,61 @@ Cognito Group Configuration.
 
 ---
 
+### EncryptionSettings <a name="EncryptionSettings" id="@cdklabs/cdk-verified-permissions.EncryptionSettings"></a>
+
+Encryption settings for the policy store.
+
+This is a union type - provide either
+`awsOwnedKey` set to true for AWS owned encryption, or `customerManagedKey` for
+customer-managed KMS key encryption. These options are mutually exclusive.
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.EncryptionSettings.Initializer"></a>
+
+```typescript
+import { EncryptionSettings } from '@cdklabs/cdk-verified-permissions'
+
+const encryptionSettings: EncryptionSettings = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.EncryptionSettings.property.awsOwnedKey">awsOwnedKey</a></code> | <code>boolean</code> | Use an AWS owned key for encryption. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.EncryptionSettings.property.customerManagedKey">customerManagedKey</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.KmsEncryptionSettings">KmsEncryptionSettings</a></code> | Use a customer-managed KMS key for encryption. |
+
+---
+
+##### `awsOwnedKey`<sup>Optional</sup> <a name="awsOwnedKey" id="@cdklabs/cdk-verified-permissions.EncryptionSettings.property.awsOwnedKey"></a>
+
+```typescript
+public readonly awsOwnedKey: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Use an AWS owned key for encryption.
+
+Cannot be specified together with `customerManagedKey`.
+
+---
+
+##### `customerManagedKey`<sup>Optional</sup> <a name="customerManagedKey" id="@cdklabs/cdk-verified-permissions.EncryptionSettings.property.customerManagedKey"></a>
+
+```typescript
+public readonly customerManagedKey: KmsEncryptionSettings;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.KmsEncryptionSettings">KmsEncryptionSettings</a>
+- *Default:* undefined
+
+Use a customer-managed KMS key for encryption.
+
+Cannot be specified together with `awsOwnedKey`.
+
+---
+
 ### EntityIdentifierProperty <a name="EntityIdentifierProperty" id="@cdklabs/cdk-verified-permissions.EntityIdentifierProperty"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.EntityIdentifierProperty.Initializer"></a>
@@ -2049,6 +2289,54 @@ public readonly principalEntityType: string;
 - *Default:* No principal entity type for the identity source.
 
 Principal entity type.
+
+---
+
+### KmsEncryptionSettings <a name="KmsEncryptionSettings" id="@cdklabs/cdk-verified-permissions.KmsEncryptionSettings"></a>
+
+Encryption settings using a customer-managed KMS key.
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-verified-permissions.KmsEncryptionSettings.Initializer"></a>
+
+```typescript
+import { KmsEncryptionSettings } from '@cdklabs/cdk-verified-permissions'
+
+const kmsEncryptionSettings: KmsEncryptionSettings = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-verified-permissions.KmsEncryptionSettings.property.key">key</a></code> | <code>aws-cdk-lib.aws_kms.IKey</code> | The KMS key to use for encryption. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.KmsEncryptionSettings.property.encryptionContext">encryptionContext</a></code> | <code>{[ key: string ]: string}</code> | Additional encryption context key-value pairs. |
+
+---
+
+##### `key`<sup>Required</sup> <a name="key" id="@cdklabs/cdk-verified-permissions.KmsEncryptionSettings.property.key"></a>
+
+```typescript
+public readonly key: IKey;
+```
+
+- *Type:* aws-cdk-lib.aws_kms.IKey
+
+The KMS key to use for encryption.
+
+This can be either a Key construct or an IKey reference.
+
+---
+
+##### `encryptionContext`<sup>Optional</sup> <a name="encryptionContext" id="@cdklabs/cdk-verified-permissions.KmsEncryptionSettings.property.encryptionContext"></a>
+
+```typescript
+public readonly encryptionContext: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+- *Default:* No additional encryption context.
+
+Additional encryption context key-value pairs.
 
 ---
 
@@ -2475,6 +2763,7 @@ const policyStoreProps: PolicyStoreProps = { ... }
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.validationSettings">validationSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.ValidationSettings">ValidationSettings</a></code> | The policy store's validation settings. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.deletionProtection">deletionProtection</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.DeletionProtectionMode">DeletionProtectionMode</a></code> | The policy store's deletion protection. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.description">description</a></code> | <code>string</code> | The policy store's description. |
+| <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.encryptionSettings">encryptionSettings</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.EncryptionSettings">EncryptionSettings</a></code> | The encryption settings for the policy store. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.schema">schema</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Schema">Schema</a></code> | This attribute is not required from an API point of view. |
 | <code><a href="#@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.tags">tags</a></code> | <code><a href="#@cdklabs/cdk-verified-permissions.Tag">Tag</a>[]</code> | The tags assigned to the policy store. |
 
@@ -2515,6 +2804,21 @@ public readonly description: string;
 - *Default:* No description.
 
 The policy store's description.
+
+---
+
+##### `encryptionSettings`<sup>Optional</sup> <a name="encryptionSettings" id="@cdklabs/cdk-verified-permissions.PolicyStoreProps.property.encryptionSettings"></a>
+
+```typescript
+public readonly encryptionSettings: EncryptionSettings;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-verified-permissions.EncryptionSettings">EncryptionSettings</a>
+- *Default:* AWS owned key encryption.
+
+The encryption settings for the policy store.
+
+If not specified, the policy store will use the default AWS owned key encryption.
 
 ---
 

@@ -70,6 +70,61 @@ const test = new PolicyStore(scope, "PolicyStore", {
   deletionProtection: DeletionProtectionMode.ENABLED
 });
 ```
+
+Define a Policy Store with AWS owned key encryption (default behavior):
+
+```ts
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  validationSettings: {
+    mode: ValidationSettingsMode.OFF,
+  },
+  encryptionSettings: {
+    awsOwnedKey: true,
+  },
+});
+```
+
+Define a Policy Store with a customer-managed KMS key for encryption:
+
+```ts
+const key = new kms.Key(scope, "PolicyStoreKey", {
+  description: "Key for Verified Permissions Policy Store encryption",
+});
+
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  validationSettings: {
+    mode: ValidationSettingsMode.OFF,
+  },
+  encryptionSettings: {
+    customerManagedKey: {
+      key,
+    },
+  },
+});
+```
+
+Define a Policy Store with a customer-managed KMS key and encryption context:
+
+```ts
+const key = new kms.Key(scope, "PolicyStoreKey", {
+  description: "Key for Verified Permissions Policy Store encryption",
+});
+
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  validationSettings: {
+    mode: ValidationSettingsMode.OFF,
+  },
+  encryptionSettings: {
+    customerManagedKey: {
+      key,
+      encryptionContext: {
+        "department": "security",
+        "project": "verified-permissions",
+      },
+    },
+  },
+});
+```
 ## Schemas
 
 If you want to have type safety when defining a schema, you can accomplish this **<ins>only</ins>** in typescript. Simply use the `Schema` type exported by the `@cedar-policy/cedar-wasm`.

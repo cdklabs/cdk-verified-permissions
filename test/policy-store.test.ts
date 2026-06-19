@@ -3,6 +3,7 @@ import { ArnFormat, Aws, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as kms from 'aws-cdk-lib/aws-kms';
 import { CfnPolicy, CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { getResourceLogicalId } from './utils';
 import { PolicyDefinitionProperty } from '../src/policy';
@@ -868,5 +869,208 @@ describe('Policy Store schema generation', () => {
       expect(Object.keys(schema.PodcastApp.actions).length).toEqual(8 + 6);
       expect(Object.keys(schema.PodcastApp.actions).sort()).toEqual(expectedActions.sort());
     });
+  });
+});
+
+
+describe('Policy Store encryption settings', () => {
+  test('Creating Policy Store with AWS owned key encryption', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+      encryptionSettings: {
+        awsOwnedKey: true,
+      },
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyStore',
+      {
+        ValidationSettings: {
+          Mode: ValidationSettingsMode.OFF,
+        },
+        EncryptionSettings: {
+          Default: {},
+        },
+      },
+    );
+  });
+
+  test('Creating Policy Store with customer-managed KMS key encryption', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+    const key = new kms.Key(stack, 'MyKey');
+
+    // WHEN
+    new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+      encryptionSettings: {
+        customerManagedKey: {
+          key,
+        },
+      },
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyStore',
+      {
+        ValidationSettings: {
+          Mode: ValidationSettingsMode.OFF,
+        },
+        EncryptionSettings: {
+          KmsEncryptionSettings: {
+            Key: {
+              'Fn::GetAtt': [
+                stack.getLogicalId(key.node.defaultChild as any),
+                'Arn',
+              ],
+            },
+          },
+        },
+      },
+    );
+  });
+
+  test('Creating Policy Store with customer-managed KMS key and encryption context', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+    const key = new kms.Key(stack, 'MyKey');
+
+    // WHEN
+    new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+      encryptionSettings: {
+        customerManagedKey: {
+          key,
+          encryptionContext: {
+            contextKey1: 'contextValue1',
+            contextKey2: 'contextValue2',
+          },
+        },
+      },
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyStore',
+      {
+        ValidationSettings: {
+          Mode: ValidationSettingsMode.OFF,
+        },
+        EncryptionSettings: {
+          KmsEncryptionSettings: {
+            Key: {
+              'Fn::GetAtt': [
+                stack.getLogicalId(key.node.defaultChild as any),
+                'Arn',
+              ],
+            },
+            EncryptionContext: {
+              contextKey1: 'contextValue1',
+              contextKey2: 'contextValue2',
+            },
+          },
+        },
+      },
+    );
+  });
+
+  test('Creating Policy Store with imported KMS key by ARN', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+    const keyArn = 'arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012';
+    const key = kms.Key.fromKeyArn(stack, 'ImportedKey', keyArn);
+
+    // WHEN
+    new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+      encryptionSettings: {
+        customerManagedKey: {
+          key,
+        },
+      },
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties(
+      'AWS::VerifiedPermissions::PolicyStore',
+      {
+        ValidationSettings: {
+          Mode: ValidationSettingsMode.OFF,
+        },
+        EncryptionSettings: {
+          KmsEncryptionSettings: {
+            Key: keyArn,
+          },
+        },
+      },
+    );
+  });
+
+  test('Creating Policy Store without encryption settings does not set EncryptionSettings', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // WHEN
+    new PolicyStore(stack, 'PolicyStore', {
+      validationSettings: {
+        mode: ValidationSettingsMode.OFF,
+      },
+    });
+
+    // THEN
+    const template = Template.fromStack(stack);
+    const resources = template.findResources('AWS::VerifiedPermissions::PolicyStore');
+    const policyStoreResource = Object.values(resources)[0];
+    expect(policyStoreResource.Properties.EncryptionSettings).toBeUndefined();
+  });
+
+  test('Throws error when both awsOwnedKey and customerManagedKey are specified', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+    const key = new kms.Key(stack, 'MyKey');
+
+    // THEN
+    expect(() => {
+      new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+        encryptionSettings: {
+          awsOwnedKey: true,
+          customerManagedKey: {
+            key,
+          },
+        },
+      });
+    }).toThrow('Only one of awsOwnedKey or customerManagedKey can be specified in encryptionSettings');
+  });
+
+  test('Throws error when neither awsOwnedKey nor customerManagedKey is specified', () => {
+    // GIVEN
+    const stack = new Stack(undefined, 'Stack');
+
+    // THEN
+    expect(() => {
+      new PolicyStore(stack, 'PolicyStore', {
+        validationSettings: {
+          mode: ValidationSettingsMode.OFF,
+        },
+        encryptionSettings: {},
+      });
+    }).toThrow('One of awsOwnedKey or customerManagedKey must be specified in encryptionSettings');
   });
 });

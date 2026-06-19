@@ -2,6 +2,7 @@
 import { IdentitySource, Policy, PolicyType, PolicyTemplate, AddPolicyOptions, PolicyStore, ValidationSettingsMode, DeletionProtectionMode } from '@cdklabs/cdk-verified-permissions';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
+import * as kms from 'aws-cdk-lib/aws-kms';
 import { Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
