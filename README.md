@@ -473,6 +473,35 @@ const policy = Policy.fromFile(scope, "MyTestPolicy", policyFromFileProps);
 ```
 
 
+## Policy Store Alias
+
+A Policy Store Alias provides an alternative identifier that you can use to reference a policy store in API operations. This operation is idempotent — if multiple requests are made with the same `aliasName` and `policyStoreId`, subsequent requests will be ignored.
+
+Define a Policy Store Alias for an existing policy store:
+
+```ts
+const policyStore = new PolicyStore(scope, "PolicyStore", {
+  validationSettings: {
+    mode: ValidationSettingsMode.OFF,
+  },
+});
+
+new PolicyStoreAlias(scope, "PolicyStoreAlias", {
+  aliasName: "my-app-production",
+  policyStore: policyStore,
+});
+```
+
+Reference an existing Policy Store Alias:
+
+```ts
+const alias = PolicyStoreAlias.fromAliasName(
+  scope,
+  "ImportedAlias",
+  "my-app-production",
+);
+```
+
 ## Policy Template
 
 Define a Policy Template referring to a Cedar Statement in local file:
