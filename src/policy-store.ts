@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as kms from 'aws-cdk-lib/aws-kms';
 import { CfnPolicyStore } from 'aws-cdk-lib/aws-verifiedpermissions';
 import { ArnFormat, IResource, Resource, Stack } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
@@ -39,6 +40,46 @@ export enum ValidationSettingsMode {
 export enum DeletionProtectionMode {
   ENABLED = 'ENABLED',
   DISABLED = 'DISABLED',
+}
+
+/**
+ * Encryption settings using a customer-managed KMS key.
+ */
+export interface KmsEncryptionSettings {
+  /**
+   * The KMS key to use for encryption. This can be either a Key construct or an IKey reference.
+   */
+  readonly key: kms.IKey;
+
+  /**
+   * Additional encryption context key-value pairs.
+   *
+   * @default - No additional encryption context.
+   */
+  readonly encryptionContext?: Record<string, string>;
+}
+
+/**
+ * Encryption settings for the policy store. This is a union type - provide either
+ * `awsOwnedKey` set to true for AWS owned encryption, or `customerManagedKey` for
+ * customer-managed KMS key encryption. These options are mutually exclusive.
+ */
+export interface EncryptionSettings {
+  /**
+   * Use an AWS owned key for encryption.
+   * Cannot be specified together with `customerManagedKey`.
+   *
+   * @default - false
+   */
+  readonly awsOwnedKey?: boolean;
+
+  /**
+   * Use a customer-managed KMS key for encryption.
+   * Cannot be specified together with `awsOwnedKey`.
+   *
+   * @default - undefined
+   */
+  readonly customerManagedKey?: KmsEncryptionSettings;
 }
 
 export interface IPolicyStore extends IResource {
@@ -125,6 +166,14 @@ export interface PolicyStoreProps {
    * @default - none
    */
   readonly tags?: Tag[];
+
+  /**
+   * The encryption settings for the policy store.
+   * If not specified, the policy store will use the default AWS owned key encryption.
+   *
+   * @default - AWS owned key encryption.
+   */
+  readonly encryptionSettings?: EncryptionSettings;
 }
 
 export interface AddPolicyOptions {
@@ -166,7 +215,6 @@ abstract class PolicyStoreBase extends Resource implements IPolicyStore {
       grantee,
       actions,
       resourceArns: [this.policyStoreArn],
-      scope: this,
     });
   }
 
@@ -380,6 +428,11 @@ export class PolicyStore extends PolicyStoreBase {
    */
   readonly deletionProtection?: DeletionProtectionMode;
 
+  /**
+   * Encryption settings of the Policy Store
+   */
+  readonly encryptionSettings?: EncryptionSettings;
+
   constructor(
     scope: Construct,
     id: string,
@@ -395,6 +448,17 @@ export class PolicyStore extends PolicyStoreBase {
       checkParseSchema(props.schema.cedarJson);
     }
 
+    if (props.encryptionSettings) {
+      if (props.encryptionSettings.awsOwnedKey && props.encryptionSettings.customerManagedKey) {
+        throw new Error('Only one of awsOwnedKey or customerManagedKey can be specified in encryptionSettings');
+      }
+      if (!props.encryptionSettings.awsOwnedKey && !props.encryptionSettings.customerManagedKey) {
+        throw new Error('One of awsOwnedKey or customerManagedKey must be specified in encryptionSettings');
+      }
+    }
+
+    const encryptionSettings = this.buildEncryptionSettings(props.encryptionSettings);
+
     this.policyStore = new CfnPolicyStore(this, id, {
       schema: props.schema
         ? {
@@ -409,6 +473,7 @@ export class PolicyStore extends PolicyStoreBase {
         mode: (props.deletionProtection) ? props.deletionProtection : DeletionProtectionMode.DISABLED,
       },
       tags: props.tags,
+      encryptionSettings,
     });
     this.policyStoreArn = this.getResourceArnAttribute(
       this.policyStore.attrArn,
@@ -424,6 +489,28 @@ export class PolicyStore extends PolicyStoreBase {
     this.validationSettings = props.validationSettings;
     this.description = props.description;
     this.deletionProtection = (props.deletionProtection) ? props.deletionProtection : DeletionProtectionMode.DISABLED;
+    this.encryptionSettings = props.encryptionSettings;
+  }
+
+  private buildEncryptionSettings(
+    settings?: EncryptionSettings,
+  ): CfnPolicyStore.EncryptionSettingsProperty | undefined {
+    if (!settings) {
+      return undefined;
+    }
+
+    if (settings.awsOwnedKey) {
+      return {
+        default: {},
+      };
+    }
+
+    return {
+      kmsEncryptionSettings: {
+        key: settings.customerManagedKey!.key.keyArn,
+        encryptionContext: settings.customerManagedKey!.encryptionContext,
+      },
+    };
   }
 
   /**
