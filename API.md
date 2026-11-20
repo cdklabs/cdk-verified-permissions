@@ -4,7 +4,7 @@
 
 ### IdentitySource <a name="IdentitySource" id="@cdklabs/cdk-verified-permissions.IdentitySource"></a>
 
-- *Implements:* <a href="#@cdklabs/cdk-verified-permissions.IIdentitySource">IIdentitySource</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.IResource, aws-cdk-lib.interfaces.IEnvironmentAware, <a href="#@cdklabs/cdk-verified-permissions.IIdentitySource">IIdentitySource</a>
 
 #### Initializers <a name="Initializers" id="@cdklabs/cdk-verified-permissions.IdentitySource.Initializer"></a>
 
@@ -488,7 +488,7 @@ public readonly userPoolArn: string;
 
 ### Policy <a name="Policy" id="@cdklabs/cdk-verified-permissions.Policy"></a>
 
-- *Implements:* <a href="#@cdklabs/cdk-verified-permissions.IPolicy">IPolicy</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.IResource, aws-cdk-lib.interfaces.IEnvironmentAware, <a href="#@cdklabs/cdk-verified-permissions.IPolicy">IPolicy</a>
 
 #### Initializers <a name="Initializers" id="@cdklabs/cdk-verified-permissions.Policy.Initializer"></a>
 
@@ -902,7 +902,7 @@ This is one of the following values: Static or TemplateLinked.
 
 ### PolicyStore <a name="PolicyStore" id="@cdklabs/cdk-verified-permissions.PolicyStore"></a>
 
-- *Implements:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.IResource, aws-cdk-lib.interfaces.IEnvironmentAware, <a href="#@cdklabs/cdk-verified-permissions.IPolicyStore">IPolicyStore</a>
 
 #### Initializers <a name="Initializers" id="@cdklabs/cdk-verified-permissions.PolicyStore.Initializer"></a>
 
@@ -1534,7 +1534,7 @@ Schema definition of the Policy Store.
 
 ### PolicyStoreAlias <a name="PolicyStoreAlias" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias"></a>
 
-- *Implements:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias">IPolicyStoreAlias</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.IResource, aws-cdk-lib.interfaces.IEnvironmentAware, <a href="#@cdklabs/cdk-verified-permissions.IPolicyStoreAlias">IPolicyStoreAlias</a>
 
 #### Initializers <a name="Initializers" id="@cdklabs/cdk-verified-permissions.PolicyStoreAlias.Initializer"></a>
 
@@ -1879,7 +1879,7 @@ The policy store associated with this alias.
 
 ### PolicyTemplate <a name="PolicyTemplate" id="@cdklabs/cdk-verified-permissions.PolicyTemplate"></a>
 
-- *Implements:* <a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate">IPolicyTemplate</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.IResource, aws-cdk-lib.interfaces.IEnvironmentAware, <a href="#@cdklabs/cdk-verified-permissions.IPolicyTemplate">IPolicyTemplate</a>
 
 #### Initializers <a name="Initializers" id="@cdklabs/cdk-verified-permissions.PolicyTemplate.Initializer"></a>
 
